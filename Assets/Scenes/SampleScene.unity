@@ -215,9 +215,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 694115692}
-  - component: {fileID: 694115694}
   - component: {fileID: 694115693}
   - component: {fileID: 694115695}
+  - component: {fileID: 694115696}
+  - component: {fileID: 694115694}
+  - component: {fileID: 694115697}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -257,6 +259,7 @@ MonoBehaviour:
   xVelMax: 0
   move: {x: 0, y: 0}
   velocity: {x: 0, y: 0}
+  playerAnimation: {fileID: 0}
 --- !u!212 &694115694
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -297,12 +300,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e632da12f7db1164db46c6c6c3ea42f0, type: 3}
+  m_Sprite: {fileID: -3316437661583186769, guid: 6de90fea7e7041648b5dbf085e3c163b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.3513514, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -402,3 +405,34 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!95 &694115696
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694115691}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cc47f267bb4f82144bb5e82d32e863ab, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &694115697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694115691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2edc7bcbb171144fa37085a5ba4549f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
