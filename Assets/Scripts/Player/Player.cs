@@ -17,9 +17,12 @@ public class Player : FSM<Player>
     public int signDirectionX = 1;
     [HideInInspector]
     public PlayerAnimation playerAnimation;
-    void Start()
+    void Awake()
     {
         playerAnimation = GetComponent<PlayerAnimation>();
+    }
+    void Start()
+    {
         ChangeState(new Idle());
     }
     void OnMove(InputValue value)
