@@ -30,4 +30,13 @@ public class AdventurerPlayerAnimation : PlayerAnimation
         spriteRenderer.flipX = sign < 0;
     }
 
+    public override void BeginRun()
+    {
+        Debug.Log("Begin run");
+    }
+
+    public override void StopRun()
+    {
+        Debug.Log("Stop run");
+    }
 }
