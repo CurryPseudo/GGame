@@ -259,6 +259,7 @@ MonoBehaviour:
   xVelMax: 0
   move: {x: 0, y: 0}
   velocity: {x: 0, y: 0}
+  signDirectionX: 1
   playerAnimation: {fileID: 0}
 --- !u!212 &694115694
 SpriteRenderer:
@@ -433,6 +434,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 694115691}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2edc7bcbb171144fa37085a5ba4549f, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a7ac7809b5cc3e42ad46bd9a97e5297, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
