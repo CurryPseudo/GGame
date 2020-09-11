@@ -45,7 +45,6 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
-        fsm.ChangeState(new Idle());
         fsmFixed.ChangeState(new Fixed.Idle());
     }
     void OnMove(InputValue value)
@@ -67,17 +66,6 @@ public class Player : MonoBehaviour
 
 namespace PlayerState
 {
-    public class Idle : State<Player>
-    {
-        public override IEnumerator Main()
-        {
-            while (true)
-            {
-                mono.animation.SetSignDirectionX(mono.SignDirectionX);
-                yield return null;
-            }
-        }
-    }
     namespace Fixed
     {
         public class Idle : State<Player>
@@ -88,7 +76,7 @@ namespace PlayerState
                 {
                     if (mono.MoveInput.x == 0)
                     {
-                        if (mono.LastMoveInput.x != 0 && mono.MoveInputDirty)
+                        if (mono.LastMoveInput.x != 0 && mono.MoveInputDirty && Mathf.Approximately(mono.VelocityX, 0))
                         {
                             mono.MoveInputClean();
                             mono.animation.StopRun();
@@ -116,6 +104,8 @@ namespace PlayerState
                     {
                         mono.VelocityX = Mathf.Sign(mono.VelocityX) * mono.xVelMax;
                     }
+                    mono.animation.SignDirectionX = mono.SignDirectionX;
+                    mono.animation.RunningSpeed = Mathf.Abs(mono.VelocityX) / mono.xVelMax;
                     yield return new WaitForFixedUpdate();
                 }
             }

@@ -25,18 +25,16 @@ public class AdventurerPlayerAnimation : PlayerAnimation
             yield return null;
         }
     }
-    public override void SetSignDirectionX(int sign)
-    {
-        spriteRenderer.flipX = sign < 0;
-    }
+    public override int SignDirectionX { set => spriteRenderer.flipX = value < 0; }
+    public override float RunningSpeed { set => animator.SetFloat("RunningSpeed", value); }
 
     public override void BeginRun()
     {
-        Debug.Log("Begin run");
+        animator.SetBool("Running", true);
     }
 
     public override void StopRun()
     {
-        Debug.Log("Stop run");
+        animator.SetBool("Running", false);
     }
 }
