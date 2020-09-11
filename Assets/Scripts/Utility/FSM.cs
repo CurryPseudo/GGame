@@ -12,20 +12,25 @@ public abstract class State<T>
     public Coroutine coroutine;
 }
 
-public class FSM<T> : MonoBehaviour where T : FSM<T>
+public class FSM<T> where T : MonoBehaviour
 {
+    private T mono;
     public State<T> current = null;
+    public FSM(T mono)
+    {
+        this.mono = mono;
+    }
     public void ChangeState(State<T> next)
     {
         if (current != null)
         {
-            StopCoroutine(current.coroutine);
+            mono.StopCoroutine(current.coroutine);
             current.Exit();
         }
         if (next != null)
         {
-            next.mono = this as T;
-            next.coroutine = StartCoroutine(next.Main());
+            next.mono = mono;
+            next.coroutine = mono.StartCoroutine(next.Main());
         }
         current = next;
     }

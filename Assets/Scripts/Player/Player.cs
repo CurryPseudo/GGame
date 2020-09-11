@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PlayerState;
+using Fixed = PlayerState.Fixed;
 using UnityEngine.InputSystem;
 using Sirenix.OdinInspector;
 [RequireComponent(typeof(PlayerAnimation))]
-public class Player : FSM<Player>
+public class Player : MonoBehaviour
 {
     // Start is called before the first frame update
     public float xAcc;
@@ -17,13 +18,18 @@ public class Player : FSM<Player>
     public int signDirectionX = 1;
     [HideInInspector]
     public new PlayerAnimation animation;
+    private FSM<Player> fsm;
+    private FSM<Player> fsmFixed;
     void Awake()
     {
         animation = GetComponent<PlayerAnimation>();
+        fsm = new FSM<Player>(this);
+        fsmFixed = new FSM<Player>(this);
     }
     void Start()
     {
-        ChangeState(new Idle());
+        fsm.ChangeState(new Idle());
+        fsmFixed.ChangeState(new Fixed.Idle());
     }
     void OnMove(InputValue value)
     {
@@ -44,9 +50,23 @@ namespace PlayerState
             while (true)
             {
                 mono.animation.SetSignDirectionX(mono.signDirectionX);
-                yield return new WaitForFixedUpdate();
+                yield return null;
             }
         }
+    }
+    namespace Fixed
+    {
+        public class Idle : State<Player>
+        {
+            public override IEnumerator Main()
+            {
+                while (true)
+                {
+                    yield return new WaitForFixedUpdate();
+                }
+            }
+        }
+
     }
 
 }
