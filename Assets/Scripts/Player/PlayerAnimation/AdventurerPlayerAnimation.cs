@@ -1,7 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer), typeof(Animator))]
 public class AdventurerPlayerAnimation : PlayerAnimation
 {
     private SpriteRenderer spriteRenderer;

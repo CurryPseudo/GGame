@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using PlayerState;
@@ -16,10 +16,10 @@ public class Player : FSM<Player>
     public Vector2 velocity = Vector2.zero;
     public int signDirectionX = 1;
     [HideInInspector]
-    public PlayerAnimation playerAnimation;
+    public new PlayerAnimation animation;
     void Awake()
     {
-        playerAnimation = GetComponent<PlayerAnimation>();
+        animation = GetComponent<PlayerAnimation>();
     }
     void Start()
     {
@@ -43,7 +43,7 @@ namespace PlayerState
         {
             while (true)
             {
-                mono.playerAnimation.SetSignDirectionX(mono.signDirectionX);
+                mono.animation.SetSignDirectionX(mono.signDirectionX);
                 yield return new WaitForFixedUpdate();
             }
         }
