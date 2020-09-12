@@ -78,7 +78,7 @@ namespace PlayerState
                 {
                     if (mono.MoveInput.x == 0)
                     {
-                        if (mono.LastMoveInput.x != 0 && mono.MoveInputDirty && Mathf.Approximately(mono.VelocityX, 0))
+                        if (mono.LastMoveInput.x != 0 && mono.MoveInputDirty)
                         {
                             mono.MoveInputClean();
                             mono.animation.StopRun();

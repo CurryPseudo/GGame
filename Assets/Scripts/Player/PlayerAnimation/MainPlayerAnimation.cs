@@ -1,0 +1,27 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[RequireComponent(typeof(SpriteRenderer), typeof(Animator))]
+public class MainPlayerAnimation : PlayerAnimation
+{
+    private SpriteRenderer spriteRenderer;
+    private Animator animator;
+    void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+    }
+    public override int SignDirectionX { set => spriteRenderer.flipX = value >= 0; }
+    public override float RunningSpeed { set => animator.SetFloat("RunningSpeed", value); }
+
+    public override void BeginRun()
+    {
+        animator.SetBool("Running", true);
+    }
+
+    public override void StopRun()
+    {
+        animator.SetBool("Running", false);
+    }
+}
