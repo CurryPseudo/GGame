@@ -4,10 +4,11 @@ using UnityEngine;
 using PlayerState;
 using Fixed = PlayerState.Fixed;
 using UnityEngine.InputSystem;
+using UnityEngine.Assertions;
 using Sirenix.OdinInspector;
 using System;
 
-[RequireComponent(typeof(PlayerAnimation), typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -38,7 +39,8 @@ public class Player : MonoBehaviour
     private FSM<Player> fsmFixed;
     void Awake()
     {
-        animation = GetComponent<PlayerAnimation>();
+        animation = GetComponentInChildren<PlayerAnimation>();
+        Assert.IsNotNull(animation);
         rigid = GetComponent<Rigidbody2D>();
         fsm = new FSM<Player>(this);
         fsmFixed = new FSM<Player>(this);
