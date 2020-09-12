@@ -20,9 +20,49 @@ public class Player : MonoBehaviour
     private bool moveInputDirty = false;
     private Vector2Int lastMoveInput = Vector2Int.zero;
     private int signDirectionX = 1;
-    public Vector2 Velocity { get { return rigid.velocity; } set { rigid.velocity = value; } }
-    public float VelocityX { get { return rigid.velocity.x; } set { rigid.velocity = new Vector2(value, rigid.velocity.y); } }
-    public float VelocityY { get { return rigid.velocity.y; } set { rigid.velocity = new Vector2(rigid.velocity.x, value); } }
+    public Vector2 Velocity
+    {
+        get { return rigid.velocity; }
+        set
+        {
+            if (value != rigid.velocity)
+            {
+                VelocityOnChange(value);
+            }
+            rigid.velocity = value;
+        }
+    }
+    public float VelocityX
+    {
+        get { return rigid.velocity.x; }
+        set
+        {
+            if (value != rigid.velocity.x)
+            {
+                VelocityOnChange(new Vector2(value, rigid.velocity.y));
+            }
+            rigid.velocity = new Vector2(value, rigid.velocity.y);
+        }
+    }
+    public float VelocityY
+    {
+        get { return rigid.velocity.y; }
+        set
+        {
+            if (value != rigid.velocity.y)
+            {
+                VelocityOnChange(new Vector2(rigid.velocity.x, value));
+            }
+            rigid.velocity = new Vector2(rigid.velocity.x, value);
+        }
+    }
+    private void VelocityOnChange(Vector2 value)
+    {
+        if (value.x != 0)
+        {
+            signDirectionX = (int)Mathf.Sign(value.x);
+        }
+    }
 
     [ShowInInspector]
     public Vector2Int MoveInput { get => moveInput; }
@@ -55,10 +95,6 @@ public class Player : MonoBehaviour
         lastMoveInput = moveInput;
         moveInput.x = Mathf.Approximately(moveFloat.x, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.x));
         moveInput.y = Mathf.Approximately(moveFloat.y, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.y));
-        if (MoveInput.x != 0)
-        {
-            signDirectionX = MoveInput.x;
-        }
         moveInputDirty = true;
     }
     void Update()
