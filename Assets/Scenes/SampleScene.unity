@@ -256,7 +256,7 @@ MonoBehaviour:
   xAcc: 12
   xRevAcc: 24
   xFri: 20
-  xVelMax: 4
+  xVelMax: 5
 --- !u!114 &694115695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -417,7 +417,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b24d610e30de2044a294f199ee1736c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  additionFlipX: 0
 --- !u!212 &1497342230
 SpriteRenderer:
   m_ObjectHideFlags: 0
