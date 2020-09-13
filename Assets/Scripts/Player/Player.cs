@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     private bool moveInputDirty = false;
     private Vector2Int lastMoveInput = Vector2Int.zero;
     private int signDirectionX = 1;
+    private bool signDirectionXDirty = false;
     public Vector2 Velocity
     {
         get { return rigid.velocity; }
@@ -60,7 +61,12 @@ public class Player : MonoBehaviour
     {
         if (value.x != 0)
         {
-            signDirectionX = (int)Mathf.Sign(value.x);
+            var next = (int)Mathf.Sign(value.x);
+            if (next != signDirectionX)
+            {
+                signDirectionXDirty = true;
+            }
+            signDirectionX = next;
         }
     }
 
@@ -70,7 +76,10 @@ public class Player : MonoBehaviour
     [ShowInInspector]
     public Vector2Int LastMoveInput { get => lastMoveInput; }
     public bool MoveInputDirty { get => moveInputDirty; }
+    public bool SignDirectionXDirty { get => signDirectionXDirty; }
+
     public void MoveInputClean() { moveInputDirty = false; }
+    public void SignDirectionXDirtyClean() { signDirectionXDirty = false; }
 
     [NonSerialized]
     public new PlayerAnimation animation;
@@ -123,6 +132,11 @@ namespace PlayerState
                     }
                     else
                     {
+                        if (mono.SignDirectionX * mono.MoveInput.x < 0 && mono.SignDirectionXDirty)
+                        {
+                            mono.SignDirectionXDirtyClean();
+                            mono.animation.TurnAround(mono.SignDirectionX);
+                        }
                         if (mono.LastMoveInput.x == 0 && mono.MoveInputDirty)
                         {
                             mono.MoveInputClean();

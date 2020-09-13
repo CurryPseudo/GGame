@@ -10,4 +10,5 @@ public abstract class PlayerAnimation : MonoBehaviour
 
     public abstract void BeginRun();
     public abstract void StopRun();
+    public abstract void TurnAround(int lastSignDirectionX);
 }

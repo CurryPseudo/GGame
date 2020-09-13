@@ -37,4 +37,6 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     {
         animator.SetBool("Running", false);
     }
+
+    public override void TurnAround(int lastSignDirectionX) { }
 }
