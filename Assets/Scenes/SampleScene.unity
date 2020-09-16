@@ -254,9 +254,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xAcc: 12
-  xRevAcc: 24
-  xFri: 20
-  xVelMax: 5
+  xRevAcc: 40
+  xFri: 30
+  xVelMax: 7
 --- !u!114 &694115695
 MonoBehaviour:
   m_ObjectHideFlags: 0

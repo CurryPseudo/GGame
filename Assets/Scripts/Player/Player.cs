@@ -20,8 +20,8 @@ public class Player : MonoBehaviour
     private bool moveInputDirty = false;
     private Vector2Int lastMoveInput = Vector2Int.zero;
     private int signDirectionX = 1;
-    private bool signDirectionXDirty = false;
-    private bool turnAroundNotFinish = false;
+    private bool signDirectionXDirty = true;
+    private int turnAroundSignDirectionX = 0;
     public Vector2 Velocity
     {
         get { return rigid.velocity; }
@@ -78,7 +78,7 @@ public class Player : MonoBehaviour
     public Vector2Int LastMoveInput { get => lastMoveInput; }
     public bool MoveInputDirty { get => moveInputDirty; }
     public bool SignDirectionXDirty { get => signDirectionXDirty; }
-    public bool TurnAroundNotFinish { get => turnAroundNotFinish; set => turnAroundNotFinish = value; }
+    public int TurnAroundSignDirectionX { get => turnAroundSignDirectionX; set => turnAroundSignDirectionX = value; }
 
     public void MoveInputClean() { moveInputDirty = false; }
     public void SignDirectionXClean() { signDirectionXDirty = false; }
@@ -132,10 +132,10 @@ namespace PlayerState
                         }
                         var lastVelocityX = mono.VelocityX;
                         mono.VelocityX = Mathf.Max(Mathf.Abs(mono.VelocityX) - mono.xFri * Time.fixedDeltaTime, 0) * Mathf.Sign(mono.VelocityX);
-                        if (mono.TurnAroundNotFinish && Mathf.Approximately(mono.VelocityX, 0))
+                        if (mono.TurnAroundSignDirectionX != 0 && Mathf.Approximately(mono.VelocityX, 0) && Mathf.Sign(lastVelocityX) != mono.TurnAroundSignDirectionX)
                         {
                             mono.VelocityX = Mathf.Sign(lastVelocityX) * -1 * Mathf.Epsilon;
-                            mono.TurnAroundNotFinish = false;
+                            mono.TurnAroundSignDirectionX = 0;
                         }
                     }
                     else
@@ -144,14 +144,11 @@ namespace PlayerState
                         {
                             mono.SignDirectionXClean();
                             mono.animation.TurnAround(mono.SignDirectionX);
-                            if (!Mathf.Approximately(mono.VelocityX, 0))
-                            {
-                                mono.TurnAroundNotFinish = true;
-                            }
+                            mono.TurnAroundSignDirectionX = (int)Mathf.Sign(mono.MoveInput.x);
                         }
                         if (mono.SignDirectionX * mono.MoveInput.x > 0)
                         {
-                            mono.TurnAroundNotFinish = false;
+                            mono.TurnAroundSignDirectionX = 0;
                         }
                         if (mono.LastMoveInput.x == 0 && mono.MoveInputDirty)
                         {
