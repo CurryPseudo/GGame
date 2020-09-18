@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     public float xRevAcc;
     public float xFri;
     public float xVelMax;
+    public Joystick joystick;
     private Vector2Int moveInput = Vector2Int.zero;
     private bool moveInputDirty = false;
     private Vector2Int lastMoveInput = Vector2Int.zero;
@@ -123,6 +124,8 @@ namespace PlayerState
             {
                 while (true)
                 {
+                    var monoMoveInput = mono.MoveInput;
+                    monoMoveInput.x = (int) mono.joystick.Horizontal;
                     if (mono.MoveInput.x == 0)
                     {
                         if (mono.LastMoveInput.x != 0 && mono.MoveInputDirty)
