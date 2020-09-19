@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Assertions;
 using Sirenix.OdinInspector;
 using System;
+using static UnityEngine.InputSystem.InputAction;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
@@ -16,13 +17,9 @@ public class Player : MonoBehaviour
     public float xRevAcc;
     public float xFri;
     public float xVelMax;
-    public Joystick joystick;
+    public InputAction moveAction;
     private Vector2Int moveInput = Vector2Int.zero;
-    private bool moveInputDirty = false;
-    private Vector2Int lastMoveInput = Vector2Int.zero;
     private int signDirectionX = 1;
-    private bool signDirectionXDirty = true;
-    private int turnAroundSignDirectionX = 0;
     public Vector2 Velocity
     {
         get { return rigid.velocity; }
@@ -64,25 +61,16 @@ public class Player : MonoBehaviour
         if (value.x != 0)
         {
             var next = (int)Mathf.Sign(value.x);
-            if (next != signDirectionX)
-            {
-                signDirectionXDirty = true;
-            }
             signDirectionX = next;
         }
     }
 
     [ShowInInspector]
     public Vector2Int MoveInput { get => moveInput; }
+    [ShowInInspector]
     public int SignDirectionX { get => signDirectionX; }
     [ShowInInspector]
-    public Vector2Int LastMoveInput { get => lastMoveInput; }
-    public bool MoveInputDirty { get => moveInputDirty; }
-    public bool SignDirectionXDirty { get => signDirectionXDirty; }
-    public int TurnAroundSignDirectionX { get => turnAroundSignDirectionX; set => turnAroundSignDirectionX = value; }
 
-    public void MoveInputClean() { moveInputDirty = false; }
-    public void SignDirectionXClean() { signDirectionXDirty = false; }
 
     [NonSerialized]
     public new PlayerAnimation animation;
@@ -96,20 +84,31 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         fsm = new FSM<Player>(this);
         fsmFixed = new FSM<Player>(this);
+        moveAction.performed += OnMove;
+        moveAction.canceled += OnMove;
+    }
+    void OnEnable()
+    {
+        moveAction.Enable();
+    }
+    void OnDisable()
+    {
+        moveAction.Disable();
     }
     void Start()
     {
         fsmFixed.ChangeState(new Fixed.Idle());
     }
-    void OnMove(InputValue value)
+    void OnMove(CallbackContext context)
     {
-        var moveFloat = value.Get<Vector2>();
-        lastMoveInput = moveInput;
+        var moveFloat = context.ReadValue<Vector2>();
         moveInput.x = Mathf.Approximately(moveFloat.x, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.x));
         moveInput.y = Mathf.Approximately(moveFloat.y, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.y));
-        moveInputDirty = true;
     }
     void Update()
+    {
+    }
+    void FixedUpdate()
     {
     }
 }
@@ -122,40 +121,21 @@ namespace PlayerState
         {
             public override IEnumerator Main()
             {
+                var lastMoveInputX = mono.MoveInput.x;
                 while (true)
                 {
-                    var monoMoveInput = mono.MoveInput;
-                    monoMoveInput.x = (int) mono.joystick.Horizontal;
                     if (mono.MoveInput.x == 0)
                     {
-                        if (mono.LastMoveInput.x != 0 && mono.MoveInputDirty)
+                        if (lastMoveInputX != 0)
                         {
-                            mono.MoveInputClean();
                             mono.animation.StopRun();
                         }
-                        var lastVelocityX = mono.VelocityX;
                         mono.VelocityX = Mathf.Max(Mathf.Abs(mono.VelocityX) - mono.xFri * Time.fixedDeltaTime, 0) * Mathf.Sign(mono.VelocityX);
-                        if (mono.TurnAroundSignDirectionX != 0 && Mathf.Approximately(mono.VelocityX, 0) && Mathf.Sign(lastVelocityX) != mono.TurnAroundSignDirectionX)
-                        {
-                            mono.VelocityX = Mathf.Sign(lastVelocityX) * -1 * Mathf.Epsilon;
-                            mono.TurnAroundSignDirectionX = 0;
-                        }
                     }
                     else
                     {
-                        if (mono.SignDirectionX * mono.MoveInput.x < 0 && mono.SignDirectionXDirty)
+                        if (lastMoveInputX == 0)
                         {
-                            mono.SignDirectionXClean();
-                            mono.animation.TurnAround(mono.SignDirectionX);
-                            mono.TurnAroundSignDirectionX = (int)Mathf.Sign(mono.MoveInput.x);
-                        }
-                        if (mono.SignDirectionX * mono.MoveInput.x > 0)
-                        {
-                            mono.TurnAroundSignDirectionX = 0;
-                        }
-                        if (mono.LastMoveInput.x == 0 && mono.MoveInputDirty)
-                        {
-                            mono.MoveInputClean();
                             mono.animation.BeginRun();
                         }
                         if (Mathf.Sign(mono.MoveInput.x) * Mathf.Sign(mono.VelocityX) >= 0)
@@ -174,6 +154,7 @@ namespace PlayerState
                     }
                     mono.animation.SignDirectionX = mono.SignDirectionX;
                     mono.animation.RunningSpeed = Mathf.Abs(mono.VelocityX) / mono.xVelMax;
+                    lastMoveInputX = mono.MoveInput.x;
                     yield return new WaitForFixedUpdate();
                 }
             }
