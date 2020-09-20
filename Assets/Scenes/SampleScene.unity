@@ -528,7 +528,7 @@ MonoBehaviour:
       m_Groups: 
       m_Action: Move
       m_Flags: 0
-  yGrav: 10
+  yGrav: 20
   yVelMax: 14
   onGroundLayer:
     serializedVersion: 2
