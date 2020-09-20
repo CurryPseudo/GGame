@@ -9,20 +9,44 @@ using Sirenix.OdinInspector;
 using System;
 using static UnityEngine.InputSystem.InputAction;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(BoxPhysics))]
-public class Player : MonoBehaviour
+[Serializable]
+public struct XMoveParam
 {
-    // Start is called before the first frame update
     public float xAcc;
     public float xRevAcc;
     public float xFri;
     public float xVelMax;
+}
+
+[RequireComponent(typeof(Rigidbody2D), typeof(BoxPhysics))]
+public class Player : MonoBehaviour
+{
+    // Start is called before the first frame update
+    public XMoveParam idleMoveX;
+    public XMoveParam dropMoveX;
     public InputAction moveAction;
     public float yGrav;
     public float yVelMax;
     public LayerMask onGroundLayer;
     private Vector2Int moveInput = Vector2Int.zero;
+    private int lastMoveInputX = 0;
     private int signDirectionX = 1;
+    public float PositionX
+    {
+        get { return rigid.position.x; }
+        set
+        {
+            rigid.position = new Vector2(value, rigid.position.y);
+        }
+    }
+    public float PositionY
+    {
+        get { return rigid.position.y; }
+        set
+        {
+            rigid.position = new Vector2(rigid.position.x, value);
+        }
+    }
     public Vector2 Velocity
     {
         get { return rigid.velocity; }
@@ -111,12 +135,47 @@ public class Player : MonoBehaviour
         moveInput.x = Mathf.Approximately(moveFloat.x, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.x));
         moveInput.y = Mathf.Approximately(moveFloat.y, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.y));
     }
-    public void StepVelocity()
+    public void MoveX(XMoveParam param)
     {
-        rigid.position += Velocity * Time.fixedDeltaTime;
-    }
-    void FixedUpdate()
-    {
+        if (MoveInput.x == 0)
+        {
+            if (lastMoveInputX != 0)
+            {
+                animation.StopRun();
+            }
+            VelocityX = Mathf.Max(Mathf.Abs(VelocityX) - param.xFri * Time.fixedDeltaTime, 0) * Mathf.Sign(VelocityX);
+        }
+        else
+        {
+            if (lastMoveInputX == 0)
+            {
+                animation.BeginRun();
+            }
+            if (Mathf.Sign(MoveInput.x) * Mathf.Sign(VelocityX) >= 0)
+            {
+                VelocityX += Mathf.Sign(VelocityX) * param.xAcc * Time.fixedDeltaTime;
+            }
+            else
+            {
+                VelocityX -= Mathf.Sign(VelocityX) * param.xRevAcc * Time.fixedDeltaTime;
+            }
+
+        }
+        if (Mathf.Abs(VelocityX) > param.xVelMax)
+        {
+            VelocityX = Mathf.Sign(VelocityX) * param.xVelMax;
+        }
+
+        animation.SignDirectionX = SignDirectionX;
+        animation.RunningSpeed = Mathf.Abs(VelocityX) / param.xVelMax;
+        var result = boxPhysics.BlockMove(onGroundLayer, Vector2Component.X, VelocityX * Time.fixedDeltaTime);
+        if (result.HasValue)
+        {
+            (var go, var dis) = result.Value;
+            PositionX += dis;
+            VelocityX = 0;
+        }
+        lastMoveInputX = MoveInput.x;
     }
 }
 
@@ -128,41 +187,10 @@ namespace PlayerState
         {
             public override IEnumerator Main()
             {
-                var lastMoveInputX = mono.MoveInput.x;
                 while (true)
                 {
                     yield return new WaitForFixedUpdate();
-                    if (mono.MoveInput.x == 0)
-                    {
-                        if (lastMoveInputX != 0)
-                        {
-                            mono.animation.StopRun();
-                        }
-                        mono.VelocityX = Mathf.Max(Mathf.Abs(mono.VelocityX) - mono.xFri * Time.fixedDeltaTime, 0) * Mathf.Sign(mono.VelocityX);
-                    }
-                    else
-                    {
-                        if (lastMoveInputX == 0)
-                        {
-                            mono.animation.BeginRun();
-                        }
-                        if (Mathf.Sign(mono.MoveInput.x) * Mathf.Sign(mono.VelocityX) >= 0)
-                        {
-                            mono.VelocityX += Mathf.Sign(mono.VelocityX) * mono.xAcc * Time.fixedDeltaTime;
-                        }
-                        else
-                        {
-                            mono.VelocityX -= Mathf.Sign(mono.VelocityX) * mono.xRevAcc * Time.fixedDeltaTime;
-                        }
-
-                    }
-                    if (Mathf.Abs(mono.VelocityX) > mono.xVelMax)
-                    {
-                        mono.VelocityX = Mathf.Sign(mono.VelocityX) * mono.xVelMax;
-                    }
-                    mono.animation.SignDirectionX = mono.SignDirectionX;
-                    mono.animation.RunningSpeed = Mathf.Abs(mono.VelocityX) / mono.xVelMax;
-                    lastMoveInputX = mono.MoveInput.x;
+                    mono.MoveX(mono.idleMoveX);
                     {
                         var result = mono.boxPhysics.BlockMove(mono.onGroundLayer, Vector2Component.Y, -0.01f);
                         if (!result.HasValue)
@@ -180,19 +208,18 @@ namespace PlayerState
                 while (true)
                 {
                     yield return new WaitForFixedUpdate();
+                    mono.MoveX(mono.dropMoveX);
                     mono.VelocityY -= mono.yGrav * Time.fixedDeltaTime;
                     if (Mathf.Abs(mono.VelocityY) > mono.yVelMax)
                     {
                         mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
                     }
                     {
-                        var velDis = mono.VelocityY * Time.fixedDeltaTime;
-                        var result = mono.boxPhysics.BlockMove(mono.onGroundLayer, Vector2Component.Y, velDis);
+                        var result = mono.boxPhysics.BlockMove(mono.onGroundLayer, Vector2Component.Y, mono.VelocityY * Time.fixedDeltaTime);
                         if (result.HasValue)
                         {
                             (var go, var dis) = result.Value;
-                            mono.VelocityY = dis / Time.fixedDeltaTime;
-                            mono.StepVelocity();
+                            mono.PositionY += dis;
                             mono.VelocityY = 0;
                             fsm.ChangeState(new Idle());
                         }

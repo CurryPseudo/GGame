@@ -31,7 +31,7 @@ public class BoxPhysics : MonoBehaviour
         yield break;
     }
 
-    public (GameObject, float)? BlockMove(LayerMask layer, Vector2Component component, float distance)
+    public (GameObject, float)? BlockMove(LayerMask layer, Vector2Component component, float distance, float disEpsilon = 0.001f)
     {
         if (Mathf.Approximately(distance, 0f))
         {
@@ -43,13 +43,12 @@ public class BoxPhysics : MonoBehaviour
             var hit = Physics2D.Raycast(origin, dir, Mathf.Abs(distance), layer);
             if (hit)
             {
-                return (hit.collider.gameObject, hit.distance * Mathf.Sign(distance));
+                return (hit.collider.gameObject, Mathf.Max(hit.distance - disEpsilon, 0) * Mathf.Sign(distance));
             }
 
         }
         return null;
     }
-
     void OnDrawGizmosSelected()
     {
         if (box == null)
