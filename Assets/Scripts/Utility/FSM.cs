@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class State<T>
+public abstract class State<T> where T : MonoBehaviour
 {
     public T mono;
+    public FSM<T> fsm;
     public abstract IEnumerator Main();
     public virtual void Exit()
     {
@@ -30,6 +31,7 @@ public class FSM<T> where T : MonoBehaviour
         if (next != null)
         {
             next.mono = mono;
+            next.fsm = this;
             next.coroutine = mono.StartCoroutine(next.Main());
         }
         current = next;

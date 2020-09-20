@@ -9,7 +9,7 @@ using Sirenix.OdinInspector;
 using System;
 using static UnityEngine.InputSystem.InputAction;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(BoxPhysics))]
 public class Player : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -18,6 +18,9 @@ public class Player : MonoBehaviour
     public float xFri;
     public float xVelMax;
     public InputAction moveAction;
+    public float yGrav;
+    public float yVelMax;
+    public LayerMask onGroundLayer;
     private Vector2Int moveInput = Vector2Int.zero;
     private int signDirectionX = 1;
     public Vector2 Velocity
@@ -74,6 +77,8 @@ public class Player : MonoBehaviour
 
     [NonSerialized]
     public new PlayerAnimation animation;
+    [NonSerialized]
+    public BoxPhysics boxPhysics;
     private Rigidbody2D rigid;
     private FSM<Player> fsm;
     private FSM<Player> fsmFixed;
@@ -81,6 +86,7 @@ public class Player : MonoBehaviour
     {
         animation = GetComponentInChildren<PlayerAnimation>();
         Assert.IsNotNull(animation);
+        boxPhysics = GetComponentInChildren<BoxPhysics>();
         rigid = GetComponent<Rigidbody2D>();
         fsm = new FSM<Player>(this);
         fsmFixed = new FSM<Player>(this);
@@ -97,7 +103,7 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
-        fsmFixed.ChangeState(new Fixed.Idle());
+        fsmFixed.ChangeState(new Fixed.Drop());
     }
     void OnMove(CallbackContext context)
     {
@@ -105,8 +111,9 @@ public class Player : MonoBehaviour
         moveInput.x = Mathf.Approximately(moveFloat.x, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.x));
         moveInput.y = Mathf.Approximately(moveFloat.y, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.y));
     }
-    void Update()
+    public void StepVelocity()
     {
+        rigid.position += Velocity * Time.fixedDeltaTime;
     }
     void FixedUpdate()
     {
@@ -124,6 +131,7 @@ namespace PlayerState
                 var lastMoveInputX = mono.MoveInput.x;
                 while (true)
                 {
+                    yield return new WaitForFixedUpdate();
                     if (mono.MoveInput.x == 0)
                     {
                         if (lastMoveInputX != 0)
@@ -155,7 +163,40 @@ namespace PlayerState
                     mono.animation.SignDirectionX = mono.SignDirectionX;
                     mono.animation.RunningSpeed = Mathf.Abs(mono.VelocityX) / mono.xVelMax;
                     lastMoveInputX = mono.MoveInput.x;
+                    {
+                        var result = mono.boxPhysics.BlockMove(mono.onGroundLayer, Vector2Component.Y, -0.01f);
+                        if (!result.HasValue)
+                        {
+                            fsm.ChangeState(new Drop());
+                        }
+                    }
+                }
+            }
+        }
+        public class Drop : State<Player>
+        {
+            public override IEnumerator Main()
+            {
+                while (true)
+                {
                     yield return new WaitForFixedUpdate();
+                    mono.VelocityY -= mono.yGrav * Time.fixedDeltaTime;
+                    if (Mathf.Abs(mono.VelocityY) > mono.yVelMax)
+                    {
+                        mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
+                    }
+                    {
+                        var velDis = mono.VelocityY * Time.fixedDeltaTime;
+                        var result = mono.boxPhysics.BlockMove(mono.onGroundLayer, Vector2Component.Y, velDis);
+                        if (result.HasValue)
+                        {
+                            (var go, var dis) = result.Value;
+                            mono.VelocityY = dis / Time.fixedDeltaTime;
+                            mono.StepVelocity();
+                            mono.VelocityY = 0;
+                            fsm.ChangeState(new Idle());
+                        }
+                    }
                 }
             }
         }
