@@ -18,69 +18,76 @@ public struct XMoveParam
     public float xVelMax;
 }
 
-[RequireComponent(typeof(Rigidbody2D), typeof(BoxPhysics))]
+[RequireComponent(typeof(BoxPhysics))]
 public class Player : MonoBehaviour
 {
     // Start is called before the first frame update
     public XMoveParam idleMoveX;
     public XMoveParam dropMoveX;
     public InputAction moveAction;
+    public InputAction dashAction;
     public float yGrav;
     public float yVelMax;
+    public float dashTime;
+    public float dashDistance;
+    public float dashRemainSpeed;
     public LayerMask onGroundLayer;
+    public bool isInCollision;
+    public event Action OnDashEvent;
     private Vector2Int moveInput = Vector2Int.zero;
     private int lastMoveInputX = 0;
     private int signDirectionX = 1;
+    private Vector2 velocity;
     public float PositionX
     {
-        get { return rigid.position.x; }
+        get { return transform.position.x; }
         set
         {
-            rigid.position = new Vector2(value, rigid.position.y);
+            transform.position = new Vector3(value, transform.position.y, transform.position.z);
         }
     }
     public float PositionY
     {
-        get { return rigid.position.y; }
+        get { return transform.position.y; }
         set
         {
-            rigid.position = new Vector2(rigid.position.x, value);
+            transform.position = new Vector3(transform.position.x, value, transform.position.z);
         }
     }
     public Vector2 Velocity
     {
-        get { return rigid.velocity; }
+        get { return velocity; }
         set
         {
-            if (value != rigid.velocity)
+            if (value != velocity)
             {
                 VelocityOnChange(value);
             }
-            rigid.velocity = value;
+            velocity = value;
         }
     }
     public float VelocityX
     {
-        get { return rigid.velocity.x; }
+        get { return Velocity.x; }
         set
         {
-            if (value != rigid.velocity.x)
+            if (value != Velocity.x)
             {
-                VelocityOnChange(new Vector2(value, rigid.velocity.y));
+                VelocityOnChange(new Vector2(value, Velocity.y));
             }
-            rigid.velocity = new Vector2(value, rigid.velocity.y);
+            Velocity = new Vector2(value, Velocity.y);
         }
     }
     public float VelocityY
     {
-        get { return rigid.velocity.y; }
+        get { return Velocity.y; }
         set
         {
-            if (value != rigid.velocity.y)
+            if (value != Velocity.y)
             {
-                VelocityOnChange(new Vector2(rigid.velocity.x, value));
+                VelocityOnChange(new Vector2(Velocity.x, value));
             }
-            rigid.velocity = new Vector2(rigid.velocity.x, value);
+            Velocity = new Vector2(Velocity.x, value);
         }
     }
     private void VelocityOnChange(Vector2 value)
@@ -103,7 +110,6 @@ public class Player : MonoBehaviour
     public new PlayerAnimation animation;
     [NonSerialized]
     public BoxPhysics boxPhysics;
-    private Rigidbody2D rigid;
     private FSM<Player> fsm;
     private FSM<Player> fsmFixed;
     void Awake()
@@ -111,29 +117,86 @@ public class Player : MonoBehaviour
         animation = GetComponentInChildren<PlayerAnimation>();
         Assert.IsNotNull(animation);
         boxPhysics = GetComponentInChildren<BoxPhysics>();
-        rigid = GetComponent<Rigidbody2D>();
         fsm = new FSM<Player>(this);
         fsmFixed = new FSM<Player>(this);
         moveAction.performed += OnMove;
         moveAction.canceled += OnMove;
+        dashAction.performed += OnDash;
     }
     void OnEnable()
     {
         moveAction.Enable();
+        dashAction.Enable();
     }
     void OnDisable()
     {
         moveAction.Disable();
+        dashAction.Disable();
     }
     void Start()
     {
         fsmFixed.ChangeState(new Fixed.Drop());
+    }
+    void FixedUpdate()
+    {
+        isInCollision = boxPhysics.InBoxCollision(onGroundLayer, null) != null;
+    }
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        var target = transform.position + Vector3.right * dashDistance;
+        Gizmos.DrawLine(transform.position, target);
     }
     void OnMove(CallbackContext context)
     {
         var moveFloat = context.ReadValue<Vector2>();
         moveInput.x = Mathf.Approximately(moveFloat.x, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.x));
         moveInput.y = Mathf.Approximately(moveFloat.y, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.y));
+    }
+    void OnDash(CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            OnDashEvent?.Invoke();
+        }
+    }
+    public bool BlockMoveX()
+    {
+        var velDis = VelocityX * Time.fixedDeltaTime;
+        if (boxPhysics.InBoxCollision(onGroundLayer, null))
+        {
+            PositionX += velDis;
+            return false;
+        }
+        var result = boxPhysics.BlockMove(onGroundLayer, Vector2Component.X, velDis);
+        if (result.HasValue)
+        {
+            (var go, var dis) = result.Value;
+            PositionX += dis;
+            VelocityX = 0;
+            return true;
+        }
+        PositionX += velDis;
+        return false;
+    }
+    public bool BlockMoveY()
+    {
+        var velDis = VelocityY * Time.fixedDeltaTime;
+        if (boxPhysics.InBoxCollision(onGroundLayer, null))
+        {
+            PositionY += velDis;
+            return false;
+        }
+        var result = boxPhysics.BlockMove(onGroundLayer, Vector2Component.Y, velDis);
+        if (result.HasValue)
+        {
+            (var go, var dis) = result.Value;
+            PositionY += dis;
+            VelocityY = 0;
+            return true;
+        }
+        PositionY += velDis;
+        return false;
     }
     public void MoveX(XMoveParam param)
     {
@@ -168,14 +231,16 @@ public class Player : MonoBehaviour
 
         animation.SignDirectionX = SignDirectionX;
         animation.RunningSpeed = Mathf.Abs(VelocityX) / param.xVelMax;
-        var result = boxPhysics.BlockMove(onGroundLayer, Vector2Component.X, VelocityX * Time.fixedDeltaTime);
-        if (result.HasValue)
-        {
-            (var go, var dis) = result.Value;
-            PositionX += dis;
-            VelocityX = 0;
-        }
+        BlockMoveX();
         lastMoveInputX = MoveInput.x;
+    }
+    public void StepVelocityX()
+    {
+        PositionX += VelocityX * Time.fixedDeltaTime;
+    }
+    public void StepVelocityY()
+    {
+        PositionY += VelocityY * Time.fixedDeltaTime;
     }
 }
 
@@ -185,8 +250,17 @@ namespace PlayerState
     {
         public class Idle : State<Player>
         {
+            void OnDash()
+            {
+                fsm.ChangeState(new Dash());
+            }
+            public override void Exit()
+            {
+                mono.OnDashEvent -= OnDash;
+            }
             public override IEnumerator Main()
             {
+                mono.OnDashEvent += OnDash;
                 while (true)
                 {
                     yield return new WaitForFixedUpdate();
@@ -203,8 +277,19 @@ namespace PlayerState
         }
         public class Drop : State<Player>
         {
+
+            void OnDash()
+            {
+                fsm.ChangeState(new Dash());
+            }
+            public override void Exit()
+            {
+                mono.OnDashEvent -= OnDash;
+            }
+
             public override IEnumerator Main()
             {
+                mono.OnDashEvent += OnDash;
                 while (true)
                 {
                     yield return new WaitForFixedUpdate();
@@ -214,18 +299,55 @@ namespace PlayerState
                     {
                         mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
                     }
+                    if (mono.BlockMoveY())
                     {
-                        var result = mono.boxPhysics.BlockMove(mono.onGroundLayer, Vector2Component.Y, mono.VelocityY * Time.fixedDeltaTime);
-                        if (result.HasValue)
-                        {
-                            (var go, var dis) = result.Value;
-                            mono.PositionY += dis;
-                            mono.VelocityY = 0;
-                            fsm.ChangeState(new Idle());
-                        }
+                        fsm.ChangeState(new Idle());
+                        yield break;
                     }
                 }
             }
+
+        }
+        public class Dash : State<Player>
+        {
+            public override IEnumerator Main()
+            {
+                var dashSpeed = mono.dashDistance / mono.dashTime;
+                Vector2 dir = mono.MoveInput;
+                if (Mathf.Approximately(dir.magnitude, 0))
+                {
+                    dir = Vector2.right * mono.SignDirectionX;
+                }
+                dir.Normalize();
+                var vel = dir * dashSpeed;
+                float time = 0;
+                //Debug.Break();
+                while (time < mono.dashTime)
+                {
+                    mono.Velocity = vel;
+                    BlockMove();
+                    yield return new WaitForFixedUpdate();
+                    time += Time.fixedDeltaTime;
+                }
+                mono.Velocity = mono.dashRemainSpeed * dir;
+                BlockMove();
+                fsm.ChangeState(new Drop());
+                yield break;
+            }
+            public void BlockMove()
+            {
+                if (mono.VelocityY > 0)
+                {
+                    mono.BlockMoveY();
+                }
+                else
+                {
+                    mono.StepVelocityY();
+                }
+                mono.BlockMoveX();
+
+            }
+
         }
 
     }

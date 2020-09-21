@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,6 +47,21 @@ public class BoxPhysics : MonoBehaviour
                 return (hit.collider.gameObject, Mathf.Max(hit.distance - disEpsilon, 0) * Mathf.Sign(distance));
             }
 
+        }
+        return null;
+    }
+    public GameObject InBoxCollision(LayerMask layer, Func<GameObject, bool> isValid)
+    {
+        var point = transform.TransformPoint(box.offset);
+        var size = transform.TransformVector(box.size) * 0.9f;
+        var colliders = Physics2D.OverlapBoxAll(point, size, 0, layer);
+        foreach (var collider in colliders)
+        {
+            var go = collider.gameObject;
+            if (isValid == null || isValid(go))
+            {
+                return go;
+            }
         }
         return null;
     }
