@@ -321,7 +321,8 @@ namespace PlayerState
                     {
                         mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
                     }
-                    if (mono.BlockMoveY())
+                    var down = mono.VelocityY < 0;
+                    if (mono.BlockMoveY() && down)
                     {
                         fsm.ChangeState(new Idle());
                         mono.animation.OnGround();
