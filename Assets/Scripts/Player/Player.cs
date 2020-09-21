@@ -32,6 +32,7 @@ public class Player : MonoBehaviour
     public float dashDistance;
     public float dashRemainSpeed;
     public LayerMask onGroundLayer;
+    public LayerMask blockLayer;
     public bool isInCollision;
     public event Action OnDashEvent;
     private Vector2Int moveInput = Vector2Int.zero;
@@ -181,15 +182,15 @@ public class Player : MonoBehaviour
             OnDashEvent?.Invoke();
         }
     }
-    public bool BlockMoveX()
+    public bool BlockMoveX(LayerMask layer)
     {
         var velDis = VelocityX * Time.fixedDeltaTime;
-        if (boxPhysics.InBoxCollision(onGroundLayer, null))
+        if (boxPhysics.InBoxCollision(layer, null))
         {
             PositionX += velDis;
             return false;
         }
-        var result = boxPhysics.BlockMove(onGroundLayer, Vector2Component.X, velDis);
+        var result = boxPhysics.BlockMove(layer, Vector2Component.X, velDis);
         if (result.HasValue)
         {
             (var go, var dis) = result.Value;
@@ -200,15 +201,15 @@ public class Player : MonoBehaviour
         PositionX += velDis;
         return false;
     }
-    public bool BlockMoveY()
+    public bool BlockMoveY(LayerMask layer)
     {
         var velDis = VelocityY * Time.fixedDeltaTime;
-        if (boxPhysics.InBoxCollision(onGroundLayer, null))
+        if (boxPhysics.InBoxCollision(layer, null))
         {
             PositionY += velDis;
             return false;
         }
-        var result = boxPhysics.BlockMove(onGroundLayer, Vector2Component.Y, velDis);
+        var result = boxPhysics.BlockMove(layer, Vector2Component.Y, velDis);
         if (result.HasValue)
         {
             (var go, var dis) = result.Value;
@@ -252,7 +253,7 @@ public class Player : MonoBehaviour
 
         animation.SignDirectionX = SignDirectionX;
         animation.RunningSpeed = Mathf.Abs(VelocityX) / param.xVelMax;
-        BlockMoveX();
+        BlockMoveX(onGroundLayer);
         lastMoveInputX = MoveInput.x;
     }
     public void StepVelocityX()
@@ -322,7 +323,7 @@ namespace PlayerState
                         mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
                     }
                     var down = mono.VelocityY < 0;
-                    if (mono.BlockMoveY() && down)
+                    if (mono.BlockMoveY(mono.onGroundLayer) && down)
                     {
                         fsm.ChangeState(new Idle());
                         mono.animation.OnGround();
@@ -363,13 +364,13 @@ namespace PlayerState
             {
                 if (mono.VelocityY > 0)
                 {
-                    mono.BlockMoveY();
+                    mono.BlockMoveY(mono.onGroundLayer);
                 }
                 else
                 {
-                    mono.StepVelocityY();
+                    mono.BlockMoveY(mono.blockLayer);
                 }
-                mono.BlockMoveX();
+                mono.BlockMoveX(mono.onGroundLayer);
 
             }
 

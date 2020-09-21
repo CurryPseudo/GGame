@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: SquareTile
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: e632da12f7db1164db46c6c6c3ea42f0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 935d8a7d8e6516245835f3eccd00ef90, type: 3}
   m_Color: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}
   m_Transform:
     e00: 1
@@ -33,4 +33,4 @@ MonoBehaviour:
     e33: 1
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
-  m_ColliderType: 2
+  m_ColliderType: 1
