@@ -56,4 +56,48 @@ public class MainPlayerAnimation : PlayerAnimation
         lockingAdditionFlipX = !lockingAdditionFlipX;
         spriteRenderer.flipX = lockingAdditionFlipX ^ lockedFlipX;
     }
+
+    public override void Dash(Vector2Int direction)
+    {
+        animator.SetTrigger("Dash");
+        int dashNo = 0;
+        if (direction.x == 0)
+        {
+            if (direction.y > 0)
+            {
+                dashNo = 1;
+            }
+            else
+            {
+                dashNo = 2;
+            }
+        }
+        else
+        {
+            if (direction.y > 0)
+            {
+                dashNo = 3;
+            }
+            else if (direction.y < 0)
+            {
+                dashNo = 4;
+
+            }
+            else
+            {
+                dashNo = 0;
+            }
+        }
+        animator.SetInteger("DashNo", dashNo);
+    }
+
+    public override void Drop()
+    {
+        animator.SetBool("OnGround", false);
+    }
+
+    public override void OnGround()
+    {
+        animator.SetBool("OnGround", true);
+    }
 }

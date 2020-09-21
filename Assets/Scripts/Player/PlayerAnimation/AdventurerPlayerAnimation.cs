@@ -39,4 +39,16 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     }
 
     public override void TurnAround(int lastSignDirectionX) { }
+
+    public override void Dash(Vector2Int direction)
+    {
+    }
+
+    public override void Drop()
+    {
+    }
+
+    public override void OnGround()
+    {
+    }
 }

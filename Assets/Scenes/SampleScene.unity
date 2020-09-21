@@ -502,8 +502,8 @@ MonoBehaviour:
     xFri: 30
     xVelMax: 7
   dropMoveX:
-    xAcc: 6
-    xRevAcc: 20
+    xAcc: 12
+    xRevAcc: 40
     xFri: 7
     xVelMax: 7
   moveAction:

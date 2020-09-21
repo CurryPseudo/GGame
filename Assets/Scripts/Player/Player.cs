@@ -311,6 +311,7 @@ namespace PlayerState
             public override IEnumerator Main()
             {
                 mono.OnDashEvent += OnDash;
+                mono.animation.Drop();
                 while (true)
                 {
                     yield return new WaitForFixedUpdate();
@@ -323,6 +324,7 @@ namespace PlayerState
                     if (mono.BlockMoveY())
                     {
                         fsm.ChangeState(new Idle());
+                        mono.animation.OnGround();
                         yield break;
                     }
                 }
@@ -334,18 +336,19 @@ namespace PlayerState
             public override IEnumerator Main()
             {
                 var dashSpeed = mono.dashDistance / mono.dashTime;
-                Vector2 dir = mono.MoveInput;
-                if (Mathf.Approximately(dir.magnitude, 0))
+                Vector2Int dirInt = mono.MoveInput;
+                if (dirInt == Vector2Int.zero)
                 {
-                    dir = Vector2.right * mono.SignDirectionX;
+                    dirInt = Vector2Int.right * mono.SignDirectionX;
                 }
-                dir.Normalize();
+                var dir = ((Vector2)dirInt).normalized;
                 var vel = dir * dashSpeed;
                 float time = 0;
-                //Debug.Break();
+                mono.animation.Dash(dirInt);
                 while (time < mono.dashTime)
                 {
                     mono.Velocity = vel;
+                    mono.animation.SignDirectionX = mono.SignDirectionX;
                     BlockMove();
                     yield return new WaitForFixedUpdate();
                     time += Time.fixedDeltaTime;
