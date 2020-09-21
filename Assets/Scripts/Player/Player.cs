@@ -150,8 +150,29 @@ public class Player : MonoBehaviour
     void OnMove(CallbackContext context)
     {
         var moveFloat = context.ReadValue<Vector2>();
-        moveInput.x = Mathf.Approximately(moveFloat.x, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.x));
-        moveInput.y = Mathf.Approximately(moveFloat.y, 0) ? 0 : Mathf.FloorToInt(Mathf.Sign(moveFloat.y));
+        if (Mathf.Approximately(moveFloat.magnitude, 0))
+        {
+            moveInput = new Vector2Int(0, 0);
+            return;
+        }
+        moveFloat.Normalize();
+        var angle = Vector2.SignedAngle(Vector2.right, moveFloat);
+        Vector2Int[] choose = {
+            new Vector2Int(-1, -1),
+            new Vector2Int(0, -1),
+            new Vector2Int(1, -1),
+            new Vector2Int(1, 0),
+            new Vector2Int(1, 1),
+            new Vector2Int(0, 1),
+            new Vector2Int(-1, 1),
+            new Vector2Int(-1, 0),
+        };
+        var index = Mathf.FloorToInt((angle + 22.5f) / 45f) + 3;
+        if (index == -1)
+        {
+            index = 7;
+        }
+        moveInput = choose[index];
     }
     void OnDash(CallbackContext context)
     {
