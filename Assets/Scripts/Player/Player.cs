@@ -22,6 +22,7 @@ public struct XMoveParam
 public class Player : MonoBehaviour
 {
     // Start is called before the first frame update
+    public float fartVelMaxRatio;
     public XMoveParam idleMoveX;
     public XMoveParam dropMoveX;
     public InputAction moveAction;
@@ -220,11 +221,12 @@ public class Player : MonoBehaviour
         PositionY += velDis;
         return false;
     }
-    public void MoveX(XMoveParam param)
+    public void MoveX(XMoveParam param, bool onGround)
     {
+        bool notFartSpeed = Mathf.Abs(VelocityX) < param.xVelMax * fartVelMaxRatio;
         if (MoveInput.x == 0)
         {
-            if (lastMoveInputX != 0)
+            if (lastMoveInputX != 0 && onGround)
             {
                 animation.StopRun();
             }
@@ -232,7 +234,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (lastMoveInputX == 0)
+            if (lastMoveInputX == 0 && onGround)
             {
                 animation.BeginRun();
             }
@@ -249,6 +251,10 @@ public class Player : MonoBehaviour
         if (Mathf.Abs(VelocityX) > param.xVelMax)
         {
             VelocityX = Mathf.Sign(VelocityX) * param.xVelMax;
+        }
+        if (notFartSpeed && onGround && Mathf.Abs(VelocityX) > param.xVelMax * fartVelMaxRatio)
+        {
+            animation.RunFart((int)(Mathf.Sign(MoveInput.x)));
         }
 
         animation.SignDirectionX = SignDirectionX;
@@ -286,7 +292,7 @@ namespace PlayerState
                 while (true)
                 {
                     yield return new WaitForFixedUpdate();
-                    mono.MoveX(mono.idleMoveX);
+                    mono.MoveX(mono.idleMoveX, true);
                     {
                         var result = mono.boxPhysics.BlockMove(mono.onGroundLayer, Vector2Component.Y, -0.01f);
                         if (!result.HasValue)
@@ -316,7 +322,7 @@ namespace PlayerState
                 while (true)
                 {
                     yield return new WaitForFixedUpdate();
-                    mono.MoveX(mono.dropMoveX);
+                    mono.MoveX(mono.dropMoveX, false);
                     mono.VelocityY -= mono.yGrav * Time.fixedDeltaTime;
                     if (Mathf.Abs(mono.VelocityY) > mono.yVelMax)
                     {

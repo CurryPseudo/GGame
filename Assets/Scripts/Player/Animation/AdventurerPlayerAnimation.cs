@@ -51,4 +51,8 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void OnGround()
     {
     }
+
+    public override void RunFart(int signDirectionX)
+    {
+    }
 }

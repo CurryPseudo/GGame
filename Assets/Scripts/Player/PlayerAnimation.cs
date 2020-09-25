@@ -9,6 +9,7 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract float RunningSpeed { set; }
 
     public abstract void BeginRun();
+    public abstract void RunFart(int signDirectionX);
     public abstract void StopRun();
     public abstract void TurnAround(int lastSignDirectionX);
     public abstract void Dash(Vector2Int direction);
