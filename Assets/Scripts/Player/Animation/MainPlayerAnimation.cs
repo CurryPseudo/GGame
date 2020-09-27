@@ -24,6 +24,8 @@ public class MainPlayerAnimation : PlayerAnimation
 {
     public GameObjectInstantiator runFartLeft;
     public GameObjectInstantiator runFartRight;
+    public List<GameObjectInstantiator> dashFartLefts;
+    public List<GameObjectInstantiator> dashFartRights;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private bool flipXLock = false;
@@ -113,6 +115,11 @@ public class MainPlayerAnimation : PlayerAnimation
             {
                 dashNo = 0;
             }
+        }
+        var dashFarts = (direction.x >= 0 ? dashFartRights : dashFartLefts);
+        if (dashNo < dashFarts.Count)
+        {
+            dashFarts[dashNo].Instantiate();
         }
         animator.SetInteger("DashNo", dashNo);
     }

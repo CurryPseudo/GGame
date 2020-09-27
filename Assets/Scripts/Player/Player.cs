@@ -226,7 +226,7 @@ public class Player : MonoBehaviour
         bool notFartSpeed = Mathf.Abs(VelocityX) < param.xVelMax * fartVelMaxRatio;
         if (MoveInput.x == 0)
         {
-            if (lastMoveInputX != 0 && onGround)
+            if (lastMoveInputX != 0)
             {
                 animation.StopRun();
             }
@@ -234,7 +234,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (lastMoveInputX == 0 && onGround)
+            if (lastMoveInputX == 0)
             {
                 animation.BeginRun();
             }
