@@ -2058,12 +2058,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runFartLeft:
     source: {fileID: 1987436236}
+    maxInstanceCount: 1
   runFartRight:
     source: {fileID: 619670416}
+    maxInstanceCount: 1
   dashFartLefts:
   - source: {fileID: 729242079}
+    maxInstanceCount: 2
   dashFartRights:
   - source: {fileID: 429484835}
+    maxInstanceCount: 2
 --- !u!212 &1497342230
 SpriteRenderer:
   m_ObjectHideFlags: 0
