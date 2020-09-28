@@ -10,7 +10,7 @@ public class GameObjectInstantiator
     public GameObject source;
     public int maxInstanceCount = 1;
     private List<GameObject> instances;
-    public void Instantiate()
+    public void Instantiate(Transform transform = null)
     {
         if (instances == null)
         {
@@ -24,6 +24,10 @@ public class GameObjectInstantiator
         if (index != -1)
         {
             instances[index] = GameObject.Instantiate(source, source.transform.position, source.transform.rotation);
+            if (transform != null)
+            {
+                instances[index].transform.SetParent(transform, true);
+            }
             instances[index].SetActive(true);
         }
     }
@@ -37,6 +41,8 @@ public class MainPlayerAnimation : PlayerAnimation
     public List<GameObjectInstantiator> dashFartLefts;
     public List<GameObjectInstantiator> dashFartRights;
     public GameObjectInstantiator onGroundFart;
+    public List<GameObjectInstantiator> swordLightLefts;
+    public List<GameObjectInstantiator> swordLightRights;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private bool flipXLock = false;
@@ -96,45 +102,6 @@ public class MainPlayerAnimation : PlayerAnimation
         spriteRenderer.flipX = lockingAdditionFlipX ^ lockedFlipX;
     }
 
-    public override void Dash(Vector2Int direction)
-    {
-        animator.SetTrigger("Dash");
-        int dashNo = 0;
-        if (direction.x == 0)
-        {
-            if (direction.y > 0)
-            {
-                dashNo = 1;
-            }
-            else
-            {
-                dashNo = 2;
-            }
-        }
-        else
-        {
-            if (direction.y > 0)
-            {
-                dashNo = 3;
-            }
-            else if (direction.y < 0)
-            {
-                dashNo = 4;
-
-            }
-            else
-            {
-                dashNo = 0;
-            }
-        }
-        var dashFarts = (direction.x >= 0 ? dashFartRights : dashFartLefts);
-        if (dashNo < dashFarts.Count)
-        {
-            dashFarts[dashNo].Instantiate();
-        }
-        animator.SetInteger("DashNo", dashNo);
-    }
-
     public override void Drop()
     {
         animator.SetBool("OnGround", false);
@@ -144,5 +111,57 @@ public class MainPlayerAnimation : PlayerAnimation
     {
         onGroundFart.Instantiate();
         animator.SetBool("OnGround", true);
+    }
+
+    private int DirectionNumber(Vector2Int direction)
+    {
+        if (direction.x == 0)
+        {
+            if (direction.y > 0)
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+        else
+        {
+            if (direction.y > 0)
+            {
+                return 3;
+            }
+            else if (direction.y < 0)
+            {
+                return 4;
+
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+    }
+    public override void Dash(Vector2Int direction)
+    {
+        animator.SetTrigger("Dash");
+        int n = DirectionNumber(direction);
+        var dashFarts = (direction.x >= 0 ? dashFartRights : dashFartLefts);
+        if (n < dashFarts.Count)
+        {
+            dashFarts[n].Instantiate();
+        }
+        animator.SetInteger("DashNo", n);
+    }
+    public override void Attack(Vector2Int direction)
+    {
+        int n = DirectionNumber(direction);
+        var sowrdLights = (direction.x >= 0 ? swordLightRights : swordLightLefts);
+        if (n < sowrdLights.Count)
+        {
+            sowrdLights[n].Instantiate(transform);
+        }
     }
 }

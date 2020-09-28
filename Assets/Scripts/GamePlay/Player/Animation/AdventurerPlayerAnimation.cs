@@ -55,4 +55,8 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void RunFart(int signDirectionX)
     {
     }
+
+    public override void Attack(Vector2Int direction)
+    {
+    }
 }

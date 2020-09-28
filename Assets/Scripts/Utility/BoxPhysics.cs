@@ -50,7 +50,7 @@ public class BoxPhysics : MonoBehaviour
         }
         return null;
     }
-    public GameObject InBoxCollision(LayerMask layer, Func<GameObject, bool> isValid)
+    public GameObject InBoxCollision(LayerMask layer, Func<GameObject, bool> isValid = null)
     {
         var point = transform.TransformPoint(box.offset);
         var size = transform.TransformVector(box.size) * 0.9f;
