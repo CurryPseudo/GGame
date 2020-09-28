@@ -36,6 +36,7 @@ public class MainPlayerAnimation : PlayerAnimation
     public GameObjectInstantiator runFartRight;
     public List<GameObjectInstantiator> dashFartLefts;
     public List<GameObjectInstantiator> dashFartRights;
+    public GameObjectInstantiator onGroundFart;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private bool flipXLock = false;
@@ -141,6 +142,7 @@ public class MainPlayerAnimation : PlayerAnimation
 
     public override void OnGround()
     {
+        onGroundFart.Instantiate();
         animator.SetBool("OnGround", true);
     }
 }

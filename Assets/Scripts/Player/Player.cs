@@ -363,7 +363,7 @@ namespace PlayerState
                 }
                 mono.Velocity = mono.dashRemainSpeed * dir;
                 BlockMove();
-                fsm.ChangeState(new Drop());
+                fsm.ChangeState(new Idle());
                 yield break;
             }
             public void BlockMove()
