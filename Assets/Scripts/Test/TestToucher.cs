@@ -24,4 +24,6 @@ public class TestToucher : Toucher
             text.text = "Press" + Position.ToString();
         }
     }
+
+    protected override string controlPathInternal { get; set; }
 }

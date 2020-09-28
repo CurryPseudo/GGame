@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.UI;
 using static UnityEngine.InputSystem.InputAction;
 
-public abstract class Toucher : MonoBehaviour
+public abstract class Toucher: OnScreenControl
 {
     public InputAction positionAction;
 
