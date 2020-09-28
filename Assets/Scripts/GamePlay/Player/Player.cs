@@ -32,6 +32,7 @@ public class Player : MonoBehaviour
     public float dashDistance;
     public float dashRemainSpeed;
     public float attackFrameDelay;
+    public float zeroInputThreshold = 0;
     public LayerMask onGroundLayer;
     public LayerMask blockLayer;
     public LayerMask attackLayer;
@@ -151,7 +152,7 @@ public class Player : MonoBehaviour
     void OnMove(CallbackContext context)
     {
         var moveFloat = context.ReadValue<Vector2>();
-        if (Mathf.Approximately(moveFloat.magnitude, 0))
+        if (moveFloat.magnitude < zeroInputThreshold)
         {
             moveInput = new Vector2Int(0, 0);
             return;
@@ -371,12 +372,12 @@ namespace PlayerState
                 {
                     mono.Velocity = vel;
                     mono.animation.SignDirectionX = mono.SignDirectionX;
-                    yield return mono.StartCoroutine(BlockMove(dirInt));
+                    mono.StartCoroutine(BlockMove(dirInt));
                     yield return new WaitForFixedUpdate();
                     time += Time.fixedDeltaTime;
                 }
                 mono.Velocity = mono.dashRemainSpeed * dir;
-                yield return mono.StartCoroutine(BlockMove(dirInt));
+                mono.StartCoroutine(BlockMove(dirInt));
                 if (!mono.IsOnGround)
                 {
                     fsm.ChangeState(new Drop());

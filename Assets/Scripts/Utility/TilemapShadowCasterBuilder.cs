@@ -9,6 +9,7 @@ using UnityEngine.Experimental.Rendering.Universal;
 [RequireComponent(typeof(Tilemap))]
 public class TilemapShadowCasterBuilder : MonoBehaviour
 {
+#if UNITY_EDITOR
     void TileMapOnChange(Tilemap inTilemap, Tilemap.SyncTile[] tiles)
     {
         if (inTilemap == GetComponent<Tilemap>())
@@ -16,15 +17,20 @@ public class TilemapShadowCasterBuilder : MonoBehaviour
             UpdateShadowCasters();
         }
     }
+#endif
     void OnEnable()
     {
         var tilemap = GetComponent<Tilemap>();
+#if UNITY_EDITOR
         Tilemap.tilemapTileChanged += TileMapOnChange;
+#endif
         UpdateShadowCasters();
     }
     void OnDisable()
     {
+#if UNITY_EDITOR
         Tilemap.tilemapTileChanged -= TileMapOnChange;
+#endif
         int childCount = transform.childCount;
         for (int i = childCount - 1; i >= 0; i--)
         {
