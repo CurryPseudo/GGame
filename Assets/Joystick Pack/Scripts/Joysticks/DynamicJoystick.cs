@@ -48,7 +48,6 @@ public class DynamicJoystick : Joystick
         base.OnPointerUp(eventData);
         background.anchoredPosition = m_StartPos;
         m_isPointerDown = false;
-        
     }
 
     protected override void HandleInput(float magnitude, Vector2 normalised, Vector2 radius, Camera cam)
