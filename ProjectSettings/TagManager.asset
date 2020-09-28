@@ -15,7 +15,7 @@ TagManager:
   - 
   - BlockPlayerMove
   - BlockPlayerUp
-  - 
+  - Monster
   - 
   - 
   - 
@@ -40,6 +40,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Platform
+    uniqueID: 2266922641
     locked: 0
   - name: Player
     uniqueID: 3292855693
