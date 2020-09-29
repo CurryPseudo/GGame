@@ -46,8 +46,9 @@ public class Player : Autonomy
     public new PlayerAnimation animation;
     private FSM<Player> fsm;
     private FSM<Player> fsmFixed;
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         animation = GetComponentInChildren<PlayerAnimation>();
         Assert.IsNotNull(animation);
         Assert.IsNotNull(moveBox);
@@ -275,10 +276,14 @@ namespace PlayerState
             {
                 mono.BlockMoveY();
                 mono.BlockMoveX();
-                var attackableGo = mono.attackBox.InBoxCollision(mono.attackLayer, (go) => go.GetComponent<IPlayerAttackable>() != null);
+                var attackableGo = mono.attackBox.InBoxCollision(mono.attackLayer, (go) =>
+                {
+                    var attackable = go.GetComponentInParent<IPlayerAttackable>();
+                    return attackable != null && attackable.validBox(go.GetComponent<BoxPhysics>());
+                });
                 if (attackableGo != null)
                 {
-                    var attackable = attackableGo.GetComponent<IPlayerAttackable>();
+                    var attackable = attackableGo.GetComponentInParent<IPlayerAttackable>();
                     if (!attacked.Contains(attackable))
                     {
                         attacked.Add(attackable);

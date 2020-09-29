@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class Autonomy : MonoBehaviour
 {
@@ -131,12 +132,18 @@ public class Autonomy : MonoBehaviour
     {
         PositionY += VelocityY * Time.fixedDeltaTime;
     }
+    public static bool DetectOnGround(BoxPhysics box, LayerMask layer)
+    {
+        var result = box.BlockMove(layer, Vector2Component.Y, -0.01f);
+        return result.HasValue;
+
+    }
     public bool IsOnGround
     {
-        get
-        {
-            var result = moveBox.BlockMove(blockLayer, Vector2Component.Y, -0.01f);
-            return result.HasValue;
-        }
+        get => Autonomy.DetectOnGround(moveBox, blockLayer);
+    }
+    protected virtual void Awake()
+    {
+        Assert.IsNotNull(moveBox);
     }
 }
