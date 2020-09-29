@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PlayerAttackable : MonoBehaviour
+public interface IPlayerAttackable
 {
     // Start is called before the first frame update
-    public abstract void OnAttack();
+    void OnAttack();
 }

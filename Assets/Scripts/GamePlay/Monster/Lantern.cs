@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lantern : PlayerAttackable
+public class Lantern : MonoBehaviour, IPlayerAttackable
 {
-    public override void OnAttack()
+    public void OnAttack()
     {
         Debug.Log("on attack");
     }
