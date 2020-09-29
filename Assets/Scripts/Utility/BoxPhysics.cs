@@ -11,6 +11,14 @@ public class BoxPhysics : MonoBehaviour
     public float debugDistance;
     public LayerMask debugLayer;
 
+    public Vector2 Origin
+    {
+        get => transform.TransformPoint(box.offset);
+    }
+    public Vector2 Size
+    {
+        get => transform.TransformVector(box.size);
+    }
     public BoxCollider2D Box { get => box; }
 
     void Awake()
@@ -18,43 +26,46 @@ public class BoxPhysics : MonoBehaviour
         box = GetComponent<BoxCollider2D>();
     }
 
-    IEnumerable<(Vector2, Vector2)> BlockMoveLine(Vector2Component component, float sgn)
+    Vector2 BoxEdgeOrigin(Vector2Component component, float sgn)
     {
         var other = component.Other();
-        for (int i = 0; i < 2; i++)
-        {
-            Vector2 dir = transform.TransformDirection(component.Create(sgn, 0));
-            Vector2 origin = transform.TransformPoint(component.Create(
-                component.Get(box.offset) + component.Get(box.size) / 2.0f * sgn,
-                other.Get(box.offset) + other.Get(box.size) * (i - 0.5f)));
-            yield return (origin, dir);
-        }
-        yield break;
+        Vector2 origin = transform.TransformPoint(component.Create(
+            component.Get(box.offset) + component.Get(box.size) / 2.0f * sgn,
+            other.Get(box.offset)));
+        return origin;
+    }
+    Vector2 Dir(Vector2Component component, float sgn)
+    {
+        return transform.TransformDirection(component.Create(sgn, 0));
     }
 
-    public (GameObject, float)? BlockMove(LayerMask layer, Vector2Component component, float distance, float disEpsilon = 0.001f)
+    public (GameObject, float)? BlockMove(LayerMask layer, Vector2Component component, float distance, Func<GameObject, bool> isValid = null)
     {
+        const float disEpsilon = 0.01f;
         if (Mathf.Approximately(distance, 0f))
         {
             return null;
         }
         var other = component.Other();
-        foreach ((Vector2 origin, Vector2 dir) in BlockMoveLine(component, Mathf.Sign(distance)))
+        float sgn = Mathf.Sign(distance);
+        Vector2 dir = Dir(component, sgn);
+        var hits = Physics2D.BoxCastAll(Origin, Size, 0, dir, Mathf.Abs(distance), layer);
+        foreach (var hit in hits)
         {
-            var hit = Physics2D.Raycast(origin, dir, Mathf.Abs(distance), layer);
             if (hit)
             {
-                return (hit.collider.gameObject, Mathf.Max(hit.distance - disEpsilon, 0) * Mathf.Sign(distance));
+                if (isValid == null || isValid(hit.collider.gameObject))
+                {
+                    return (hit.collider.gameObject, (hit.distance - Mathf.Abs(disEpsilon)) * sgn);
+                }
             }
-
         }
         return null;
     }
     public GameObject InBoxCollision(LayerMask layer, Func<GameObject, bool> isValid = null)
     {
-        var point = transform.TransformPoint(box.offset);
-        var size = transform.TransformVector(box.size) * 0.9f;
-        var colliders = Physics2D.OverlapBoxAll(point, size, 0, layer);
+        var size = Size * 0.9f;
+        var colliders = Physics2D.OverlapBoxAll(Origin, size, 0, layer);
         foreach (var collider in colliders)
         {
             var go = collider.gameObject;
@@ -73,18 +84,18 @@ public class BoxPhysics : MonoBehaviour
         }
         Gizmos.color = Color.yellow;
         Vector2Component component = debugIsX ? Vector2Component.X : Vector2Component.Y;
-        foreach ((Vector2 origin, Vector2 dir) in BlockMoveLine(component, Mathf.Sign(debugDistance)))
+        float sgn = Mathf.Sign(debugDistance);
+        Vector2 dir = Dir(component, sgn);
+        Vector2 lineOrigin = BoxEdgeOrigin(component, sgn);
+        var result = BlockMove(debugLayer, component, debugDistance);
+        if (result.HasValue)
         {
-            var result = BlockMove(debugLayer, component, debugDistance);
-            if (result.HasValue)
-            {
-                (var go, var dis) = result.Value;
-                Gizmos.DrawLine(origin, origin + dir * Mathf.Abs(dis));
-            }
-            else
-            {
-                Gizmos.DrawLine(origin, origin + dir * Mathf.Abs(debugDistance));
-            }
+            (var go, var dis) = result.Value;
+            Gizmos.DrawLine(lineOrigin, lineOrigin + dir * Mathf.Abs(dis));
+        }
+        else
+        {
+            Gizmos.DrawLine(lineOrigin, lineOrigin + dir * Mathf.Abs(debugDistance));
         }
     }
 

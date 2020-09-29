@@ -33,7 +33,6 @@ public class Player : MonoBehaviour
     public float dashRemainSpeed;
     public float attackFrameDelay;
     public float zeroInputThreshold = 0;
-    public LayerMask onGroundLayer;
     public LayerMask blockLayer;
     public LayerMask attackLayer;
     public bool isInCollision;
@@ -44,6 +43,11 @@ public class Player : MonoBehaviour
     private int lastMoveInputX = 0;
     private int signDirectionX = 1;
     private Vector2 velocity;
+    public Vector2 Position
+    {
+        get => transform.position;
+        set => transform.position = value;
+    }
     public float PositionX
     {
         get { return transform.position.x; }
@@ -141,7 +145,7 @@ public class Player : MonoBehaviour
     }
     void FixedUpdate()
     {
-        isInCollision = moveBox.InBoxCollision(onGroundLayer, null) != null;
+        isInCollision = moveBox.InBoxCollision(blockLayer, null) != null;
     }
     void OnDrawGizmosSelected()
     {
@@ -183,43 +187,52 @@ public class Player : MonoBehaviour
             OnDashEvent?.Invoke();
         }
     }
-    public bool BlockMoveX(LayerMask layer)
+    public bool BlockMove(Vector2Component component, LayerMask layer)
     {
-        var velDis = VelocityX * Time.fixedDeltaTime;
+        var velDis = component.Get(Velocity) * Time.fixedDeltaTime;
         if (moveBox.InBoxCollision(layer))
         {
-            PositionX += velDis;
+            var position = Position;
+            component.Set(ref position, component.Get(position) + velDis);
+            Position = position;
             return false;
         }
-        var result = moveBox.BlockMove(layer, Vector2Component.X, velDis);
+        var result = moveBox.BlockMove(layer, component, velDis);
         if (result.HasValue)
         {
             (var go, var dis) = result.Value;
-            PositionX += dis;
-            VelocityX = 0;
+            var position = Position;
+            component.Set(ref position, component.Get(position) + dis);
+            Position = position;
+            var velocity = Velocity;
+            component.Set(ref velocity, 0);
+            Velocity = velocity;
             return true;
         }
-        PositionX += velDis;
-        return false;
+        else
+        {
+            var position = Position;
+            component.Set(ref position, component.Get(position) + velDis);
+            Position = position;
+            return false;
+        }
+
+    }
+    public bool BlockMoveX()
+    {
+        return BlockMoveX(blockLayer);
+    }
+    public bool BlockMoveX(LayerMask layer)
+    {
+        return BlockMove(Vector2Component.X, layer);
+    }
+    public bool BlockMoveY()
+    {
+        return BlockMoveY(blockLayer);
     }
     public bool BlockMoveY(LayerMask layer)
     {
-        var velDis = VelocityY * Time.fixedDeltaTime;
-        if (moveBox.InBoxCollision(layer))
-        {
-            PositionY += velDis;
-            return false;
-        }
-        var result = moveBox.BlockMove(layer, Vector2Component.Y, velDis);
-        if (result.HasValue)
-        {
-            (var go, var dis) = result.Value;
-            PositionY += dis;
-            VelocityY = 0;
-            return true;
-        }
-        PositionY += velDis;
-        return false;
+        return BlockMove(Vector2Component.Y, layer);
     }
     public void MoveX(XMoveParam param, bool onGround)
     {
@@ -259,7 +272,7 @@ public class Player : MonoBehaviour
 
         animation.SignDirectionX = SignDirectionX;
         animation.RunningSpeed = Mathf.Abs(VelocityX) / param.xVelMax;
-        BlockMoveX(onGroundLayer);
+        BlockMoveX();
         lastMoveInputX = MoveInput.x;
     }
     public void StepVelocityX()
@@ -274,7 +287,7 @@ public class Player : MonoBehaviour
     {
         get
         {
-            var result = moveBox.BlockMove(onGroundLayer, Vector2Component.Y, -0.01f);
+            var result = moveBox.BlockMove(blockLayer, Vector2Component.Y, -0.01f);
             return result.HasValue;
         }
     }
@@ -337,7 +350,7 @@ namespace PlayerState
                         mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
                     }
                     var down = mono.VelocityY < 0;
-                    if (mono.BlockMoveY(mono.onGroundLayer) && down)
+                    if (mono.BlockMoveY() && down)
                     {
                         fsm.ChangeState(new Idle());
                         mono.animation.OnGround();
@@ -394,15 +407,8 @@ namespace PlayerState
             }
             public IEnumerator BlockMove(Vector2Int dirInt)
             {
-                if (mono.VelocityY > 0)
-                {
-                    mono.BlockMoveY(mono.onGroundLayer);
-                }
-                else
-                {
-                    mono.BlockMoveY(mono.blockLayer);
-                }
-                mono.BlockMoveX(mono.onGroundLayer);
+                mono.BlockMoveY();
+                mono.BlockMoveX();
                 var attackableGo = mono.attackBox.InBoxCollision(mono.attackLayer, (go) => go.GetComponent<PlayerAttackable>() != null);
                 if (attackableGo != null)
                 {
