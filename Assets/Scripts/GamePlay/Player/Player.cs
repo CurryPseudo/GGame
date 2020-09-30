@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using PlayerState;
-using Fixed = PlayerState.Fixed;
 using UnityEngine.InputSystem;
 using UnityEngine.Assertions;
 using Sirenix.OdinInspector;
@@ -16,6 +15,11 @@ public struct XMoveParam
     public float xRevAcc;
     public float xFri;
     public float xVelMax;
+}
+
+public interface IDashPowerUI
+{
+    void SetDashPower(float value);
 }
 
 public class Player : Autonomy
@@ -33,19 +37,55 @@ public class Player : Autonomy
     public float dashRemainSpeed;
     public float attackFrameDelay;
     public float zeroInputThreshold = 0;
+    public float lightDashPowerAccBase = 0;
+    public float lightDashPowerAccMultiply = 0;
+    public float maxDashPower = 6;
     public LayerMask attackLayer;
     public bool isInCollision;
     public BoxPhysics attackBox;
     public event Action OnDashEvent;
     private Vector2Int moveInput = Vector2Int.zero;
     private int lastMoveInputX = 0;
+    private float dashPower;
+    private HashSet<IGLight> inLights = new HashSet<IGLight>();
+    public void UpdateInLights(IGLight light, bool isIn)
+    {
+        if (inLights.Contains(light))
+        {
+            if (!isIn)
+            {
+                inLights.Remove(light);
+            }
+        }
+        else
+        {
+            if (isIn)
+            {
+                inLights.Add(light);
+            }
+
+        }
+    }
+    public float DashPower
+    {
+        get => dashPower;
+        set
+        {
+            dashPower = value;
+            if (dashPower > maxDashPower)
+            {
+                dashPower = maxDashPower;
+            }
+            SceneSingleton.Get<IDashPowerUI>().SetDashPower(dashPower);
+        }
+    }
 
     [ShowInInspector]
     public Vector2Int MoveInput { get => moveInput; }
+
     [NonSerialized]
     public new PlayerAnimation animation;
-    private FSM<Player> fsm;
-    private FSM<Player> fsmFixed;
+    private FSM<Player> mainFsm;
     protected override void Awake()
     {
         base.Awake();
@@ -53,8 +93,7 @@ public class Player : Autonomy
         Assert.IsNotNull(animation);
         Assert.IsNotNull(moveBox);
         Assert.IsNotNull(attackBox);
-        fsm = new FSM<Player>(this);
-        fsmFixed = new FSM<Player>(this);
+        mainFsm = new FSM<Player>(this);
         moveAction.performed += OnMove;
         moveAction.canceled += OnMove;
         dashAction.performed += OnDash;
@@ -71,11 +110,17 @@ public class Player : Autonomy
     }
     void Start()
     {
-        fsmFixed.ChangeState(new Fixed.Drop());
+        mainFsm.ChangeState(new Drop());
+        DashPower = maxDashPower;
     }
     void FixedUpdate()
     {
         isInCollision = moveBox.InBoxCollision(blockLayer, null) != null;
+        if (inLights.Count > 0)
+        {
+            DashPower += lightDashPowerAccBase * Time.fixedDeltaTime;
+            DashPower += lightDashPowerAccMultiply * inLights.Count * Time.fixedDeltaTime;
+        }
     }
     void OnDrawGizmosSelected()
     {
@@ -162,143 +207,146 @@ public class Player : Autonomy
 
 namespace PlayerState
 {
-    namespace Fixed
+    public class Idle : State<Player>
     {
-        public class Idle : State<Player>
+        void OnDash()
         {
-            void OnDash()
+            if (mono.DashPower >= 1)
             {
+                mono.DashPower -= 1;
                 fsm.ChangeState(new Dash(true));
             }
-            public override void Exit()
+        }
+        public override void Exit()
+        {
+            mono.OnDashEvent -= OnDash;
+        }
+        public override IEnumerator Main()
+        {
+            mono.OnDashEvent += OnDash;
+            while (true)
             {
-                mono.OnDashEvent -= OnDash;
-            }
-            public override IEnumerator Main()
-            {
-                mono.OnDashEvent += OnDash;
-                while (true)
+                yield return new WaitForFixedUpdate();
+                mono.MoveX(mono.idleMoveX, true);
                 {
-                    yield return new WaitForFixedUpdate();
-                    mono.MoveX(mono.idleMoveX, true);
+                    if (!mono.IsOnGround)
                     {
-                        if (!mono.IsOnGround)
-                        {
-                            fsm.ChangeState(new Drop());
+                        fsm.ChangeState(new Drop());
 
-                        }
                     }
                 }
             }
         }
-        public class Drop : State<Player>
-        {
+    }
+    public class Drop : State<Player>
+    {
 
-            void OnDash()
+        void OnDash()
+        {
+            if (mono.DashPower >= 1)
             {
+                mono.DashPower -= 1;
                 fsm.ChangeState(new Dash(false));
             }
-            public override void Exit()
-            {
-                mono.OnDashEvent -= OnDash;
-            }
-
-            public override IEnumerator Main()
-            {
-                mono.OnDashEvent += OnDash;
-                mono.animation.Drop();
-                while (true)
-                {
-                    yield return new WaitForFixedUpdate();
-                    mono.MoveX(mono.dropMoveX, false);
-                    mono.VelocityY -= mono.yGrav * Time.fixedDeltaTime;
-                    if (Mathf.Abs(mono.VelocityY) > mono.yVelMax)
-                    {
-                        mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
-                    }
-                    var down = mono.VelocityY < 0;
-                    if (mono.BlockMoveY() && down)
-                    {
-                        fsm.ChangeState(new Idle());
-                        mono.animation.OnGround();
-                        yield break;
-                    }
-                }
-            }
-
         }
-        public class Dash : State<Player>
+        public override void Exit()
         {
-            private bool onGroundWhileDash;
-            public Dash(bool onGroundWhileDash)
+            mono.OnDashEvent -= OnDash;
+        }
+
+        public override IEnumerator Main()
+        {
+            mono.OnDashEvent += OnDash;
+            mono.animation.Drop();
+            while (true)
             {
-                this.onGroundWhileDash = onGroundWhileDash;
-            }
-            private HashSet<IPlayerAttackable> attacked;
-            public override IEnumerator Main()
-            {
-                attacked = new HashSet<IPlayerAttackable>();
-                var dashSpeed = mono.dashDistance / mono.dashTime;
-                Vector2Int dirInt = mono.MoveInput;
-                if (dirInt == Vector2Int.zero)
+                yield return new WaitForFixedUpdate();
+                mono.MoveX(mono.dropMoveX, false);
+                mono.VelocityY -= mono.yGrav * Time.fixedDeltaTime;
+                if (Mathf.Abs(mono.VelocityY) > mono.yVelMax)
                 {
-                    dirInt = Vector2Int.right * mono.SignDirectionX;
+                    mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
                 }
-                var dir = ((Vector2)dirInt).normalized;
-                var vel = dir * dashSpeed;
-                float time = 0;
-                mono.animation.Dash(dirInt);
-                while (time < mono.dashTime)
-                {
-                    mono.Velocity = vel;
-                    mono.animation.SignDirectionX = mono.SignDirectionX;
-                    mono.StartCoroutine(BlockMove(dirInt));
-                    yield return new WaitForFixedUpdate();
-                    time += Time.fixedDeltaTime;
-                }
-                mono.Velocity = mono.dashRemainSpeed * dir;
-                mono.StartCoroutine(BlockMove(dirInt));
-                if (!mono.IsOnGround)
-                {
-                    fsm.ChangeState(new Drop());
-                }
-                else
+                var down = mono.VelocityY < 0;
+                if (mono.BlockMoveY() && down)
                 {
                     fsm.ChangeState(new Idle());
-                    if (!onGroundWhileDash)
-                    {
-                        mono.animation.OnGround();
-                    }
+                    mono.animation.OnGround();
+                    yield break;
                 }
-                yield break;
             }
-            public IEnumerator BlockMove(Vector2Int dirInt)
-            {
-                mono.BlockMoveY();
-                mono.BlockMoveX();
-                var attackableGo = mono.attackBox.InBoxCollision(mono.attackLayer, (go) =>
-                {
-                    var attackable = go.GetComponentInParent<IPlayerAttackable>();
-                    return attackable != null && attackable.validBox(go.GetComponent<BoxPhysics>());
-                });
-                if (attackableGo != null)
-                {
-                    var attackable = attackableGo.GetComponentInParent<IPlayerAttackable>();
-                    if (!attacked.Contains(attackable))
-                    {
-                        attacked.Add(attackable);
-                        Time.timeScale = 0;
-                        attackable.OnAttack();
-                        mono.animation.Attack(dirInt);
-                        yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
-                        Time.timeScale = 1;
-                    }
-                }
-                yield break;
-            }
-
         }
 
     }
+    public class Dash : State<Player>
+    {
+        private bool onGroundWhileDash;
+        public Dash(bool onGroundWhileDash)
+        {
+            this.onGroundWhileDash = onGroundWhileDash;
+        }
+        private HashSet<IPlayerAttackable> attacked;
+        public override IEnumerator Main()
+        {
+            attacked = new HashSet<IPlayerAttackable>();
+            var dashSpeed = mono.dashDistance / mono.dashTime;
+            Vector2Int dirInt = mono.MoveInput;
+            if (dirInt == Vector2Int.zero)
+            {
+                dirInt = Vector2Int.right * mono.SignDirectionX;
+            }
+            var dir = ((Vector2)dirInt).normalized;
+            var vel = dir * dashSpeed;
+            float time = 0;
+            mono.animation.Dash(dirInt);
+            while (time < mono.dashTime)
+            {
+                mono.Velocity = vel;
+                mono.animation.SignDirectionX = mono.SignDirectionX;
+                mono.StartCoroutine(BlockMove(dirInt));
+                yield return new WaitForFixedUpdate();
+                time += Time.fixedDeltaTime;
+            }
+            mono.Velocity = mono.dashRemainSpeed * dir;
+            mono.StartCoroutine(BlockMove(dirInt));
+            if (!mono.IsOnGround)
+            {
+                fsm.ChangeState(new Drop());
+            }
+            else
+            {
+                fsm.ChangeState(new Idle());
+                if (!onGroundWhileDash)
+                {
+                    mono.animation.OnGround();
+                }
+            }
+            yield break;
+        }
+        public IEnumerator BlockMove(Vector2Int dirInt)
+        {
+            mono.BlockMoveY();
+            mono.BlockMoveX();
+            var attackableGo = mono.attackBox.InBoxCollision(mono.attackLayer, (go) =>
+            {
+                var attackable = go.GetComponentInParent<IPlayerAttackable>();
+                return attackable != null && attackable.validBox(go.GetComponent<BoxPhysics>());
+            });
+            if (attackableGo != null)
+            {
+                var attackable = attackableGo.GetComponentInParent<IPlayerAttackable>();
+                if (!attacked.Contains(attackable))
+                {
+                    attacked.Add(attackable);
+                    Time.timeScale = 0;
+                    attackable.OnAttack();
+                    mono.animation.Attack(dirInt);
+                    yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
+                    Time.timeScale = 1;
+                }
+            }
+            yield break;
+        }
 
+    }
 }
