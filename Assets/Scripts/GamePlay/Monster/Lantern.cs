@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LanternState;
+using LanternStates;
 using Sirenix.OdinInspector;
 
 public class Lantern : Autonomy, IPlayerAttackable
@@ -38,6 +38,7 @@ public class Lantern : Autonomy, IPlayerAttackable
     public BoxPhysics detectBoxAirRight;
     public BoxPhysics detectBoxGroundLeft;
     public BoxPhysics detectBoxGroundRight;
+    public GameObjectInstantiator dieLight;
     public Animator animator
     {
         get => animation.GetComponentInChildren<Animator>();
@@ -46,19 +47,21 @@ public class Lantern : Autonomy, IPlayerAttackable
     {
         get => animation.GetComponentInChildren<SpriteRenderer>();
     }
-    private FSM<Lantern> fsm;
+    private FSM<Lantern, LanternState> fsm;
     protected override void Awake()
     {
         base.Awake();
-        fsm = new FSM<Lantern>(this);
+        fsm = new FSM<Lantern, LanternState>(this);
     }
     void Start()
     {
         fsm.ChangeState(new Drop());
     }
-    public void OnAttack()
+    public bool OnAttack()
     {
-        Debug.Log("on attack");
+        dieLight.Instantiate();
+        Destroy(gameObject);
+        return true;
     }
 
     public bool validBox(BoxPhysics box)
@@ -66,9 +69,10 @@ public class Lantern : Autonomy, IPlayerAttackable
         return box == moveBox;
     }
 }
-namespace LanternState
+namespace LanternStates
 {
-    public class Drop : State<Lantern>
+    public abstract class LanternState : State<Lantern, LanternState> { }
+    public class Drop : LanternState
     {
         public override IEnumerator Main()
         {
@@ -89,7 +93,7 @@ namespace LanternState
             }
         }
     }
-    public class Idle : State<Lantern>
+    public class Idle : LanternState
     {
         public override IEnumerator Main()
         {
@@ -111,7 +115,7 @@ namespace LanternState
             fsm.ChangeState(new Attack());
         }
     }
-    public class Attack : State<Lantern>
+    public class Attack : LanternState
     {
         public override IEnumerator Main()
         {

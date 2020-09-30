@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IPlayerAttackable
 {
     // Start is called before the first frame update
-    void OnAttack();
+    bool OnAttack();
     bool validBox(BoxPhysics box);
 }

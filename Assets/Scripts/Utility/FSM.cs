@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class State<T> where T : MonoBehaviour
+public abstract class State<T, S> where T : MonoBehaviour where S : State<T, S>
 {
     public T mono;
-    public FSM<T> fsm;
+    public FSM<T, S> fsm;
     public abstract IEnumerator Main();
     public virtual void Exit()
     {
@@ -13,19 +13,23 @@ public abstract class State<T> where T : MonoBehaviour
     public Coroutine coroutine;
 }
 
-public class FSM<T> where T : MonoBehaviour
+public class FSM<T, S> where T : MonoBehaviour where S : State<T, S>
 {
     private T mono;
-    public State<T> current = null;
+    private S current = null;
+
     public FSM(T mono)
     {
         this.mono = mono;
     }
-    public void ChangeState(State<T> next)
+
+    public S Current { get => current; }
+
+    public void ChangeState(S next)
     {
         if (current != null)
         {
-            mono.StopCoroutine(current.coroutine);
+            mono.StopCoroutine(Current.coroutine);
             current.Exit();
         }
         if (next != null)

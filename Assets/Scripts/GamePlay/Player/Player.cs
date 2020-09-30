@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using PlayerState;
+using PlayerStates;
 using UnityEngine.InputSystem;
 using UnityEngine.Assertions;
 using Sirenix.OdinInspector;
 using System;
 using static UnityEngine.InputSystem.InputAction;
+using UnityEngine.SceneManagement;
 
 [Serializable]
 public struct XMoveParam
@@ -37,17 +38,37 @@ public class Player : Autonomy
     public float dashRemainSpeed;
     public float attackFrameDelay;
     public float zeroInputThreshold = 0;
-    public float lightDashPowerAccBase = 0;
-    public float lightDashPowerAccMultiply = 0;
+    public AnimationCurve lightDashPowerAccBase;
+    public AnimationCurve lightDashPowerAccMultiply;
+    public bool refreshDashPowerAfterKill;
+    public bool resetPoweringWhileDash;
     public float maxDashPower = 6;
+    public float dashAfterDamageDelayTime;
+    public Vector2 damageVelDrop;
+    public Vector2 damageVelIdle;
     public LayerMask attackLayer;
+    public LayerMask damageLayer;
     public bool isInCollision;
     public BoxPhysics attackBox;
-    public event Action OnDashEvent;
+    public BoxPhysics damageBox;
     private Vector2Int moveInput = Vector2Int.zero;
     private int lastMoveInputX = 0;
     private float dashPower;
     private HashSet<IGLight> inLights = new HashSet<IGLight>();
+    private float poweringTime = 0;
+    private bool pausePowering = false;
+    public void ResetPoweringTime()
+    {
+        poweringTime = 0;
+    }
+    public void PausePowering()
+    {
+        pausePowering = true;
+    }
+    public void ContinuePowering()
+    {
+        pausePowering = false;
+    }
     public void UpdateInLights(IGLight light, bool isIn)
     {
         if (inLights.Contains(light))
@@ -76,6 +97,11 @@ public class Player : Autonomy
             {
                 dashPower = maxDashPower;
             }
+            if (dashPower < 0)
+            {
+                var scene = SceneManager.GetActiveScene();
+                SceneManager.LoadScene(scene.name);
+            }
             SceneSingleton.Get<IDashPowerUI>().SetDashPower(dashPower);
         }
     }
@@ -85,7 +111,7 @@ public class Player : Autonomy
 
     [NonSerialized]
     public new PlayerAnimation animation;
-    private FSM<Player> mainFsm;
+    private FSM<Player, PlayerState> mainFsm;
     protected override void Awake()
     {
         base.Awake();
@@ -93,7 +119,7 @@ public class Player : Autonomy
         Assert.IsNotNull(animation);
         Assert.IsNotNull(moveBox);
         Assert.IsNotNull(attackBox);
-        mainFsm = new FSM<Player>(this);
+        mainFsm = new FSM<Player, PlayerState>(this);
         moveAction.performed += OnMove;
         moveAction.canceled += OnMove;
         dashAction.performed += OnDash;
@@ -118,9 +144,18 @@ public class Player : Autonomy
         isInCollision = moveBox.InBoxCollision(blockLayer, null) != null;
         if (inLights.Count > 0)
         {
-            DashPower += lightDashPowerAccBase * Time.fixedDeltaTime;
-            DashPower += lightDashPowerAccMultiply * inLights.Count * Time.fixedDeltaTime;
+            DashPower += lightDashPowerAccBase.Evaluate(poweringTime) * Time.fixedDeltaTime;
+            DashPower += lightDashPowerAccMultiply.Evaluate(poweringTime) * inLights.Count * Time.fixedDeltaTime;
+            if (!pausePowering)
+            {
+                poweringTime += Time.fixedDeltaTime;
+            }
         }
+        else
+        {
+            poweringTime = 0;
+        }
+        ProcessDamage();
     }
     void OnDrawGizmosSelected()
     {
@@ -159,7 +194,7 @@ public class Player : Autonomy
     {
         if (context.ReadValueAsButton())
         {
-            OnDashEvent?.Invoke();
+            mainFsm.Current.OnDash();
         }
     }
     public void MoveX(XMoveParam param, bool onGround)
@@ -203,13 +238,41 @@ public class Player : Autonomy
         BlockMoveX();
         lastMoveInputX = MoveInput.x;
     }
+    public void DropY()
+    {
+        VelocityY -= yGrav * Time.fixedDeltaTime;
+        if (Mathf.Abs(VelocityY) > yVelMax)
+        {
+            VelocityY = Mathf.Sign(VelocityY) * yVelMax;
+        }
+        var down = VelocityY < 0;
+        if (BlockMoveY() && down)
+        {
+            mainFsm.ChangeState(new Idle());
+            animation.OnGround();
+        }
+    }
+    public void ProcessDamage()
+    {
+        var damageGo = damageBox.InBoxCollision(damageLayer);
+        if (damageGo != null)
+        {
+            Vector2 dir = transform.position - damageGo.transform.position;
+            mainFsm.Current.OnDamage(dir.normalized);
+        }
+    }
 }
 
-namespace PlayerState
+public abstract class PlayerState : State<Player, PlayerState>
 {
-    public class Idle : State<Player>
+    public abstract void OnDash();
+    public abstract void OnDamage(Vector2 direction);
+}
+namespace PlayerStates
+{
+    public class Idle : PlayerState
     {
-        void OnDash()
+        public override void OnDash()
         {
             if (mono.DashPower >= 1)
             {
@@ -217,13 +280,8 @@ namespace PlayerState
                 fsm.ChangeState(new Dash(true));
             }
         }
-        public override void Exit()
-        {
-            mono.OnDashEvent -= OnDash;
-        }
         public override IEnumerator Main()
         {
-            mono.OnDashEvent += OnDash;
             while (true)
             {
                 yield return new WaitForFixedUpdate();
@@ -237,11 +295,18 @@ namespace PlayerState
                 }
             }
         }
+
+        public override void OnDamage(Vector2 direction)
+        {
+            mono.VelocityX = (direction.x >= 0 ? 1 : -1) * mono.damageVelIdle.x;
+            mono.VelocityY = mono.damageVelIdle.y;
+            fsm.ChangeState(new Damage());
+        }
     }
-    public class Drop : State<Player>
+    public class Drop : PlayerState
     {
 
-        void OnDash()
+        public override void OnDash()
         {
             if (mono.DashPower >= 1)
             {
@@ -249,36 +314,25 @@ namespace PlayerState
                 fsm.ChangeState(new Dash(false));
             }
         }
-        public override void Exit()
-        {
-            mono.OnDashEvent -= OnDash;
-        }
-
         public override IEnumerator Main()
         {
-            mono.OnDashEvent += OnDash;
             mono.animation.Drop();
             while (true)
             {
                 yield return new WaitForFixedUpdate();
                 mono.MoveX(mono.dropMoveX, false);
-                mono.VelocityY -= mono.yGrav * Time.fixedDeltaTime;
-                if (Mathf.Abs(mono.VelocityY) > mono.yVelMax)
-                {
-                    mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
-                }
-                var down = mono.VelocityY < 0;
-                if (mono.BlockMoveY() && down)
-                {
-                    fsm.ChangeState(new Idle());
-                    mono.animation.OnGround();
-                    yield break;
-                }
+                mono.DropY();
             }
         }
 
+        public override void OnDamage(Vector2 direction)
+        {
+            mono.VelocityX = (direction.x >= 0 ? 1 : -1) * mono.damageVelDrop.x;
+            mono.VelocityY = mono.damageVelDrop.y;
+            fsm.ChangeState(new Damage());
+        }
     }
-    public class Dash : State<Player>
+    public class Dash : PlayerState
     {
         private bool onGroundWhileDash;
         public Dash(bool onGroundWhileDash)
@@ -288,6 +342,10 @@ namespace PlayerState
         private HashSet<IPlayerAttackable> attacked;
         public override IEnumerator Main()
         {
+            if (mono.resetPoweringWhileDash)
+            {
+                mono.ResetPoweringTime();
+            }
             attacked = new HashSet<IPlayerAttackable>();
             var dashSpeed = mono.dashDistance / mono.dashTime;
             Vector2Int dirInt = mono.MoveInput;
@@ -338,15 +396,71 @@ namespace PlayerState
                 if (!attacked.Contains(attackable))
                 {
                     attacked.Add(attackable);
-                    Time.timeScale = 0;
-                    attackable.OnAttack();
                     mono.animation.Attack(dirInt);
-                    yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
+                    if (mono.attackFrameDelay > 0)
+                    {
+                        Time.timeScale = 0;
+                        yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
+                    }
+                    if (attackable.OnAttack() && mono.refreshDashPowerAfterKill)
+                    {
+                        mono.DashPower = mono.maxDashPower;
+                    }
                     Time.timeScale = 1;
                 }
             }
             yield break;
         }
 
+        public override void OnDash()
+        {
+        }
+
+        public override void OnDamage(Vector2 direction)
+        {
+        }
+    }
+    public class Damage : PlayerState
+    {
+        private bool couldDash = false;
+        public override IEnumerator Main()
+        {
+            mono.DashPower -= 1;
+            mono.ResetPoweringTime();
+            mono.PausePowering();
+            mono.animation.Drop();
+            mono.animation.SignDirectionX = mono.VelocityX >= 0 ? -1 : 1;
+            var timeLeft = mono.dashAfterDamageDelayTime;
+            while (timeLeft > 0)
+            {
+                yield return new WaitForFixedUpdate();
+                timeLeft -= Time.fixedDeltaTime;
+                mono.BlockMoveX();
+                mono.DropY();
+            }
+            couldDash = true;
+            while (true)
+            {
+                yield return new WaitForFixedUpdate();
+                mono.BlockMoveX();
+                mono.DropY();
+            }
+        }
+        public override void Exit()
+        {
+            mono.ContinuePowering();
+        }
+
+        public override void OnDamage(Vector2 direction)
+        {
+        }
+
+        public override void OnDash()
+        {
+            if (couldDash)
+            {
+                fsm.ChangeState(new Dash(false));
+            }
+        }
     }
 }
