@@ -8,10 +8,8 @@ public class LockCamera : MonoBehaviour
 {
     public Transform lockPoint;
     private BoxCollider2D detectBox;
-    public Transform player;
     public bool lockX;
     public bool lockY;
-    public new CinemachineVirtualCamera camera;
     private Vector2 Origin
     {
         get => transform.TransformPoint(detectBox.offset);
@@ -20,13 +18,16 @@ public class LockCamera : MonoBehaviour
     {
         get => transform.TransformVector(detectBox.size);
     }
+    private bool lastInRect = false;
     void Awake()
     {
         detectBox = GetComponent<BoxCollider2D>();
     }
     void Update()
     {
+        var player = SceneSingleton.Get<Player>().transform;
         var position = lockPoint.position;
+        var camera = SceneSingleton.Get<CinemachineVirtualCamera>();
         if (!lockX)
         {
             position.x = player.transform.position.x;
@@ -40,10 +41,12 @@ public class LockCamera : MonoBehaviour
         if (rect.Contains(player.position))
         {
             camera.Follow = lockPoint;
+            lastInRect = true;
         }
-        else
+        else if (lastInRect)
         {
             camera.Follow = player;
+            lastInRect = false;
         }
     }
 }
