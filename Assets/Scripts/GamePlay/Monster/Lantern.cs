@@ -32,20 +32,40 @@ public class Lantern : Autonomy, IPlayerAttackable
     public float yVelMax;
     public float waitJumpTime;
     public float prepareJumpTime;
-    public bool faceLeft;
+    [SerializeField]
+    private bool faceLeft;
+    public bool FaceLeft
+    {
+        get => faceLeft;
+        set
+        {
+            faceLeft = value;
+            SpriteRenderer.flipX = !faceLeft;
+        }
+    }
     public new GameObject animation;
     public BoxPhysics detectBoxAirLeft;
     public BoxPhysics detectBoxAirRight;
     public BoxPhysics detectBoxGroundLeft;
     public BoxPhysics detectBoxGroundRight;
+    public BoxPhysics attackDetectBox;
     public GameObjectInstantiator dieLight;
-    public Animator animator
+    public Animator Animator
     {
         get => animation.GetComponentInChildren<Animator>();
     }
-    public SpriteRenderer spriteRenderer
+    public SpriteRenderer SpriteRenderer
     {
         get => animation.GetComponentInChildren<SpriteRenderer>();
+    }
+    public LayerMask PlayerLayer
+    {
+        get
+        {
+            var player = SceneSingleton.Get<Player>();
+            return 1 << player.gameObject.layer;
+
+        }
     }
     private FSM<Lantern, LanternState> fsm;
     protected override void Awake()
@@ -100,28 +120,49 @@ namespace LanternStates
             while (true)
             {
                 yield return new WaitForSeconds(mono.waitJumpTime);
-                var detectBoxAir = mono.faceLeft ? mono.detectBoxAirLeft : mono.detectBoxAirRight;
-                var detectBoxGround = mono.faceLeft ? mono.detectBoxGroundLeft : mono.detectBoxGroundRight;
-                if (!detectBoxAir.InBoxCollision(mono.blockLayer, null) && Autonomy.DetectOnGround(detectBoxGround, mono.blockLayer))
+                if (mono.attackDetectBox.InBoxCollision(mono.PlayerLayer) != null)
                 {
-                    break;
+                    var player = SceneSingleton.Get<Player>();
+                    mono.FaceLeft = (player.transform.position - mono.transform.position).x < 0;
+                    if (ValidAttackGround())
+                    {
+                        break;
+                    }
                 }
                 else
                 {
-                    mono.faceLeft = !mono.faceLeft;
-                    mono.spriteRenderer.flipX = !mono.faceLeft;
+                    if (ValidAttackAir() && ValidAttackGround())
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        mono.FaceLeft = !mono.FaceLeft;
+                    }
                 }
+
             }
             fsm.ChangeState(new Attack());
+        }
+        private bool ValidAttackAir()
+        {
+            var detectBoxAir = mono.FaceLeft ? mono.detectBoxAirLeft : mono.detectBoxAirRight;
+            return !detectBoxAir.InBoxCollision(mono.blockLayer, null);
+        }
+        private bool ValidAttackGround()
+        {
+
+            var detectBoxGround = mono.FaceLeft ? mono.detectBoxGroundLeft : mono.detectBoxGroundRight;
+            return Autonomy.DetectOnGround(detectBoxGround, mono.blockLayer);
         }
     }
     public class Attack : LanternState
     {
         public override IEnumerator Main()
         {
-            mono.animator.SetTrigger("Jump");
+            mono.Animator.SetTrigger("Jump");
             yield return new WaitForSeconds(mono.prepareJumpTime);
-            var xSign = mono.faceLeft ? -1 : 1;
+            var xSign = mono.FaceLeft ? -1 : 1;
             var timeLeft = mono.jumpTime * 2;
             mono.VelocityY = mono.jumpYVel;
             mono.VelocityX = mono.jumpXSpeed * xSign;

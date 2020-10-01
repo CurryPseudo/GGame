@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 68602944}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Fart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 249985966}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Run
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 303327125}
   - component: {fileID: 303327127}
   - component: {fileID: 303327126}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DashFart3Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,7 +270,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 309397330}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 429484836}
   - component: {fileID: 429484838}
   - component: {fileID: 429484837}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DashFart0Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -414,7 +414,7 @@ GameObject:
   - component: {fileID: 498021164}
   - component: {fileID: 498021166}
   - component: {fileID: 498021165}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DashFart3Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -516,7 +516,7 @@ GameObject:
   - component: {fileID: 532842919}
   - component: {fileID: 532842921}
   - component: {fileID: 532842920}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: OnGroundFart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -618,7 +618,7 @@ GameObject:
   - component: {fileID: 568330214}
   - component: {fileID: 568330216}
   - component: {fileID: 568330215}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Move
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -693,7 +693,7 @@ GameObject:
   - component: {fileID: 619670417}
   - component: {fileID: 619670419}
   - component: {fileID: 619670418}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: RunFartRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -795,7 +795,7 @@ GameObject:
   - component: {fileID: 689782813}
   - component: {fileID: 689782815}
   - component: {fileID: 689782814}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight0Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -896,7 +896,7 @@ GameObject:
   m_Component:
   - component: {fileID: 694115692}
   - component: {fileID: 694115693}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1164,7 +1164,7 @@ GameObject:
   - component: {fileID: 728784660}
   - component: {fileID: 728784662}
   - component: {fileID: 728784661}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Attack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1239,7 +1239,7 @@ GameObject:
   - component: {fileID: 729242080}
   - component: {fileID: 729242082}
   - component: {fileID: 729242081}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DashFart0Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1339,7 +1339,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 769838089}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Dash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1377,7 +1377,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 802042077}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1410,7 +1410,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 900117564}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1444,7 +1444,7 @@ GameObject:
   - component: {fileID: 991664948}
   - component: {fileID: 991664950}
   - component: {fileID: 991664949}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DashFart2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1546,7 +1546,7 @@ GameObject:
   - component: {fileID: 1076499690}
   - component: {fileID: 1076499692}
   - component: {fileID: 1076499691}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight3Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1648,7 +1648,7 @@ GameObject:
   - component: {fileID: 1232893746}
   - component: {fileID: 1232893748}
   - component: {fileID: 1232893747}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Damage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1723,7 +1723,7 @@ GameObject:
   - component: {fileID: 1243468692}
   - component: {fileID: 1243468694}
   - component: {fileID: 1243468693}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight2Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1825,7 +1825,7 @@ GameObject:
   - component: {fileID: 1330878157}
   - component: {fileID: 1330878159}
   - component: {fileID: 1330878158}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight3Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1927,7 +1927,7 @@ GameObject:
   - component: {fileID: 1339200653}
   - component: {fileID: 1339200655}
   - component: {fileID: 1339200654}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DashFart1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2029,7 +2029,7 @@ GameObject:
   - component: {fileID: 1459114809}
   - component: {fileID: 1459114811}
   - component: {fileID: 1459114810}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight1Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2132,7 +2132,7 @@ GameObject:
   - component: {fileID: 1497342230}
   - component: {fileID: 1497342229}
   - component: {fileID: 1497342231}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: MainAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2301,7 +2301,7 @@ GameObject:
   - component: {fileID: 1598367400}
   - component: {fileID: 1598367402}
   - component: {fileID: 1598367401}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight1Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2403,7 +2403,7 @@ GameObject:
   - component: {fileID: 1627034071}
   - component: {fileID: 1627034073}
   - component: {fileID: 1627034072}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight4Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2505,7 +2505,7 @@ GameObject:
   - component: {fileID: 1731753624}
   - component: {fileID: 1731753626}
   - component: {fileID: 1731753625}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight4Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2608,7 +2608,7 @@ GameObject:
   - component: {fileID: 1772735247}
   - component: {fileID: 1772735246}
   - component: {fileID: 1772735245}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: AdventurerAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2722,7 +2722,7 @@ GameObject:
   - component: {fileID: 1836821154}
   - component: {fileID: 1836821156}
   - component: {fileID: 1836821155}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DashFart4Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2824,7 +2824,7 @@ GameObject:
   - component: {fileID: 1912408464}
   - component: {fileID: 1912408463}
   - component: {fileID: 1912408462}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight0Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2926,7 +2926,7 @@ GameObject:
   - component: {fileID: 1916219336}
   - component: {fileID: 1916219338}
   - component: {fileID: 1916219337}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DashFart4Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3028,7 +3028,7 @@ GameObject:
   - component: {fileID: 1987436237}
   - component: {fileID: 1987436240}
   - component: {fileID: 1987436239}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: RunFartLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3130,7 +3130,7 @@ GameObject:
   - component: {fileID: 1992683646}
   - component: {fileID: 1992683648}
   - component: {fileID: 1992683647}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordLight2Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3561,7 +3561,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5576726913910560923}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.3977118, y: -4.144131, z: -10}
+  m_LocalPosition: {x: 3.4024222, y: -4.144131, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5576726913954292633}
@@ -3930,7 +3930,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5576726914537856773}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.3977118, y: -4.144131, z: -10}
+  m_LocalPosition: {x: 3.4024222, y: -4.144131, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4011743833216391334}
