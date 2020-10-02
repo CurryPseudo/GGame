@@ -388,7 +388,7 @@ namespace PlayerStates
             var attackableGo = mono.attackBox.InBoxCollision(mono.attackLayer, (go) =>
             {
                 var attackable = go.GetComponentInParent<IPlayerAttackable>();
-                return attackable != null && attackable.validBox(go.GetComponent<BoxPhysics>());
+                return attackable != null && attackable.ValidBox(go.GetComponent<BoxPhysics>());
             });
             if (attackableGo != null)
             {

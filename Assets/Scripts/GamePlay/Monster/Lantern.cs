@@ -79,19 +79,23 @@ public class Lantern : Autonomy, IPlayerAttackable
     }
     public bool OnAttack()
     {
-        dieLight.Instantiate();
-        Destroy(gameObject);
+        fsm.Current.OnDie();
         return true;
     }
-
-    public bool validBox(BoxPhysics box)
+    public bool ValidBox(BoxPhysics box)
     {
         return box == moveBox;
     }
 }
 namespace LanternStates
 {
-    public abstract class LanternState : State<Lantern, LanternState> { }
+    public abstract class LanternState : State<Lantern, LanternState>
+    {
+        public virtual void OnDie()
+        {
+            fsm.ChangeState(new Die());
+        }
+    }
     public class Drop : LanternState
     {
         public override IEnumerator Main()
@@ -176,6 +180,20 @@ namespace LanternStates
             }
             mono.VelocityX = 0;
             fsm.ChangeState(new Drop());
+        }
+    }
+    public class Die : LanternState
+    {
+        public override IEnumerator Main()
+        {
+            mono.moveBox.gameObject.SetActive(false);
+            mono.Animator.SetTrigger("Die");
+            yield return new WaitForFixedUpdate();
+            var dieTime = mono.Animator.GetCurrentAnimatorStateInfo(0).length;
+            yield return new WaitForSeconds(dieTime);
+            mono.dieLight.Instantiate();
+            GameObject.Destroy(mono.gameObject);
+            yield break;
         }
     }
 }
