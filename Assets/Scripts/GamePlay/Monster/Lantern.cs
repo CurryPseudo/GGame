@@ -87,12 +87,13 @@ public class Lantern : Autonomy, IPlayerAttackable
         {
             life -= 1;
             fsm.Current.OnDamage();
+            return false;
         }
         else
         {
             fsm.Current.OnDie();
+            return true;
         }
-        return true;
     }
     public bool ValidBox(BoxPhysics box)
     {
