@@ -5,6 +5,7 @@ using UnityEngine.Experimental.Rendering.Universal;
 
 public class LightIntensityFadeIn : MonoBehaviour
 {
+    public float prepareTime;
     public float time;
     void Start()
     {
@@ -16,6 +17,7 @@ public class LightIntensityFadeIn : MonoBehaviour
         var initIntensity = light.intensity;
         var timeLeft = time;
         light.intensity = 0;
+        yield return new WaitForSeconds(prepareTime);
         while (timeLeft > 0)
         {
             yield return null;

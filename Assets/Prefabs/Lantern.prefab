@@ -401,6 +401,7 @@ MonoBehaviour:
   detectBoxGroundLeft: {fileID: 8630890729502814934}
   detectBoxGroundRight: {fileID: 8630890729923181190}
   attackDetectBox: {fileID: 1601851816}
+  damageBox: {fileID: 1861741362}
   dieLight:
     source: {fileID: 6611665954989856693}
     maxInstanceCount: 1

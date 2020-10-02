@@ -49,6 +49,7 @@ public class Lantern : Autonomy, IPlayerAttackable
     public BoxPhysics detectBoxGroundLeft;
     public BoxPhysics detectBoxGroundRight;
     public BoxPhysics attackDetectBox;
+    public BoxPhysics damageBox;
     public GameObjectInstantiator dieLight;
     public Animator Animator
     {
@@ -128,35 +129,36 @@ namespace LanternStates
                 {
                     var player = SceneSingleton.Get<Player>();
                     mono.FaceLeft = (player.transform.position - mono.transform.position).x < 0;
-                    if (ValidAttackGround())
+                    if (ValidAttackGround(mono.FaceLeft))
                     {
                         break;
                     }
                 }
                 else
                 {
-                    if (ValidAttackAir() && ValidAttackGround())
+                    if (ValidAttackAir(mono.FaceLeft) && ValidAttackGround(mono.FaceLeft))
                     {
                         break;
                     }
-                    else
+                    else if (ValidAttackAir(!mono.FaceLeft) && ValidAttackGround(!mono.FaceLeft))
                     {
                         mono.FaceLeft = !mono.FaceLeft;
+                        break;
                     }
                 }
 
             }
             fsm.ChangeState(new Attack());
         }
-        private bool ValidAttackAir()
+        private bool ValidAttackAir(bool left)
         {
-            var detectBoxAir = mono.FaceLeft ? mono.detectBoxAirLeft : mono.detectBoxAirRight;
+            var detectBoxAir = left ? mono.detectBoxAirLeft : mono.detectBoxAirRight;
             return !detectBoxAir.InBoxCollision(mono.blockLayer, null);
         }
-        private bool ValidAttackGround()
+        private bool ValidAttackGround(bool left)
         {
 
-            var detectBoxGround = mono.FaceLeft ? mono.detectBoxGroundLeft : mono.detectBoxGroundRight;
+            var detectBoxGround = left ? mono.detectBoxGroundLeft : mono.detectBoxGroundRight;
             return Autonomy.DetectOnGround(detectBoxGround, mono.blockLayer);
         }
     }
@@ -186,7 +188,7 @@ namespace LanternStates
     {
         public override IEnumerator Main()
         {
-            mono.moveBox.gameObject.SetActive(false);
+            mono.damageBox.gameObject.SetActive(false);
             mono.Animator.SetTrigger("Die");
             mono.dieLight.Instantiate();
             yield return new WaitForFixedUpdate();
