@@ -188,10 +188,10 @@ namespace LanternStates
         {
             mono.moveBox.gameObject.SetActive(false);
             mono.Animator.SetTrigger("Die");
+            mono.dieLight.Instantiate();
             yield return new WaitForFixedUpdate();
             var dieTime = mono.Animator.GetCurrentAnimatorStateInfo(0).length;
             yield return new WaitForSeconds(dieTime);
-            mono.dieLight.Instantiate();
             GameObject.Destroy(mono.gameObject);
             yield break;
         }
