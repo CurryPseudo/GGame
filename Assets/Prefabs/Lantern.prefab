@@ -394,6 +394,9 @@ MonoBehaviour:
   yVelMax: 28
   waitJumpTime: 0.1
   prepareJumpTime: 0.2
+  dieTime: 0.7
+  life: 2
+  damageTime: 0.5
   faceLeft: 1
   animation: {fileID: 8630890728889028723}
   detectBoxAirLeft: {fileID: 8630890728756833704}

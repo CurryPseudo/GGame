@@ -32,6 +32,9 @@ public class Lantern : Autonomy, IPlayerAttackable
     public float yVelMax;
     public float waitJumpTime;
     public float prepareJumpTime;
+    public float dieTime;
+    public int life;
+    public float damageTime;
     [SerializeField]
     private bool faceLeft;
     public bool FaceLeft
@@ -80,7 +83,15 @@ public class Lantern : Autonomy, IPlayerAttackable
     }
     public bool OnAttack()
     {
-        fsm.Current.OnDie();
+        if (life > 1)
+        {
+            life -= 1;
+            fsm.Current.OnDamage();
+        }
+        else
+        {
+            fsm.Current.OnDie();
+        }
         return true;
     }
     public bool ValidBox(BoxPhysics box)
@@ -95,6 +106,10 @@ namespace LanternStates
         public virtual void OnDie()
         {
             fsm.ChangeState(new Die());
+        }
+        public virtual void OnDamage()
+        {
+            fsm.ChangeState(new Damage());
         }
     }
     public class Drop : LanternState
@@ -192,9 +207,21 @@ namespace LanternStates
             mono.Animator.SetTrigger("Die");
             mono.dieLight.Instantiate();
             yield return new WaitForFixedUpdate();
-            var dieTime = mono.Animator.GetCurrentAnimatorStateInfo(0).length;
-            yield return new WaitForSeconds(dieTime);
+            yield return new WaitForSeconds(mono.dieTime);
             GameObject.Destroy(mono.gameObject);
+            yield break;
+        }
+    }
+    public class Damage : LanternState
+    {
+        public override IEnumerator Main()
+        {
+            mono.Velocity = Vector2.zero;
+            mono.damageBox.gameObject.SetActive(false);
+            mono.Animator.SetTrigger("Damage");
+            yield return new WaitForSeconds(mono.damageTime);
+            mono.damageBox.gameObject.SetActive(true);
+            fsm.ChangeState(new Drop());
             yield break;
         }
     }
