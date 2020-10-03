@@ -40,9 +40,9 @@ public class Player : Autonomy
     public float zeroInputThreshold = 0;
     public AnimationCurve lightDashPowerAccBase;
     public AnimationCurve lightDashPowerAccMultiply;
-    public bool refreshDashPowerAfterKill;
     public bool resetPoweringWhileDash;
     public float maxDashPower = 6;
+    public float restoreDashPowerAfterKill;
     public float dashAfterDamageDelayTime;
     public Vector2 damageVelDrop;
     public Vector2 damageVelIdle;
@@ -402,9 +402,9 @@ namespace PlayerStates
                         Time.timeScale = 0;
                         yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
                     }
-                    if (attackable.OnAttack() && mono.refreshDashPowerAfterKill)
+                    if (attackable.OnAttack())
                     {
-                        mono.DashPower = mono.maxDashPower;
+                        mono.DashPower = mono.DashPower + mono.restoreDashPowerAfterKill;
                     }
                     Time.timeScale = 1;
                 }
