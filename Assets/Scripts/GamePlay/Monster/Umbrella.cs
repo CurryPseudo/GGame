@@ -8,10 +8,23 @@ public class Umbrella : Monster<Umbrella, UmbrellaState>
     public float waitAttackTime;
     public float detectAccumulatedTime;
     public float attackVel;
+    public float parryTime;
+    public float dieTime;
     public BoxPhysics attackDetectBox;
+    public BoxPhysics damageBox;
     void Start()
     {
-        fsm.ChangeState(new Drop());
+        fsm.ChangeState(new Drop(false));
+    }
+    public bool IdleParry(Vector2Int attackDirection)
+    {
+        return attackDirection.y < 0;
+    }
+    public bool AttackParry(Vector2Int attackDirection)
+    {
+        return (attackDirection.x == 0 && attackDirection.y < 0)
+            || (attackDirection.y == 0 && ((attackDirection.x < 0) ^ FaceLeft))
+            || (attackDirection.y < 0 && ((attackDirection.x < 0) ^ FaceLeft));
     }
 }
 
@@ -19,18 +32,29 @@ namespace UmbrellaStates
 {
     public abstract class UmbrellaState : State<Umbrella, UmbrellaState>, IMonsterState
     {
-        public void OnDamage()
+        public virtual AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
         {
-            Debug.Log("haha");
+            return AttackResult.None;
         }
 
-        public void OnDie()
-        {
-            Debug.Log("haha ehhh");
-        }
     }
     public class Drop : UmbrellaState
     {
+        private bool attacking = false;
+        public Drop(bool attacking)
+        {
+            this.attacking = attacking;
+        }
+        public override AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
+        {
+            if ((attacking && mono.AttackParry(attackDirection)) || (!attacking && mono.IdleParry(attackDirection)))
+            {
+                fsm.ChangeState(new Parry());
+                return AttackResult.Parry;
+            }
+            fsm.ChangeState(new Die());
+            return AttackResult.Dead;
+        }
         public override IEnumerator Main()
         {
             while (true)
@@ -58,6 +82,16 @@ namespace UmbrellaStates
                 }
             }
         }
+        public override AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
+        {
+            if (mono.IdleParry(attackDirection))
+            {
+                fsm.ChangeState(new Parry());
+                return AttackResult.Parry;
+            }
+            fsm.ChangeState(new Die());
+            return AttackResult.Dead;
+        }
     }
     public class Detected : UmbrellaState
     {
@@ -76,6 +110,16 @@ namespace UmbrellaStates
                 }
             }
             fsm.ChangeState(new Attack());
+        }
+        public override AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
+        {
+            if (mono.IdleParry(attackDirection))
+            {
+                fsm.ChangeState(new Parry());
+                return AttackResult.Parry;
+            }
+            fsm.ChangeState(new Die());
+            return AttackResult.Dead;
         }
     }
     public class Attack : UmbrellaState
@@ -97,9 +141,42 @@ namespace UmbrellaStates
                 if (!mono.IsOnGround)
                 {
                     mono.VelocityX = 0;
-                    fsm.ChangeState(new Drop());
+                    fsm.ChangeState(new Drop(true));
                 }
             }
+        }
+        public override AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
+        {
+            if (mono.AttackParry(attackDirection))
+            {
+                fsm.ChangeState(new Parry());
+                return AttackResult.Parry;
+            }
+            fsm.ChangeState(new Die());
+            return AttackResult.Dead;
+        }
+    }
+    public class Parry : UmbrellaState
+    {
+        public override IEnumerator Main()
+        {
+            mono.Animator.SetTrigger("Parry");
+            mono.VelocityX = 0;
+            yield return new WaitForSeconds(mono.parryTime);
+            fsm.ChangeState(new Attack());
+        }
+    }
+    public class Die : UmbrellaState
+    {
+        public override IEnumerator Main()
+        {
+            mono.damageBox.gameObject.SetActive(false);
+            mono.Animator.SetTrigger("Die");
+            mono.dieLight.Instantiate();
+            yield return new WaitForFixedUpdate();
+            yield return new WaitForSeconds(mono.dieTime);
+            GameObject.Destroy(mono.gameObject);
+            yield break;
         }
     }
 }

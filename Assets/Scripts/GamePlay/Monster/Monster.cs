@@ -4,8 +4,7 @@ using UnityEngine;
 
 public interface IMonsterState
 {
-    void OnDamage();
-    void OnDie();
+    AttackResult OnDamage(Vector2Int attackDirection, bool willDead);
 }
 
 public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S> where S : State<T, S>, IMonsterState
@@ -50,18 +49,20 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
         fsm = new FSM<T, S>(this as T);
     }
 
-    public bool OnAttack()
+    public AttackResult OnAttack(Vector2Int attackDirection)
     {
         if (life > 1)
         {
-            life -= 1;
-            fsm.Current.OnDamage();
-            return false;
+            var result = fsm.Current.OnDamage(attackDirection, false);
+            if (result == AttackResult.Damage)
+            {
+                life -= 1;
+            }
+            return result;
         }
         else
         {
-            fsm.Current.OnDie();
-            return true;
+            return fsm.Current.OnDamage(attackDirection, true);
         }
     }
     public bool ValidBox(BoxPhysics box)

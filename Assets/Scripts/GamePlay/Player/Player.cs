@@ -44,8 +44,12 @@ public class Player : Autonomy
     public float maxDashPower = 6;
     public float restoreDashPowerAfterKill;
     public float dashAfterDamageDelayTime;
+    public float damageInvincibleTime;
+    public float parriedInvincibleTime;
+    public float attackInvincibleTime;
     public Vector2 damageVelDrop;
     public Vector2 damageVelIdle;
+    public Vector2 damageVelParried;
     public LayerMask attackLayer;
     public LayerMask damageLayer;
     public bool isInCollision;
@@ -57,6 +61,17 @@ public class Player : Autonomy
     private HashSet<IGLight> inLights = new HashSet<IGLight>();
     private float poweringTime = 0;
     private bool pausePowering = false;
+    private bool invincible = false;
+    public void SetInvincibleTime(float time)
+    {
+        invincible = true;
+        StartCoroutine(Invincible(time));
+    }
+    private IEnumerator Invincible(float time)
+    {
+        yield return new WaitForSeconds(time);
+        invincible = false;
+    }
     public void ResetPoweringTime()
     {
         poweringTime = 0;
@@ -254,12 +269,28 @@ public class Player : Autonomy
     }
     public void ProcessDamage()
     {
+        if (invincible)
+        {
+            return;
+        }
         var damageGo = damageBox.InBoxCollision(damageLayer);
         if (damageGo != null)
         {
             Vector2 dir = transform.position - damageGo.transform.position;
             mainFsm.Current.OnDamage(dir.normalized);
         }
+    }
+    public void DamageVel(Vector2 direction, Vector2 velocity)
+    {
+        VelocityX = (direction.x >= 0 ? 1 : -1) * velocity.x;
+        VelocityY = velocity.y;
+    }
+    public void OnDamage()
+    {
+        DashPower -= 1;
+        ResetPoweringTime();
+        PausePowering();
+        SetInvincibleTime(damageInvincibleTime);
     }
 }
 
@@ -298,8 +329,8 @@ namespace PlayerStates
 
         public override void OnDamage(Vector2 direction)
         {
-            mono.VelocityX = (direction.x >= 0 ? 1 : -1) * mono.damageVelIdle.x;
-            mono.VelocityY = mono.damageVelIdle.y;
+            mono.DamageVel(direction, mono.damageVelIdle);
+            mono.OnDamage();
             fsm.ChangeState(new Damage());
         }
     }
@@ -327,8 +358,8 @@ namespace PlayerStates
 
         public override void OnDamage(Vector2 direction)
         {
-            mono.VelocityX = (direction.x >= 0 ? 1 : -1) * mono.damageVelDrop.x;
-            mono.VelocityY = mono.damageVelDrop.y;
+            mono.DamageVel(direction, mono.damageVelDrop);
+            mono.OnDamage();
             fsm.ChangeState(new Damage());
         }
     }
@@ -402,9 +433,20 @@ namespace PlayerStates
                         Time.timeScale = 0;
                         yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
                     }
-                    if (attackable.OnAttack())
+                    var attackResult = attackable.OnAttack(dirInt);
+                    if (attackResult == AttackResult.Dead)
                     {
                         mono.DashPower = mono.DashPower + mono.restoreDashPowerAfterKill;
+                    }
+                    else if (attackResult == AttackResult.Parry)
+                    {
+                        mono.DamageVel(-dirInt, mono.damageVelParried);
+                        mono.SetInvincibleTime(mono.parriedInvincibleTime);
+                        fsm.ChangeState(new Damage());
+                    }
+                    else
+                    {
+                        mono.SetInvincibleTime(mono.attackInvincibleTime);
                     }
                     Time.timeScale = 1;
                 }
@@ -425,9 +467,6 @@ namespace PlayerStates
         private bool couldDash = false;
         public override IEnumerator Main()
         {
-            mono.DashPower -= 1;
-            mono.ResetPoweringTime();
-            mono.PausePowering();
             mono.animation.Drop();
             mono.animation.SignDirectionX = mono.VelocityX >= 0 ? -1 : 1;
             var timeLeft = mono.dashAfterDamageDelayTime;
@@ -453,6 +492,8 @@ namespace PlayerStates
 
         public override void OnDamage(Vector2 direction)
         {
+            mono.DamageVel(direction, mono.damageVelDrop);
+            mono.OnDamage();
         }
 
         public override void OnDash()

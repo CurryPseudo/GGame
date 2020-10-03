@@ -1138,12 +1138,16 @@ MonoBehaviour:
     m_PreInfinity: 1
     m_PostInfinity: 2
     m_RotationOrder: 4
-  refreshDashPowerAfterKill: 1
   resetPoweringWhileDash: 1
   maxDashPower: 6
+  restoreDashPowerAfterKill: 3
   dashAfterDamageDelayTime: 0.3
+  damageInvincibleTime: 1
+  parriedInvincibleTime: 0.2
+  attackInvincibleTime: 0.2
   damageVelDrop: {x: 13, y: 10}
   damageVelIdle: {x: 13, y: 10}
+  damageVelParried: {x: 13, y: 10}
   attackLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -3477,7 +3481,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5576726913035047067
 RectTransform:
   m_ObjectHideFlags: 0
