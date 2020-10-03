@@ -4,7 +4,7 @@ using UnityEngine;
 using LanternStates;
 using Sirenix.OdinInspector;
 
-public class Lantern : Autonomy, IPlayerAttackable
+public class Lantern : Monster<Lantern, LanternState>, IPlayerAttackable
 {
     public float jumpTime;
     public float jumpXDis;
@@ -28,81 +28,24 @@ public class Lantern : Autonomy, IPlayerAttackable
             return jumpXDis / (2 * jumpTime);
         }
     }
-    public float yGrav;
-    public float yVelMax;
     public float waitJumpTime;
     public float prepareJumpTime;
     public float dieTime;
-    public int life;
     public float damageTime;
-    [SerializeField]
-    private bool faceLeft;
-    public bool FaceLeft
-    {
-        get => faceLeft;
-        set
-        {
-            faceLeft = value;
-            SpriteRenderer.flipX = !faceLeft;
-        }
-    }
-    public new GameObject animation;
     public BoxPhysics detectBoxAirLeft;
     public BoxPhysics detectBoxAirRight;
     public BoxPhysics detectBoxGroundLeft;
     public BoxPhysics detectBoxGroundRight;
     public BoxPhysics attackDetectBox;
     public BoxPhysics damageBox;
-    public GameObjectInstantiator dieLight;
-    public Animator Animator
-    {
-        get => animation.GetComponentInChildren<Animator>();
-    }
-    public SpriteRenderer SpriteRenderer
-    {
-        get => animation.GetComponentInChildren<SpriteRenderer>();
-    }
-    public LayerMask PlayerLayer
-    {
-        get
-        {
-            var player = SceneSingleton.Get<Player>();
-            return 1 << player.gameObject.layer;
-
-        }
-    }
-    private FSM<Lantern, LanternState> fsm;
-    protected override void Awake()
-    {
-        base.Awake();
-        fsm = new FSM<Lantern, LanternState>(this);
-    }
     void Start()
     {
         fsm.ChangeState(new Drop());
     }
-    public bool OnAttack()
-    {
-        if (life > 1)
-        {
-            life -= 1;
-            fsm.Current.OnDamage();
-            return false;
-        }
-        else
-        {
-            fsm.Current.OnDie();
-            return true;
-        }
-    }
-    public bool ValidBox(BoxPhysics box)
-    {
-        return box == moveBox;
-    }
 }
 namespace LanternStates
 {
-    public abstract class LanternState : State<Lantern, LanternState>
+    public abstract class LanternState : State<Lantern, LanternState>, IMonsterState
     {
         public virtual void OnDie()
         {
@@ -120,13 +63,7 @@ namespace LanternStates
             while (true)
             {
                 yield return new WaitForFixedUpdate();
-                mono.VelocityY -= mono.yGrav * Time.fixedDeltaTime;
-                if (Mathf.Abs(mono.VelocityY) > mono.yVelMax)
-                {
-                    mono.VelocityY = Mathf.Sign(mono.VelocityY) * mono.yVelMax;
-                }
-                var down = mono.VelocityY < 0;
-                if (mono.BlockMoveY() && down)
+                if (mono.Drop())
                 {
                     fsm.ChangeState(new Idle());
                     yield break;
