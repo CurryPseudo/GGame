@@ -94,11 +94,11 @@ namespace LanternStates
                 }
                 else
                 {
-                    if (ValidAttackAir(mono.FaceLeft) && ValidAttackGround(mono.FaceLeft))
+                    if (ValidAttackGround(mono.FaceLeft))
                     {
                         break;
                     }
-                    else if (ValidAttackAir(!mono.FaceLeft) && ValidAttackGround(!mono.FaceLeft))
+                    else if (ValidAttackGround(!mono.FaceLeft))
                     {
                         mono.FaceLeft = !mono.FaceLeft;
                         break;
