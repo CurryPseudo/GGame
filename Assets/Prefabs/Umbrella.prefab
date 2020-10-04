@@ -138,6 +138,7 @@ MonoBehaviour:
   attackVel: 20
   parryTime: 0.2
   dieTime: 0.8
+  afterAttackToIdleTime: 0.2
   attackDetectBox: {fileID: 8543327838855113833}
   damageBox: {fileID: 8543327838594897651}
 --- !u!1 &92581096422492097

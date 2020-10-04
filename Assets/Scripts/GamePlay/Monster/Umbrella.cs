@@ -10,6 +10,7 @@ public class Umbrella : Monster<Umbrella, UmbrellaState>
     public float attackVel;
     public float parryTime;
     public float dieTime;
+    public float afterAttackToIdleTime;
     public BoxPhysics attackDetectBox;
     public BoxPhysics damageBox;
     void Start()
@@ -23,8 +24,9 @@ public class Umbrella : Monster<Umbrella, UmbrellaState>
     public bool AttackParry(Vector2Int attackDirection)
     {
         return (attackDirection.x == 0 && attackDirection.y < 0)
-            || (attackDirection.y == 0 && ((attackDirection.x < 0) ^ FaceLeft))
-            || (attackDirection.y < 0 && ((attackDirection.x < 0) ^ FaceLeft));
+            //|| (attackDirection.y == 0 && ((attackDirection.x < 0) ^ FaceLeft))
+            //|| (attackDirection.y < 0 && ((attackDirection.x < 0) ^ FaceLeft));
+            || ((attackDirection.x < 0) ^ FaceLeft);
     }
 }
 
@@ -62,6 +64,11 @@ namespace UmbrellaStates
                 yield return new WaitForFixedUpdate();
                 if (mono.Drop())
                 {
+                    if (attacking)
+                    {
+                        mono.Animator.SetBool("Attack", false);
+                        yield return new WaitForSeconds(mono.afterAttackToIdleTime);
+                    }
                     fsm.ChangeState(new Idle());
                     yield break;
                 }
@@ -72,7 +79,6 @@ namespace UmbrellaStates
     {
         public override IEnumerator Main()
         {
-            mono.Animator.SetBool("Attack", false);
             while (true)
             {
                 yield return new WaitForFixedUpdate();
@@ -135,6 +141,8 @@ namespace UmbrellaStates
                 yield return new WaitForFixedUpdate();
                 if (mono.BlockMoveX())
                 {
+                    mono.Animator.SetBool("Attack", false);
+                    yield return new WaitForSeconds(mono.afterAttackToIdleTime);
                     fsm.ChangeState(new Idle());
                     yield break;
                 }
