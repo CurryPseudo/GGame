@@ -120,7 +120,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.22714329, y: -0.26489925}
+  m_Offset: {x: -0.22714329, y: -0.22905874}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -131,7 +131,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.49646568, y: 0.9110298}
+  m_Size: {x: 0.49646568, y: 0.98271084}
   m_EdgeRadius: 0
 --- !u!114 &1861741362
 MonoBehaviour:
@@ -387,27 +387,27 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   moveBox: {fileID: 8630890729572661727}
+  yGrav: 40
+  yVelMax: 28
+  faceLeft: 1
+  life: 1
+  animation: {fileID: 8630890728889028723}
+  dieLight:
+    source: {fileID: 6611665954989856693}
+    maxInstanceCount: 1
   jumpTime: 0.3
   jumpXDis: 2
   jumpYDis: 3
-  yGrav: 40
-  yVelMax: 28
   waitJumpTime: 0.1
   prepareJumpTime: 0.2
   dieTime: 0.7
-  life: 2
   damageTime: 0.5
-  faceLeft: 1
-  animation: {fileID: 8630890728889028723}
   detectBoxAirLeft: {fileID: 8630890728756833704}
   detectBoxAirRight: {fileID: 8630890728767365581}
   detectBoxGroundLeft: {fileID: 8630890729502814934}
   detectBoxGroundRight: {fileID: 8630890729923181190}
   attackDetectBox: {fileID: 1601851816}
   damageBox: {fileID: 1861741362}
-  dieLight:
-    source: {fileID: 6611665954989856693}
-    maxInstanceCount: 1
 --- !u!1 &8630890729007502213
 GameObject:
   m_ObjectHideFlags: 0
