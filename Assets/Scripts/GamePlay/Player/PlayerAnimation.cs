@@ -16,4 +16,5 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void Drop();
     public abstract void OnGround();
     public abstract void Attack(Vector2Int direction);
+    public abstract void OnParried(Vector2Int direction);
 }

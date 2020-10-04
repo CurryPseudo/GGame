@@ -442,6 +442,7 @@ namespace PlayerStates
                     {
                         mono.DamageVel(-dirInt, mono.damageVelParried);
                         mono.SetInvincibleTime(mono.parriedInvincibleTime);
+                        mono.animation.OnParried(dirInt);
                         fsm.ChangeState(new Damage());
                     }
                     else

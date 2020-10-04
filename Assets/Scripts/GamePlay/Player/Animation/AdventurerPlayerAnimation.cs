@@ -59,4 +59,8 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void Attack(Vector2Int direction)
     {
     }
+
+    public override void OnParried(Vector2Int direction)
+    {
+    }
 }

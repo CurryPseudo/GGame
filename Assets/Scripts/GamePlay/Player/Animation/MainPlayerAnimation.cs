@@ -14,6 +14,8 @@ public class MainPlayerAnimation : PlayerAnimation
     public GameObjectInstantiator onGroundFart;
     public List<GameObjectInstantiator> swordLightLefts;
     public List<GameObjectInstantiator> swordLightRights;
+    public List<GameObjectInstantiator> parriedEffectLefts;
+    public List<GameObjectInstantiator> parriedEffectRights;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private bool flipXLock = false;
@@ -134,5 +136,16 @@ public class MainPlayerAnimation : PlayerAnimation
         {
             sowrdLights[n].Instantiate(transform);
         }
+    }
+
+    public override void OnParried(Vector2Int direction)
+    {
+        int n = DirectionNumber(direction);
+        var parriedEffects = (direction.x >= 0 ? parriedEffectRights : parriedEffectLefts);
+        if (n < parriedEffects.Count)
+        {
+            parriedEffects[n].Instantiate();
+        }
+
     }
 }
