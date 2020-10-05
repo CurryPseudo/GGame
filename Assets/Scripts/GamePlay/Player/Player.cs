@@ -48,6 +48,7 @@ public class Player : Autonomy
     public float parriedInvincibleTime;
     public float attackInvincibleTime;
     public float dieTime;
+    public float bornTime;
     public Vector2 damageVelDrop;
     public Vector2 damageVelIdle;
     public Vector2 damageVelParried;
@@ -162,7 +163,7 @@ public class Player : Autonomy
     }
     void Start()
     {
-        mainFsm.ChangeState(new Drop());
+        mainFsm.ChangeState(new Born());
         DashPower = maxDashPower;
     }
     void FixedUpdate()
@@ -542,6 +543,27 @@ namespace PlayerStates
             var scene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(scene.name);
             yield break;
+        }
+
+        public override void OnDamage(Vector2 direction)
+        {
+        }
+
+        public override void OnDash()
+        {
+        }
+    }
+    public class Born : PlayerState
+    {
+        public override IEnumerator Main()
+        {
+            yield return new WaitForFixedUpdate();
+            mono.animation.Born();
+            Time.timeScale = 0;
+            yield return new WaitForSecondsRealtime(mono.bornTime);
+            Time.timeScale = 1;
+            mono.animation.AfterBorn();
+            fsm.ChangeState(new Drop());
         }
 
         public override void OnDamage(Vector2 direction)

@@ -1387,7 +1387,8 @@ MonoBehaviour:
   damageInvincibleTime: 1
   parriedInvincibleTime: 0.2
   attackInvincibleTime: 0.2
-  dieTime: 1.5
+  dieTime: 0.8
+  bornTime: 0.8
   damageVelDrop: {x: 13, y: 10}
   damageVelIdle: {x: 13, y: 10}
   damageVelParried: {x: 13, y: 10}

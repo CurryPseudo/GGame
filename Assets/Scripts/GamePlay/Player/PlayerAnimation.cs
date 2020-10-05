@@ -18,4 +18,6 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void Attack(Vector2Int direction);
     public abstract void OnParried(Vector2Int direction);
     public abstract void Die();
+    public abstract void Born();
+    public abstract void AfterBorn();
 }

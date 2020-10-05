@@ -67,4 +67,11 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void Die()
     {
     }
+
+    public override void Born()
+    {
+    }
+    public override void AfterBorn()
+    {
+    }
 }

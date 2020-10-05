@@ -154,4 +154,15 @@ public class MainPlayerAnimation : PlayerAnimation
         animator.updateMode = AnimatorUpdateMode.UnscaledTime;
         animator.SetTrigger("Die");
     }
+
+    public override void Born()
+    {
+        animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        animator.SetTrigger("Born");
+    }
+
+    public override void AfterBorn()
+    {
+        animator.updateMode = AnimatorUpdateMode.Normal;
+    }
 }
