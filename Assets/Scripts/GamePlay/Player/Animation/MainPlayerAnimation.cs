@@ -148,4 +148,10 @@ public class MainPlayerAnimation : PlayerAnimation
         }
 
     }
+
+    public override void Die()
+    {
+        animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        animator.SetTrigger("Die");
+    }
 }

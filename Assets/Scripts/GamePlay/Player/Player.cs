@@ -47,6 +47,7 @@ public class Player : Autonomy
     public float damageInvincibleTime;
     public float parriedInvincibleTime;
     public float attackInvincibleTime;
+    public float dieTime;
     public Vector2 damageVelDrop;
     public Vector2 damageVelIdle;
     public Vector2 damageVelParried;
@@ -112,11 +113,6 @@ public class Player : Autonomy
             {
                 dashPower = maxDashPower;
             }
-            if (dashPower < 0)
-            {
-                var scene = SceneManager.GetActiveScene();
-                SceneManager.LoadScene(scene.name);
-            }
             SceneSingleton.Get<IDashPowerUI>().SetDashPower(dashPower);
         }
     }
@@ -126,6 +122,21 @@ public class Player : Autonomy
 
     [NonSerialized]
     public new PlayerAnimation animation;
+    [ShowInInspector]
+    public String CurrentState
+    {
+        get
+        {
+            if (mainFsm != null && mainFsm.Current != null)
+            {
+                return mainFsm.Current.ToString();
+            }
+            else
+            {
+                return "null";
+            }
+        }
+    }
     private FSM<Player, PlayerState> mainFsm;
     protected override void Awake()
     {
@@ -288,9 +299,18 @@ public class Player : Autonomy
     public void OnDamage()
     {
         DashPower -= 1;
+        if (DashPower < 0)
+        {
+            mainFsm.ChangeState(new Die());
+            return;
+        }
         ResetPoweringTime();
         PausePowering();
         SetInvincibleTime(damageInvincibleTime);
+        if (!mainFsm.Current.IsDamage())
+        {
+            mainFsm.ChangeState(new Damage());
+        }
     }
 }
 
@@ -298,6 +318,10 @@ public abstract class PlayerState : State<Player, PlayerState>
 {
     public abstract void OnDash();
     public abstract void OnDamage(Vector2 direction);
+    public virtual bool IsDamage()
+    {
+        return false;
+    }
 }
 namespace PlayerStates
 {
@@ -331,7 +355,6 @@ namespace PlayerStates
         {
             mono.DamageVel(direction, mono.damageVelIdle);
             mono.OnDamage();
-            fsm.ChangeState(new Damage());
         }
     }
     public class Drop : PlayerState
@@ -360,7 +383,6 @@ namespace PlayerStates
         {
             mono.DamageVel(direction, mono.damageVelDrop);
             mono.OnDamage();
-            fsm.ChangeState(new Damage());
         }
     }
     public class Dash : PlayerState
@@ -496,6 +518,10 @@ namespace PlayerStates
             mono.DamageVel(direction, mono.damageVelDrop);
             mono.OnDamage();
         }
+        public override bool IsDamage()
+        {
+            return true;
+        }
 
         public override void OnDash()
         {
@@ -503,6 +529,27 @@ namespace PlayerStates
             {
                 fsm.ChangeState(new Dash(false));
             }
+        }
+    }
+    public class Die : PlayerState
+    {
+        public override IEnumerator Main()
+        {
+            mono.animation.Die();
+            Time.timeScale = 0;
+            yield return new WaitForSecondsRealtime(mono.dieTime);
+            Time.timeScale = 1;
+            var scene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(scene.name);
+            yield break;
+        }
+
+        public override void OnDamage(Vector2 direction)
+        {
+        }
+
+        public override void OnDash()
+        {
         }
     }
 }

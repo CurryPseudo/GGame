@@ -29,7 +29,10 @@ public class FSM<T, S> where T : MonoBehaviour where S : State<T, S>
     {
         if (current != null)
         {
-            mono.StopCoroutine(Current.coroutine);
+            if (Current.coroutine != null)
+            {
+                mono.StopCoroutine(Current.coroutine);
+            }
             current.Exit();
         }
         if (next != null)
