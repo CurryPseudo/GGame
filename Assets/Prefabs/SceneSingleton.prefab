@@ -1398,6 +1398,9 @@ MonoBehaviour:
   damageLayer:
     serializedVersion: 2
     m_Bits: 4096
+  detectPlayerLayer:
+    serializedVersion: 2
+    m_Bits: 32768
   isInCollision: 0
   attackBox: {fileID: 728784661}
   damageBox: {fileID: 1232893747}
@@ -1998,7 +2001,7 @@ GameObject:
   - component: {fileID: 1232893746}
   - component: {fileID: 1232893748}
   - component: {fileID: 1232893747}
-  m_Layer: 13
+  m_Layer: 15
   m_Name: Damage
   m_TagString: Untagged
   m_Icon: {fileID: 0}

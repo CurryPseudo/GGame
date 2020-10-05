@@ -4248,18 +4248,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 694115693, guid: 4f98c95884bab0143bbef3fc26a52350, type: 3}
-      propertyPath: detectPlayerLayer.m_Bits
-      value: 32768
-      objectReference: {fileID: 0}
-    - target: {fileID: 694115693, guid: 4f98c95884bab0143bbef3fc26a52350, type: 3}
-      propertyPath: bornTime
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1232893745, guid: 4f98c95884bab0143bbef3fc26a52350, type: 3}
-      propertyPath: m_Layer
-      value: 15
-      objectReference: {fileID: 0}
     - target: {fileID: 3783480788586529427, guid: 4f98c95884bab0143bbef3fc26a52350, type: 3}
       propertyPath: m_Name
       value: SceneSingleton
