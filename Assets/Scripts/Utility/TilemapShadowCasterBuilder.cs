@@ -39,41 +39,6 @@ public class TilemapShadowCasterBuilder : MonoBehaviour
 
         }
     }
-    IEnumerable<Vector2Int> AllTiles()
-    {
-        var tilemap = GetComponent<Tilemap>();
-        if (tilemap == null)
-        {
-            yield break;
-        }
-        var bounds = tilemap.cellBounds;
-        var tiles = tilemap.GetTilesBlock(bounds);
-        for (int y = 0; y < bounds.size.y; y++)
-        {
-            for (int x = 0; x < bounds.size.x; x++)
-            {
-                var tile = tiles[x + y * bounds.size.x];
-                if (tile != null)
-                {
-                    yield return new Vector2Int(bounds.min.x + x, bounds.min.y + y);
-                }
-            }
-        }
-
-    }
-    IEnumerable<Vector3> AllTilePositions()
-    {
-        var tilemap = GetComponent<Tilemap>();
-        if (tilemap == null)
-        {
-            yield break;
-        }
-        foreach (var tilePos in AllTiles())
-        {
-            yield return tilemap.CellToWorld(new Vector3Int(tilePos.x, tilePos.y, 0)) + tilemap.GetLayoutCellCenter();
-        }
-
-    }
     void UpdateShadowCasters()
     {
         int childCount = transform.childCount;
