@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Experimental.Rendering.Universal;
+using System.Reflection;
 
 [ExecuteInEditMode]
 [DisallowMultipleComponent]
@@ -81,14 +82,41 @@ public class TilemapShadowCasterBuilder : MonoBehaviour
             DestroyImmediate(transform.GetChild(i).gameObject);
 
         }
-        foreach (var position in AllTilePositions())
+        var composite = GetComponent<CompositeCollider2D>();
+        for (int i = 0; i < composite.pathCount; i++)
         {
             GameObject go = new GameObject("ShadowCaster");
             go.transform.SetParent(transform);
-            go.transform.position = position;
             var caster = go.AddComponent<ShadowCaster2D>();
             caster.selfShadows = true;
+            var path = new Vector2[composite.GetPathPointCount(i)];
+            composite.GetPath(i, path);
+            var pathV3 = new Vector3[path.Length];
+            for (int j = path.Length - 1; j >= 0; j--)
+            {
+                pathV3[j] = path[j];
+            }
+            SetShadowCasterPath(caster, pathV3);
+            ShadowCasterReset(caster);
         }
     }
-
+    public static Vector3[] GetShadowCasterPath(ShadowCaster2D shadowCaster)
+    {
+        FieldInfo field = typeof(ShadowCaster2D).GetField("m_ShapePath", BindingFlags.NonPublic | BindingFlags.Instance);
+        return (Vector3[])field.GetValue(shadowCaster);
+    }
+    public static void SetShadowCasterPath(ShadowCaster2D shadowCaster, Vector3[] shadowPath)
+    {
+        FieldInfo field = typeof(ShadowCaster2D).GetField("m_ShapePath", BindingFlags.NonPublic | BindingFlags.Instance);
+        field.SetValue(shadowCaster, shadowPath);
+    }
+    public static void ShadowCasterReset(ShadowCaster2D shadowCaster)
+    {
+        FieldInfo field = typeof(ShadowCaster2D).GetField("m_Mesh", BindingFlags.NonPublic | BindingFlags.Instance);
+        field.SetValue(shadowCaster, null);
+        MethodInfo method = typeof(ShadowCaster2D).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
+        method.Invoke(shadowCaster, new object[] { });
+        method = typeof(ShadowCaster2D).GetMethod("OnEnable", BindingFlags.NonPublic | BindingFlags.Instance);
+        method.Invoke(shadowCaster, new object[] { });
+    }
 }
