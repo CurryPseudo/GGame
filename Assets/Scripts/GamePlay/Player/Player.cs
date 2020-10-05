@@ -54,6 +54,15 @@ public class Player : Autonomy
     public Vector2 damageVelParried;
     public LayerMask attackLayer;
     public LayerMask damageLayer;
+    public LayerMask detectPlayerLayer;
+    public static LayerMask DetectPlayerLayer
+    {
+        get
+        {
+            var player = SceneSingleton.Get<Player>();
+            return player.detectPlayerLayer;
+        }
+    }
     public bool isInCollision;
     public BoxPhysics attackBox;
     public BoxPhysics damageBox;
@@ -163,6 +172,11 @@ public class Player : Autonomy
     }
     void Start()
     {
+        var currentCheckPoint = CheckPoint.Current;
+        if (currentCheckPoint != null)
+        {
+            transform.position = currentCheckPoint.Point;
+        }
         mainFsm.ChangeState(new Born());
         DashPower = maxDashPower;
     }
@@ -557,7 +571,6 @@ namespace PlayerStates
     {
         public override IEnumerator Main()
         {
-            yield return new WaitForFixedUpdate();
             mono.animation.Born();
             Time.timeScale = 0;
             yield return new WaitForSecondsRealtime(mono.bornTime);
