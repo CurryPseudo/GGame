@@ -58,6 +58,9 @@ public class Player : Autonomy
     public LayerMask attackLayer;
     public LayerMask damageLayer;
     public LayerMask detectPlayerLayer;
+    public bool isInCollision;
+    public BoxPhysics attackBox;
+    public BoxPhysics damageBox;
     public static LayerMask DetectPlayerLayer
     {
         get
@@ -66,9 +69,10 @@ public class Player : Autonomy
             return player.detectPlayerLayer;
         }
     }
-    public bool isInCollision;
-    public BoxPhysics attackBox;
-    public BoxPhysics damageBox;
+    public PlayerInputQueue InputQueue
+    {
+        get => GetComponent<PlayerInputQueue>();
+    }
     private Vector2Int dashDirInput = Vector2Int.zero;
     [ShowInInspector]
     private int moveInput;
@@ -203,6 +207,14 @@ public class Player : Autonomy
             poweringTime = 0;
         }
         ProcessDamage();
+        if (mainFsm.Current != null && mainFsm.Current.CouldDash)
+        {
+            var action = InputQueue.GetAction();
+            if (action != null)
+            {
+                mainFsm.Current.OnDash(action.Value.dashDir);
+            }
+        }
     }
     void OnDrawGizmosSelected()
     {
@@ -248,10 +260,7 @@ public class Player : Autonomy
         dashDirInput = choose[index];
         if (dashDirInput != new Vector2Int(0, 0))
         {
-            if (mainFsm.Current != null)
-            {
-                mainFsm.Current.OnDash();
-            }
+            InputQueue.AddAction(new PlayerAction(dashDirInput));
         }
     }
     public void MoveX(XMoveParam param, bool onGround)
@@ -347,7 +356,22 @@ public class Player : Autonomy
 
 public abstract class PlayerState : State<Player, PlayerState>
 {
-    public abstract void OnDash();
+    public virtual void OnDash(Vector2Int dir)
+    {
+        if (mono.DashPower >= 1)
+        {
+            mono.DashPower -= 1;
+            fsm.ChangeState(new Dash(dir, OnGround));
+        }
+    }
+    public virtual bool CouldDash
+    {
+        get => true;
+    }
+    public virtual bool OnGround
+    {
+        get => false;
+    }
     public abstract void OnDamage(Vector2 direction);
     public virtual bool IsDamage()
     {
@@ -358,14 +382,6 @@ namespace PlayerStates
 {
     public class Idle : PlayerState
     {
-        public override void OnDash()
-        {
-            if (mono.DashPower >= 1)
-            {
-                mono.DashPower -= 1;
-                fsm.ChangeState(new Dash(true));
-            }
-        }
         public override IEnumerator Main()
         {
             while (true)
@@ -387,18 +403,14 @@ namespace PlayerStates
             mono.DamageVel(direction, mono.damageVelIdle);
             mono.OnDamage();
         }
+        public override bool OnGround
+        {
+            get => true;
+        }
     }
     public class Drop : PlayerState
     {
 
-        public override void OnDash()
-        {
-            if (mono.DashPower >= 1)
-            {
-                mono.DashPower -= 1;
-                fsm.ChangeState(new Dash(false));
-            }
-        }
         public override IEnumerator Main()
         {
             mono.animation.Drop();
@@ -419,8 +431,10 @@ namespace PlayerStates
     public class Dash : PlayerState
     {
         private bool onGroundWhileDash;
-        public Dash(bool onGroundWhileDash)
+        private Vector2Int dirInt;
+        public Dash(Vector2Int dirInt, bool onGroundWhileDash)
         {
+            this.dirInt = dirInt;
             this.onGroundWhileDash = onGroundWhileDash;
         }
         private HashSet<IPlayerAttackable> attacked;
@@ -432,7 +446,6 @@ namespace PlayerStates
             }
             attacked = new HashSet<IPlayerAttackable>();
             var dashSpeed = mono.dashDistance / mono.dashTime;
-            Vector2Int dirInt = mono.DashDirInput;
             if (dirInt == Vector2Int.zero)
             {
                 dirInt = Vector2Int.right * mono.SignDirectionX;
@@ -526,12 +539,12 @@ namespace PlayerStates
             yield break;
         }
 
-        public override void OnDash()
-        {
-        }
-
         public override void OnDamage(Vector2 direction)
         {
+        }
+        public override bool CouldDash
+        {
+            get => false;
         }
     }
     public class Damage : PlayerState
@@ -572,12 +585,16 @@ namespace PlayerStates
             return true;
         }
 
-        public override void OnDash()
+        public override void OnDash(Vector2Int dir)
         {
             if (couldDash)
             {
-                fsm.ChangeState(new Dash(false));
+                fsm.ChangeState(new Dash(dir, false));
             }
+        }
+        public override bool CouldDash
+        {
+            get => couldDash;
         }
     }
     public class Die : PlayerState
@@ -596,10 +613,11 @@ namespace PlayerStates
         public override void OnDamage(Vector2 direction)
         {
         }
-
-        public override void OnDash()
+        public override bool CouldDash
         {
+            get => false;
         }
+
     }
     public class Born : PlayerState
     {
@@ -616,9 +634,10 @@ namespace PlayerStates
         public override void OnDamage(Vector2 direction)
         {
         }
-
-        public override void OnDash()
+        public override bool CouldDash
         {
+            get => false;
         }
+
     }
 }
