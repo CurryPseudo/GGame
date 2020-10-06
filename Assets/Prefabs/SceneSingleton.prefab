@@ -1197,237 +1197,157 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: AD
-      m_Id: 78bffb2e-cdd1-4951-b74d-4af94c9d8c18
-      m_Path: 2DVector
+      m_Id: 4bbb0fbd-5323-4fa1-af14-bed6fca94f82
+      m_Path: 1DAxis
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Move
       m_Flags: 4
-    - m_Name: up
-      m_Id: 808ad5a6-334f-463b-87e3-43167098815e
-      m_Path: 
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: down
-      m_Id: d13483a4-6e00-4e67-96af-3ff157188482
-      m_Path: 
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: left
-      m_Id: dd2c37fc-70ef-44f9-b729-0f64f84e711b
+    - m_Name: negative
+      m_Id: b5ec04c4-0810-433c-ae0f-8d133f59d344
       m_Path: <Keyboard>/a
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Move
       m_Flags: 8
-    - m_Name: right
-      m_Id: 646a5439-53e5-4ead-b4fb-e121019ccc26
+    - m_Name: positive
+      m_Id: 45fcf3a0-e6e6-49a7-a78c-57fbf78faf24
       m_Path: <Keyboard>/d
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Move
       m_Flags: 8
-    - m_Name: 4862
-      m_Id: f0c0a858-4fd9-4ee9-8dd1-fe03cba64c3c
-      m_Path: 2DVector
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 4
-    - m_Name: up
-      m_Id: 0bfedcf9-1a42-4622-b8ba-50c206c58d3b
-      m_Path: <Keyboard>/numpad8
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: down
-      m_Id: 153e8e7f-2f43-4d89-b1bc-17368ce7217b
-      m_Path: <Keyboard>/numpad2
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: left
-      m_Id: 37f25a33-9ae5-4f36-a0e4-71570f9fa121
-      m_Path: <Keyboard>/numpad4
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: right
-      m_Id: a1e6347e-3065-4aae-99b0-074f5a6b6761
-      m_Path: <Keyboard>/numpad6
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: 73
-      m_Id: 8e54d80e-7bcb-48f1-9d99-6bc50468f477
-      m_Path: 2DVector
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 4
-    - m_Name: up
-      m_Id: d2a3a3ee-3c24-41eb-bb06-ce214203749f
-      m_Path: <Keyboard>/numpad7
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: down
-      m_Id: 76859997-02bf-4a1f-a731-780dace82ee4
-      m_Path: <Keyboard>/numpad3
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: left
-      m_Id: a5acd8b8-ca5b-4e15-8ff5-7099d112875f
-      m_Path: <Keyboard>/numpad7
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: right
-      m_Id: 3458abfc-2fb3-43d7-a77f-90b6a04fe17b
-      m_Path: <Keyboard>/numpad3
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: 19
-      m_Id: 4d9401be-a84c-44e7-9afd-9721af4e543a
-      m_Path: 2DVector
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 4
-    - m_Name: up
-      m_Id: dac7fe91-45b7-4847-9e44-298aba24f2da
-      m_Path: <Keyboard>/numpad9
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: down
-      m_Id: 79d9a007-bd03-47e4-91fe-9bc041412e0d
-      m_Path: <Keyboard>/numpad1
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: left
-      m_Id: 7b5beac6-eff5-46be-b099-3990437965ff
-      m_Path: <Keyboard>/numpad1
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-    - m_Name: right
-      m_Id: 3f5d496c-b0f6-446b-8a44-41c3b41bad4d
-      m_Path: <Keyboard>/numpad9
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Move
-      m_Flags: 8
-  dashAction:
-    m_Name: Dash
+  dashDirAction:
+    m_Name: Dash Dir
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 21397fc4-3570-4e9d-8260-70ece562a7c6
+    m_Id: ea16b198-1c55-4a3c-ab9d-380cd21ff4b1
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 9e31c3fc-cc2d-42bb-b1d9-ac1e7928b59f
-      m_Path: <Keyboard>/numpad1
+    - m_Name: 4862
+      m_Id: bf50a28d-7ea3-48ee-9090-748b6566bae0
+      m_Path: 2DVector
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Dash
-      m_Flags: 0
-    - m_Name: 
-      m_Id: 6e1cd9dd-6bf3-45c5-8cf8-051bc204efe0
-      m_Path: <Keyboard>/numpad2
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Dash
-      m_Flags: 0
-    - m_Name: 
-      m_Id: c3c16f15-c7f2-4d77-be50-1b7f8cd4a023
-      m_Path: <Keyboard>/numpad3
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Dash
-      m_Flags: 0
-    - m_Name: 
-      m_Id: a6e1f17a-de99-43ae-982b-4b3982298366
-      m_Path: <Keyboard>/numpad4
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Dash
-      m_Flags: 0
-    - m_Name: 
-      m_Id: 583e290e-64f9-454c-9460-eb0aa26252ae
-      m_Path: <Keyboard>/numpad6
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Dash
-      m_Flags: 0
-    - m_Name: 
-      m_Id: 0d3cc128-04dc-4919-b778-abc1b7fd6acf
-      m_Path: <Keyboard>/numpad7
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Dash
-      m_Flags: 0
-    - m_Name: 
-      m_Id: e370e6e0-db1d-44dc-a17f-7f113378cf6d
+      m_Action: Dash Dir
+      m_Flags: 4
+    - m_Name: up
+      m_Id: a7891923-1542-47d3-a207-d7fea9e3e704
       m_Path: <Keyboard>/numpad8
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Dash
-      m_Flags: 0
-    - m_Name: 
-      m_Id: 3d80da8f-5ac7-4ee3-9013-6e49164ed4c9
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: down
+      m_Id: 67e35f86-7b8b-471a-be84-7a4669e1f1de
+      m_Path: <Keyboard>/numpad2
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: left
+      m_Id: a13f71c5-a8b0-45db-85da-e3853c47ca46
+      m_Path: <Keyboard>/numpad4
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: right
+      m_Id: c5656c1f-f5ae-4791-894c-d57f6821229b
+      m_Path: <Keyboard>/numpad6
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: 73
+      m_Id: a3b9f53d-2189-4d43-99b5-7307ffe1919c
+      m_Path: 2DVector
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 4
+    - m_Name: up
+      m_Id: b307da1b-7bf8-4aec-8ac5-33e0b4bddab6
+      m_Path: <Keyboard>/numpad7
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: left
+      m_Id: 4254352b-43ab-4d17-9ea6-200c50778a42
+      m_Path: <Keyboard>/numpad7
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: down
+      m_Id: c29c5510-dc26-4cc9-b180-5707b86b6cfa
+      m_Path: <Keyboard>/numpad3
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: right
+      m_Id: c44b8b6f-2f3e-4ce8-8304-7250b738ba07
+      m_Path: <Keyboard>/numpad3
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: 19
+      m_Id: 350eb9fe-cda6-4b44-bd80-1c4f1f8a5a09
+      m_Path: 2DVector
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 4
+    - m_Name: up
+      m_Id: 95ce95dd-6a12-425b-b3f2-5d84eef7f47b
       m_Path: <Keyboard>/numpad9
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Dash
-      m_Flags: 0
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: down
+      m_Id: d5afc2df-056d-463b-b813-d36fe320a28c
+      m_Path: <Keyboard>/numpad1
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: left
+      m_Id: 167b1691-8a40-4788-8061-e9f2f8f95cb5
+      m_Path: <Keyboard>/numpad1
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
+    - m_Name: right
+      m_Id: 2d793505-c7fa-4fc7-a854-02055a5a8a6a
+      m_Path: <Keyboard>/numpad9
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash Dir
+      m_Flags: 8
   yGrav: 40
   yVelMax: 28
   dashTime: 0.15
@@ -4868,7 +4788,7 @@ RectTransform:
   m_GameObject: {fileID: 4104602237351590620}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.09646884, y: 0.09646884, z: 0.09646884}
+  m_LocalScale: {x: 0.13402416, y: 0.13402416, z: 0.13402416}
   m_Children: []
   m_Father: {fileID: 1388929648073839789}
   m_RootOrder: 0
@@ -4957,7 +4877,7 @@ RectTransform:
   m_GameObject: {fileID: 4307305297441314351}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.09646884, y: 0.09646884, z: 0.09646884}
+  m_LocalScale: {x: 0.13402416, y: 0.13402416, z: 0.13402416}
   m_Children: []
   m_Father: {fileID: 1388929648073839789}
   m_RootOrder: 1

@@ -30,7 +30,7 @@ public class Player : Autonomy
     public XMoveParam idleMoveX;
     public XMoveParam dropMoveX;
     public InputAction moveAction;
-    public InputAction dashAction;
+    public InputAction dashDirAction;
     public float yGrav;
     public float yVelMax;
     public float dashTime;
@@ -66,7 +66,9 @@ public class Player : Autonomy
     public bool isInCollision;
     public BoxPhysics attackBox;
     public BoxPhysics damageBox;
-    private Vector2Int moveInput = Vector2Int.zero;
+    private Vector2Int dashDirInput = Vector2Int.zero;
+    [ShowInInspector]
+    private int moveInput;
     private int lastMoveInputX = 0;
     private float dashPower;
     private HashSet<IGLight> inLights = new HashSet<IGLight>();
@@ -128,7 +130,7 @@ public class Player : Autonomy
     }
 
     [ShowInInspector]
-    public Vector2Int MoveInput { get => moveInput; }
+    public Vector2Int DashDirInput { get => dashDirInput; }
 
     [NonSerialized]
     public new PlayerAnimation animation;
@@ -158,17 +160,18 @@ public class Player : Autonomy
         mainFsm = new FSM<Player, PlayerState>(this);
         moveAction.performed += OnMove;
         moveAction.canceled += OnMove;
-        dashAction.performed += OnDash;
+        dashDirAction.performed += OnDashDir;
+        dashDirAction.canceled += OnDashDir;
     }
     void OnEnable()
     {
         moveAction.Enable();
-        dashAction.Enable();
+        dashDirAction.Enable();
     }
     void OnDisable()
     {
         moveAction.Disable();
-        dashAction.Disable();
+        dashDirAction.Disable();
     }
     void Start()
     {
@@ -206,14 +209,24 @@ public class Player : Autonomy
     }
     void OnMove(CallbackContext context)
     {
-        var moveFloat = context.ReadValue<Vector2>();
-        if (moveFloat.magnitude < zeroInputThreshold)
+        var moveFloat = context.ReadValue<float>();
+        if (Mathf.Abs(moveFloat) < zeroInputThreshold)
         {
-            moveInput = new Vector2Int(0, 0);
+            moveInput = 0;
             return;
         }
-        moveFloat.Normalize();
-        var angle = Vector2.SignedAngle(Vector2.right, moveFloat);
+        moveInput = moveFloat >= 0 ? 1 : -1;
+    }
+    void OnDashDir(CallbackContext context)
+    {
+        var dashDirFloat = context.ReadValue<Vector2>();
+        if (dashDirFloat.magnitude < zeroInputThreshold)
+        {
+            dashDirInput = new Vector2Int(0, 0);
+            return;
+        }
+        dashDirFloat.Normalize();
+        var angle = Vector2.SignedAngle(Vector2.right, dashDirFloat);
         Vector2Int[] choose = {
             new Vector2Int(-1, -1),
             new Vector2Int(0, -1),
@@ -229,19 +242,19 @@ public class Player : Autonomy
         {
             index = 7;
         }
-        moveInput = choose[index];
-    }
-    void OnDash(CallbackContext context)
-    {
-        if (context.ReadValueAsButton())
+        dashDirInput = choose[index];
+        if (dashDirInput != new Vector2Int(0, 0))
         {
-            mainFsm.Current.OnDash();
+            if (mainFsm.Current != null)
+            {
+                mainFsm.Current.OnDash();
+            }
         }
     }
     public void MoveX(XMoveParam param, bool onGround)
     {
         bool notFartSpeed = Mathf.Abs(VelocityX) < param.xVelMax * fartVelMaxRatio;
-        if (MoveInput.x == 0)
+        if (moveInput == 0)
         {
             if (lastMoveInputX != 0)
             {
@@ -255,7 +268,7 @@ public class Player : Autonomy
             {
                 animation.BeginRun();
             }
-            if (Mathf.Sign(MoveInput.x) * Mathf.Sign(VelocityX) >= 0)
+            if (moveInput * Mathf.Sign(VelocityX) >= 0)
             {
                 VelocityX += Mathf.Sign(VelocityX) * param.xAcc * Time.fixedDeltaTime;
             }
@@ -271,13 +284,13 @@ public class Player : Autonomy
         }
         if (notFartSpeed && onGround && Mathf.Abs(VelocityX) > param.xVelMax * fartVelMaxRatio)
         {
-            animation.RunFart((int)(Mathf.Sign(MoveInput.x)));
+            animation.RunFart(moveInput);
         }
 
         animation.SignDirectionX = SignDirectionX;
         animation.RunningSpeed = Mathf.Abs(VelocityX) / param.xVelMax;
         BlockMoveX();
-        lastMoveInputX = MoveInput.x;
+        lastMoveInputX = moveInput;
     }
     public void DropY()
     {
@@ -416,7 +429,7 @@ namespace PlayerStates
             }
             attacked = new HashSet<IPlayerAttackable>();
             var dashSpeed = mono.dashDistance / mono.dashTime;
-            Vector2Int dirInt = mono.MoveInput;
+            Vector2Int dirInt = mono.DashDirInput;
             if (dirInt == Vector2Int.zero)
             {
                 dirInt = Vector2Int.right * mono.SignDirectionX;
