@@ -8,6 +8,7 @@ using Sirenix.OdinInspector;
 using System;
 using static UnityEngine.InputSystem.InputAction;
 using UnityEngine.SceneManagement;
+using Cinemachine;
 
 [Serializable]
 public struct XMoveParam
@@ -49,6 +50,8 @@ public class Player : Autonomy
     public float attackInvincibleTime;
     public float dieTime;
     public float bornTime;
+    public float attackNoiseAmplitudeGain;
+    public float attackNoiseFrequencyGain;
     public Vector2 damageVelDrop;
     public Vector2 damageVelIdle;
     public Vector2 damageVelParried;
@@ -478,10 +481,28 @@ namespace PlayerStates
                 {
                     attacked.Add(attackable);
                     mono.animation.Attack(dirInt);
+                    {
+                        var cameraBrain = SceneSingleton.Get<CinemachineBrain>();
+                        cameraBrain.m_IgnoreTimeScale = true;
+
+                        var virtualCamera = SceneSingleton.Get<CinemachineVirtualCamera>();
+                        var perlin = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+                        perlin.m_AmplitudeGain = mono.attackNoiseAmplitudeGain;
+                        perlin.m_FrequencyGain = mono.attackNoiseFrequencyGain;
+                    }
                     if (mono.attackFrameDelay > 0)
                     {
                         Time.timeScale = 0;
                         yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
+                    }
+                    {
+                        var cameraBrain = SceneSingleton.Get<CinemachineBrain>();
+                        cameraBrain.m_IgnoreTimeScale = false;
+
+                        var virtualCamera = SceneSingleton.Get<CinemachineVirtualCamera>();
+                        var perlin = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+                        perlin.m_AmplitudeGain = 0;
+                        perlin.m_FrequencyGain = 0;
                     }
                     var attackResult = attackable.OnAttack(dirInt);
                     if (attackResult == AttackResult.Dead)
