@@ -147,6 +147,7 @@ namespace LanternStates
         public override IEnumerator Main()
         {
             mono.damageBox.gameObject.SetActive(false);
+            mono.attackableBox.gameObject.SetActive(false);
             mono.Animator.SetTrigger("Die");
             mono.dieLight.Instantiate();
             yield return new WaitForFixedUpdate();
@@ -161,9 +162,11 @@ namespace LanternStates
         {
             mono.Velocity = Vector2.zero;
             mono.damageBox.gameObject.SetActive(false);
+            mono.attackableBox.gameObject.SetActive(false);
             mono.Animator.SetTrigger("Damage");
             yield return new WaitForSeconds(mono.damageTime);
             mono.damageBox.gameObject.SetActive(true);
+            mono.attackableBox.gameObject.SetActive(true);
             fsm.ChangeState(new Drop());
             yield break;
         }

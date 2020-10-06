@@ -392,6 +392,7 @@ MonoBehaviour:
   faceLeft: 1
   life: 1
   animation: {fileID: 8630890728889028723}
+  attackableBox: {fileID: 8630890729572661727}
   dieLight:
     source: {fileID: 6611665954989856693}
     maxInstanceCount: 1

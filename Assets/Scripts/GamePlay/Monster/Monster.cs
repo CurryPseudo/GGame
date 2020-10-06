@@ -15,6 +15,7 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
     private bool faceLeft;
     public int life;
     public new GameObject animation;
+    public BoxPhysics attackableBox;
     public bool FaceLeft
     {
         get => faceLeft;
@@ -67,7 +68,7 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
     }
     public bool ValidBox(BoxPhysics box)
     {
-        return box == moveBox;
+        return box == attackableBox;
     }
     public bool Drop()
     {

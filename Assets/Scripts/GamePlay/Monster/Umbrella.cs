@@ -179,6 +179,7 @@ namespace UmbrellaStates
         public override IEnumerator Main()
         {
             mono.damageBox.gameObject.SetActive(false);
+            mono.attackableBox.gameObject.SetActive(false);
             mono.Animator.SetTrigger("Die");
             mono.dieLight.Instantiate();
             yield return new WaitForFixedUpdate();

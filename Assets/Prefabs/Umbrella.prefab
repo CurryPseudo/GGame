@@ -130,6 +130,7 @@ MonoBehaviour:
   faceLeft: 1
   life: 1
   animation: {fileID: 92581096476388932}
+  attackableBox: {fileID: 92581095978271774}
   dieLight:
     source: {fileID: 3264727375101209204}
     maxInstanceCount: 1
@@ -263,7 +264,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1002111603
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 31f2b9c0308b179489152a53eb972ac0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -634,7 +635,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1002111603
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 3295dca031a5afe4eb2ee0072912510a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
