@@ -165,4 +165,14 @@ public class MainPlayerAnimation : PlayerAnimation
     {
         animator.updateMode = AnimatorUpdateMode.Normal;
     }
+
+    public override void BounceUp()
+    {
+        animator.SetBool("BouncingUp", true);
+    }
+
+    public override void AfterBounceUp()
+    {
+        animator.SetBool("BouncingUp", false);
+    }
 }

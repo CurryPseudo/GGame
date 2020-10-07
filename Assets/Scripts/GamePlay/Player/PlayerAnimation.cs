@@ -20,4 +20,6 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void Die();
     public abstract void Born();
     public abstract void AfterBorn();
+    public abstract void BounceUp();
+    public abstract void AfterBounceUp();
 }

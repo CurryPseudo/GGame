@@ -52,6 +52,15 @@ public class Player : Autonomy
     public float bornTime;
     public float attackNoiseAmplitudeGain;
     public float attackNoiseFrequencyGain;
+    public float bounceUpDis;
+    [ShowInInspector]
+    public float BounceUpVel
+    {
+        get
+        {
+            return Mathf.Sqrt(2 * yGrav * bounceUpDis);
+        }
+    }
     public Vector2 damageVelDrop;
     public Vector2 damageVelIdle;
     public Vector2 damageVelParried;
@@ -347,6 +356,10 @@ public class Player : Autonomy
             mainFsm.ChangeState(new Damage());
         }
     }
+    public void OnBounceUp()
+    {
+        mainFsm.Current?.OnBounceUp();
+    }
 }
 
 public abstract class PlayerState : State<Player, PlayerState>
@@ -371,6 +384,11 @@ public abstract class PlayerState : State<Player, PlayerState>
     public virtual bool IsDamage()
     {
         return false;
+    }
+    public virtual void OnBounceUp()
+    {
+        mono.VelocityY = mono.BounceUpVel;
+        fsm.ChangeState(new BounceUp());
     }
 }
 namespace PlayerStates
@@ -638,6 +656,34 @@ namespace PlayerStates
         public override bool CouldDash
         {
             get => false;
+        }
+
+    }
+    public class BounceUp : PlayerState
+    {
+        public override IEnumerator Main()
+        {
+            mono.animation.BounceUp();
+            while (true)
+            {
+                yield return new WaitForFixedUpdate();
+                mono.MoveX(mono.dropMoveX, false);
+                mono.DropY();
+                if (mono.VelocityY < 0)
+                {
+                    fsm.ChangeState(new Drop());
+                }
+            }
+        }
+
+        public override void OnDamage(Vector2 direction)
+        {
+            mono.DamageVel(direction, mono.damageVelDrop);
+            mono.ProcessDamage();
+        }
+        public override void Exit()
+        {
+            mono.animation.AfterBounceUp();
         }
 
     }

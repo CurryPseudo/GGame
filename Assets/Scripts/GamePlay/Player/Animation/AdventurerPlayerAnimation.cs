@@ -74,4 +74,12 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void AfterBorn()
     {
     }
+
+    public override void BounceUp()
+    {
+    }
+
+    public override void AfterBounceUp()
+    {
+    }
 }
