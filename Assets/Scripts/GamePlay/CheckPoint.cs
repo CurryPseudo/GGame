@@ -11,8 +11,9 @@ public class CheckPoint : MonoBehaviour
     {
         get => GetComponentInChildren<Animator>();
     }
-    public void Active()
+    public void Active(Player t)
     {
+        t.AtCheckPoint();
         if (!active)
         {
             active = true;

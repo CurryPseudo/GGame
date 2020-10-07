@@ -360,6 +360,10 @@ public class Player : Autonomy
     {
         mainFsm.Current?.OnBounceUp();
     }
+    public void AtCheckPoint()
+    {
+        DashPower = maxDashPower;
+    }
 }
 
 public abstract class PlayerState : State<Player, PlayerState>
