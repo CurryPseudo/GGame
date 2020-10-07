@@ -25,6 +25,10 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
             SpriteRenderer.flipX = !faceLeft;
         }
     }
+    public Vector2 FaceDir
+    {
+        get => (faceLeft ? -1 : 1) * Vector2.right;
+    }
     public Animator Animator
     {
         get => animation.GetComponentInChildren<Animator>();

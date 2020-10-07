@@ -36,11 +36,12 @@ public class Lantern : Monster<Lantern, LanternState>, IPlayerAttackable
     public BoxPhysics detectBoxAirRight;
     public BoxPhysics detectBoxGroundLeft;
     public BoxPhysics detectBoxGroundRight;
-    public BoxPhysics attackDetectBox;
-    public BoxPhysics damageBox;
+    public ContainPlayer attackDetect;
+    public DamagePlayer damagePlayer;
     void Start()
     {
         fsm.ChangeState(new Drop());
+        damagePlayer.DamageDir = () => FaceDir;
     }
 }
 namespace LanternStates
@@ -83,9 +84,9 @@ namespace LanternStates
             while (true)
             {
                 yield return new WaitForSeconds(mono.waitJumpTime);
-                if (mono.attackDetectBox.InBoxCollision(mono.PlayerLayer) != null)
+                if (mono.attackDetect.Player != null)
                 {
-                    var player = SceneSingleton.Get<Player>();
+                    var player = mono.attackDetect.Player;
                     mono.FaceLeft = (player.transform.position - mono.transform.position).x < 0;
                     if (ValidAttackGround(mono.FaceLeft))
                     {
@@ -146,7 +147,7 @@ namespace LanternStates
     {
         public override IEnumerator Main()
         {
-            mono.damageBox.gameObject.SetActive(false);
+            mono.damagePlayer.gameObject.SetActive(false);
             mono.attackableBox.gameObject.SetActive(false);
             mono.Animator.SetTrigger("Die");
             mono.dieLight.Instantiate();
@@ -161,11 +162,11 @@ namespace LanternStates
         public override IEnumerator Main()
         {
             mono.Velocity = Vector2.zero;
-            mono.damageBox.gameObject.SetActive(false);
+            mono.damagePlayer.gameObject.SetActive(false);
             mono.attackableBox.gameObject.SetActive(false);
             mono.Animator.SetTrigger("Damage");
             yield return new WaitForSeconds(mono.damageTime);
-            mono.damageBox.gameObject.SetActive(true);
+            mono.damagePlayer.gameObject.SetActive(true);
             mono.attackableBox.gameObject.SetActive(true);
             fsm.ChangeState(new Drop());
             yield break;

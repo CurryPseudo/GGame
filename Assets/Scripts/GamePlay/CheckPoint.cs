@@ -5,23 +5,19 @@ using UnityEngine;
 
 public class CheckPoint : MonoBehaviour
 {
-    public BoxPhysics box;
     public Transform point;
     private bool active = false;
     private Animator Animator
     {
         get => GetComponentInChildren<Animator>();
     }
-    public void FixedUpdate()
+    public void Active()
     {
         if (!active)
         {
-            if (box.InBoxCollision(Player.DetectPlayerLayer))
-            {
-                active = true;
-                Animator.SetBool("Active", true);
-                PlayerPrefs.SetInt("BornPoint", this.gameObject.name.GetHashCode());
-            }
+            active = true;
+            Animator.SetBool("Active", true);
+            PlayerPrefs.SetInt("BornPoint", this.gameObject.name.GetHashCode());
         }
     }
     private static Dictionary<int, CheckPoint> map;

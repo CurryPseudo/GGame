@@ -11,11 +11,12 @@ public class Umbrella : Monster<Umbrella, UmbrellaState>
     public float parryTime;
     public float dieTime;
     public float afterAttackToIdleTime;
-    public BoxPhysics attackDetectBox;
-    public BoxPhysics damageBox;
+    public ContainPlayer attackDetect;
+    public DamagePlayer damagePlayer;
     void Start()
     {
         fsm.ChangeState(new Drop(false));
+        damagePlayer.DamageDir = () => FaceDir;
     }
     public bool IdleParry(Vector2Int attackDirection)
     {
@@ -82,7 +83,7 @@ namespace UmbrellaStates
             while (true)
             {
                 yield return new WaitForFixedUpdate();
-                if (mono.attackDetectBox.InBoxCollision(mono.PlayerLayer) != null)
+                if (mono.attackDetect.Player != null)
                 {
                     fsm.ChangeState(new Detected());
                 }
@@ -110,7 +111,7 @@ namespace UmbrellaStates
                 timeLeft -= Time.fixedDeltaTime;
                 var player = SceneSingleton.Get<Player>();
                 mono.FaceLeft = (player.transform.position - mono.transform.position).x < 0;
-                if (mono.attackDetectBox.InBoxCollision(mono.PlayerLayer) == null)
+                if (mono.attackDetect.Player == null)
                 {
                     fsm.ChangeState(new Idle());
                 }
@@ -178,7 +179,7 @@ namespace UmbrellaStates
     {
         public override IEnumerator Main()
         {
-            mono.damageBox.gameObject.SetActive(false);
+            mono.damagePlayer.gameObject.SetActive(false);
             mono.attackableBox.gameObject.SetActive(false);
             mono.Animator.SetTrigger("Die");
             mono.dieLight.Instantiate();

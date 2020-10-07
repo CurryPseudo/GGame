@@ -140,8 +140,8 @@ MonoBehaviour:
   parryTime: 0.2
   dieTime: 0.8
   afterAttackToIdleTime: 0.2
-  attackDetectBox: {fileID: 8543327838855113833}
-  damageBox: {fileID: 8543327838594897651}
+  attackDetect: {fileID: 2016198699313674920}
+  damagePlayer: {fileID: 5316752094121107502}
 --- !u!1 &92581096422492097
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,6 +407,7 @@ GameObject:
   - component: {fileID: 8543327838594897648}
   - component: {fileID: 8543327838594897650}
   - component: {fileID: 8543327838594897651}
+  - component: {fileID: 5316752094121107502}
   m_Layer: 12
   m_Name: DamageBox
   m_TagString: Untagged
@@ -471,6 +472,18 @@ MonoBehaviour:
   debugLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &5316752094121107502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8543327838594897649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 850517d204b9a844285d7274cf032014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8543327838855113831
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,6 +495,7 @@ GameObject:
   - component: {fileID: 8543327838855113830}
   - component: {fileID: 8543327838855113832}
   - component: {fileID: 8543327838855113833}
+  - component: {fileID: 2016198699313674920}
   m_Layer: 10
   m_Name: AttackDetectBox
   m_TagString: Untagged
@@ -546,6 +560,18 @@ MonoBehaviour:
   debugLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &2016198699313674920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8543327838855113831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1627715b86d3a1545b107e055ae6c709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8543327839923346896
 GameObject:
   m_ObjectHideFlags: 0

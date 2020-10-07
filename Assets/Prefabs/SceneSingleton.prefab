@@ -822,6 +822,7 @@ GameObject:
   - component: {fileID: 568330214}
   - component: {fileID: 568330216}
   - component: {fileID: 568330215}
+  - component: {fileID: 660644049158822891}
   m_Layer: 13
   m_Name: Move
   m_TagString: Untagged
@@ -886,6 +887,22 @@ MonoBehaviour:
   debugLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &660644049158822891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 568330213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be927480dda3105418949f9971408ae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 65335
+  host: {fileID: 694115693}
 --- !u!1 &569775715
 GameObject:
   m_ObjectHideFlags: 0

@@ -85,9 +85,9 @@ public class Player : Autonomy
     public void SetInvincibleTime(float time)
     {
         invincible = true;
-        StartCoroutine(Invincible(time));
+        StartCoroutine(InvincibleCoroutine(time));
     }
-    private IEnumerator Invincible(float time)
+    private IEnumerator InvincibleCoroutine(float time)
     {
         yield return new WaitForSeconds(time);
         invincible = false;
@@ -156,6 +156,7 @@ public class Player : Autonomy
             }
         }
     }
+
     private FSM<Player, PlayerState> mainFsm;
     protected override void Awake()
     {
@@ -206,7 +207,6 @@ public class Player : Autonomy
         {
             poweringTime = 0;
         }
-        ProcessDamage();
         if (mainFsm.Current != null && mainFsm.Current.CouldDash)
         {
             var action = InputQueue.GetAction();
@@ -318,25 +318,20 @@ public class Player : Autonomy
             animation.OnGround();
         }
     }
-    public void ProcessDamage()
+    public void OnDamage(Vector2 dir)
     {
         if (invincible)
         {
             return;
         }
-        var damageGo = damageBox.InBoxCollision(damageLayer);
-        if (damageGo != null)
-        {
-            Vector2 dir = transform.position - damageGo.transform.position;
-            mainFsm.Current.OnDamage(dir.normalized);
-        }
+        mainFsm.Current.OnDamage(dir);
     }
     public void DamageVel(Vector2 direction, Vector2 velocity)
     {
         VelocityX = (direction.x >= 0 ? 1 : -1) * velocity.x;
         VelocityY = velocity.y;
     }
-    public void OnDamage()
+    public void ProcessDamage()
     {
         DashPower -= 1;
         if (DashPower < 0)
@@ -401,7 +396,7 @@ namespace PlayerStates
         public override void OnDamage(Vector2 direction)
         {
             mono.DamageVel(direction, mono.damageVelIdle);
-            mono.OnDamage();
+            mono.ProcessDamage();
         }
         public override bool OnGround
         {
@@ -425,7 +420,7 @@ namespace PlayerStates
         public override void OnDamage(Vector2 direction)
         {
             mono.DamageVel(direction, mono.damageVelDrop);
-            mono.OnDamage();
+            mono.ProcessDamage();
         }
     }
     public class Dash : PlayerState
@@ -584,7 +579,7 @@ namespace PlayerStates
         public override void OnDamage(Vector2 direction)
         {
             mono.DamageVel(direction, mono.damageVelDrop);
-            mono.OnDamage();
+            mono.ProcessDamage();
         }
         public override bool IsDamage()
         {

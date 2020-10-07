@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1601851815}
   - component: {fileID: 1601851817}
   - component: {fileID: 1601851816}
+  - component: {fileID: 207878505512064418}
   m_Layer: 10
   m_Name: AttackDetectBox
   m_TagString: Untagged
@@ -75,6 +76,18 @@ MonoBehaviour:
   debugLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &207878505512064418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601851814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1627715b86d3a1545b107e055ae6c709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1861741360
 GameObject:
   m_ObjectHideFlags: 0
@@ -86,6 +99,7 @@ GameObject:
   - component: {fileID: 1861741361}
   - component: {fileID: 1861741363}
   - component: {fileID: 1861741362}
+  - component: {fileID: 4226298220019671897}
   m_Layer: 12
   m_Name: DamageBox
   m_TagString: Untagged
@@ -150,6 +164,18 @@ MonoBehaviour:
   debugLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &4226298220019671897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1861741360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 850517d204b9a844285d7274cf032014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8630890728756833706
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,8 +433,8 @@ MonoBehaviour:
   detectBoxAirRight: {fileID: 8630890728767365581}
   detectBoxGroundLeft: {fileID: 8630890729502814934}
   detectBoxGroundRight: {fileID: 8630890729923181190}
-  attackDetectBox: {fileID: 1601851816}
-  damageBox: {fileID: 1861741362}
+  attackDetect: {fileID: 207878505512064418}
+  damagePlayer: {fileID: 4226298220019671897}
 --- !u!1 &8630890729007502213
 GameObject:
   m_ObjectHideFlags: 0
