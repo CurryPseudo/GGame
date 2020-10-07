@@ -1439,10 +1439,13 @@ MonoBehaviour:
   attackInvincibleTime: 0.2
   dieTime: 0.8
   bornTime: 0.8
-  attackNoiseAmplitudeGain: 50
-  attackNoiseFrequencyGain: 0.1
+  attackAmplitude: 50
+  attackFrequency: 0.1
+  damageAmplitude: 25
+  damageFrequency: 0.1
   bounceUpDis: 8
   lastDashPowerRestoreTime: 2
+  onDamageFrameDelay: 0.3
   damageVelDrop: {x: 13, y: 10}
   damageVelIdle: {x: 13, y: 10}
   damageVelParried: {x: 13, y: 10}
@@ -1458,6 +1461,7 @@ MonoBehaviour:
   isInCollision: 0
   attackBox: {fileID: 728784661}
   damageBox: {fileID: 1232893747}
+  dashable: 1
 --- !u!114 &3359674803725171109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1470,7 +1474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef30ca462c33a974bac3d2f8eee308d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cacheTime: 0.5
+  cacheTime: 0.3
 --- !u!1 &728784659
 GameObject:
   m_ObjectHideFlags: 0

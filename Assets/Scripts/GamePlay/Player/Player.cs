@@ -50,10 +50,13 @@ public class Player : Autonomy
     public float attackInvincibleTime;
     public float dieTime;
     public float bornTime;
-    public float attackNoiseAmplitudeGain;
-    public float attackNoiseFrequencyGain;
+    public float attackAmplitude;
+    public float attackFrequency;
+    public float damageAmplitude;
+    public float damageFrequency;
     public float bounceUpDis;
     public float lastDashPowerRestoreTime;
+    public float onDamageFrameDelay;
     [ShowInInspector]
     public float BounceUpVel
     {
@@ -369,7 +372,7 @@ public class Player : Autonomy
         SetInvincibleTime(damageInvincibleTime);
         if (!mainFsm.Current.IsDamage())
         {
-            mainFsm.ChangeState(new Damage());
+            mainFsm.ChangeState(new Damage(false));
         }
     }
     public void OnBounceUp()
@@ -379,6 +382,15 @@ public class Player : Autonomy
     public void AtCheckPoint()
     {
         DashPower = maxDashPower;
+    }
+    public static void SetNoise(float amplitude, float frequency)
+    {
+        var cameraBrain = SceneSingleton.Get<CinemachineBrain>();
+        cameraBrain.m_IgnoreTimeScale = true;
+        var virtualCamera = SceneSingleton.Get<CinemachineVirtualCamera>();
+        var perlin = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        perlin.m_AmplitudeGain = amplitude;
+        perlin.m_FrequencyGain = frequency;
     }
 }
 
@@ -533,29 +545,13 @@ namespace PlayerStates
                 {
                     attacked.Add(attackable);
                     mono.animation.Attack(dirInt);
-                    {
-                        var cameraBrain = SceneSingleton.Get<CinemachineBrain>();
-                        cameraBrain.m_IgnoreTimeScale = true;
-
-                        var virtualCamera = SceneSingleton.Get<CinemachineVirtualCamera>();
-                        var perlin = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-                        perlin.m_AmplitudeGain = mono.attackNoiseAmplitudeGain;
-                        perlin.m_FrequencyGain = mono.attackNoiseFrequencyGain;
-                    }
+                    Player.SetNoise(mono.attackAmplitude, mono.attackFrequency);
                     if (mono.attackFrameDelay > 0)
                     {
                         Time.timeScale = 0;
                         yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
                     }
-                    {
-                        var cameraBrain = SceneSingleton.Get<CinemachineBrain>();
-                        cameraBrain.m_IgnoreTimeScale = false;
-
-                        var virtualCamera = SceneSingleton.Get<CinemachineVirtualCamera>();
-                        var perlin = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-                        perlin.m_AmplitudeGain = 0;
-                        perlin.m_FrequencyGain = 0;
-                    }
+                    Player.SetNoise(0, 0);
                     var attackResult = attackable.OnAttack(dirInt);
                     if (attackResult == AttackResult.Dead)
                     {
@@ -566,7 +562,7 @@ namespace PlayerStates
                         mono.DamageVel(-dirInt, mono.damageVelParried);
                         mono.SetInvincibleTime(mono.parriedInvincibleTime);
                         mono.animation.OnParried(dirInt);
-                        fsm.ChangeState(new Damage());
+                        fsm.ChangeState(new Damage(true));
                     }
                     else
                     {
@@ -589,10 +585,23 @@ namespace PlayerStates
     public class Damage : PlayerState
     {
         private bool couldDash = false;
+        private bool isParried;
+        public Damage(bool isParried)
+        {
+            this.isParried = isParried;
+        }
         public override IEnumerator Main()
         {
             mono.animation.Drop();
             mono.animation.SignDirectionX = mono.VelocityX >= 0 ? -1 : 1;
+            if (!isParried)
+            {
+                Player.SetNoise(mono.damageAmplitude, mono.damageFrequency);
+                Time.timeScale = 0;
+                yield return new WaitForSecondsRealtime(mono.onDamageFrameDelay);
+                Time.timeScale = 1;
+                Player.SetNoise(0, 0);
+            }
             var timeLeft = mono.dashAfterDamageDelayTime;
             while (timeLeft > 0)
             {

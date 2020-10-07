@@ -89,7 +89,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1002111603
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 3295dca031a5afe4eb2ee0072912510a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.191
+  m_FalloffIntensity: 0
   m_Color: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 1}
   m_Intensity: 0.52
   m_LightVolumeOpacity: 1
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_ShadowVolumeIntensity: 1
   m_PointLightInnerAngle: 0
   m_PointLightOuterAngle: 31.5
-  m_PointLightInnerRadius: 0
+  m_PointLightInnerRadius: 12.47
   m_PointLightOuterRadius: 16.26
   m_PointLightDistance: 3
   m_PointLightQuality: 1
