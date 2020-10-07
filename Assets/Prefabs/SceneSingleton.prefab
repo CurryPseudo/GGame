@@ -1434,7 +1434,7 @@ MonoBehaviour:
   maxDashPower: 5
   restoreDashPowerAfterKill: 2
   dashAfterDamageDelayTime: 0.3
-  damageInvincibleTime: 1
+  damageInvincibleTime: 2
   parriedInvincibleTime: 0.2
   attackInvincibleTime: 0.2
   dieTime: 0.8
@@ -1444,7 +1444,7 @@ MonoBehaviour:
   damageAmplitude: 25
   damageFrequency: 0.1
   bounceUpDis: 8
-  lastDashPowerRestoreTime: 2
+  lastDashPowerRestoreTime: 4
   onDamageFrameDelay: 0.3
   damageVelDrop: {x: 13, y: 10}
   damageVelIdle: {x: 13, y: 10}

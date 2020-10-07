@@ -175,4 +175,14 @@ public class MainPlayerAnimation : PlayerAnimation
     {
         animator.SetBool("BouncingUp", false);
     }
+
+    public override void Damage()
+    {
+        animator.SetBool("Damage", true);
+    }
+
+    public override void AfterDamage()
+    {
+        animator.SetBool("Damage", false);
+    }
 }

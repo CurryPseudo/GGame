@@ -22,4 +22,6 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void AfterBorn();
     public abstract void BounceUp();
     public abstract void AfterBounceUp();
+    public abstract void Damage();
+    public abstract void AfterDamage();
 }

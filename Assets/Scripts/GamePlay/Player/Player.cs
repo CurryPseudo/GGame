@@ -97,15 +97,23 @@ public class Player : Autonomy
     private bool pausePowering = false;
     private bool invincible = false;
     public bool dashable = true;
-    public void SetInvincibleTime(float time)
+    public void SetInvincibleTime(float time, bool playAnimation)
     {
         invincible = true;
-        StartCoroutine(InvincibleCoroutine(time));
+        if (playAnimation)
+        {
+            animation.Damage();
+        }
+        StartCoroutine(InvincibleCoroutine(time, playAnimation));
     }
-    private IEnumerator InvincibleCoroutine(float time)
+    private IEnumerator InvincibleCoroutine(float time, bool playAnimation)
     {
         yield return new WaitForSeconds(time);
         invincible = false;
+        if (playAnimation)
+        {
+            animation.AfterDamage();
+        }
     }
     public void ResetPoweringTime()
     {
@@ -369,7 +377,7 @@ public class Player : Autonomy
         }
         ResetPoweringTime();
         PausePowering();
-        SetInvincibleTime(damageInvincibleTime);
+        SetInvincibleTime(damageInvincibleTime, true);
         if (!mainFsm.Current.IsDamage())
         {
             mainFsm.ChangeState(new Damage(false));
@@ -556,17 +564,18 @@ namespace PlayerStates
                     if (attackResult == AttackResult.Dead)
                     {
                         mono.DashPower = mono.DashPower + mono.restoreDashPowerAfterKill;
+                        mono.SetInvincibleTime(mono.attackInvincibleTime, false);
                     }
                     else if (attackResult == AttackResult.Parry)
                     {
                         mono.DamageVel(-dirInt, mono.damageVelParried);
-                        mono.SetInvincibleTime(mono.parriedInvincibleTime);
+                        mono.SetInvincibleTime(mono.parriedInvincibleTime, false);
                         mono.animation.OnParried(dirInt);
                         fsm.ChangeState(new Damage(true));
                     }
                     else
                     {
-                        mono.SetInvincibleTime(mono.attackInvincibleTime);
+                        mono.SetInvincibleTime(mono.attackInvincibleTime, false);
                     }
                     Time.timeScale = 1;
                 }

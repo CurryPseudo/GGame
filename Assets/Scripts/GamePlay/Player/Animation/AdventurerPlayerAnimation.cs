@@ -82,4 +82,12 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void AfterBounceUp()
     {
     }
+
+    public override void Damage()
+    {
+    }
+
+    public override void AfterDamage()
+    {
+    }
 }
