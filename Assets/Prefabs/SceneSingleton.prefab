@@ -1441,6 +1441,8 @@ MonoBehaviour:
   bornTime: 0.8
   attackNoiseAmplitudeGain: 50
   attackNoiseFrequencyGain: 0.1
+  bounceUpDis: 8
+  lastDashPowerRestoreTime: 2
   damageVelDrop: {x: 13, y: 10}
   damageVelIdle: {x: 13, y: 10}
   damageVelParried: {x: 13, y: 10}

@@ -53,6 +53,7 @@ public class Player : Autonomy
     public float attackNoiseAmplitudeGain;
     public float attackNoiseFrequencyGain;
     public float bounceUpDis;
+    public float lastDashPowerRestoreTime;
     [ShowInInspector]
     public float BounceUpVel
     {
@@ -89,6 +90,7 @@ public class Player : Autonomy
     private float dashPower;
     private HashSet<IGLight> inLights = new HashSet<IGLight>();
     private float poweringTime = 0;
+    private float lastPowerRestoreTimeLeft = 0;
     private bool pausePowering = false;
     private bool invincible = false;
     public void SetInvincibleTime(float time)
@@ -136,7 +138,12 @@ public class Player : Autonomy
         get => dashPower;
         set
         {
+            var last = dashPower;
             dashPower = value;
+            if (dashPower < 1)
+            {
+                lastPowerRestoreTimeLeft = lastDashPowerRestoreTime;
+            }
             if (dashPower > maxDashPower)
             {
                 dashPower = maxDashPower;
@@ -223,6 +230,14 @@ public class Player : Autonomy
             {
                 mainFsm.Current.OnDash(action.Value.dashDir);
             }
+        }
+        if (lastPowerRestoreTimeLeft > 0)
+        {
+            lastPowerRestoreTimeLeft -= Time.fixedDeltaTime;
+        }
+        if (DashPower < 1 && lastPowerRestoreTimeLeft <= 0)
+        {
+            DashPower = 1;
         }
     }
     void OnDrawGizmosSelected()
