@@ -93,6 +93,7 @@ public class Player : Autonomy
     private float lastPowerRestoreTimeLeft = 0;
     private bool pausePowering = false;
     private bool invincible = false;
+    public bool dashable = true;
     public void SetInvincibleTime(float time)
     {
         invincible = true;
@@ -223,7 +224,7 @@ public class Player : Autonomy
         {
             poweringTime = 0;
         }
-        if (mainFsm.Current != null && mainFsm.Current.CouldDash)
+        if (mainFsm.Current != null && mainFsm.Current.CouldDash && dashable)
         {
             var action = InputQueue.GetAction();
             if (action != null)
