@@ -64,6 +64,29 @@ public class BoxPhysics : MonoBehaviour
     }
     public GameObject InBoxCollision(LayerMask layer, Func<GameObject, bool> isValid = null)
     {
+        foreach (var go in InBoxCollisionAll(layer, isValid))
+        {
+            return go;
+        }
+        return null;
+    }
+    public IEnumerable<T> InBoxCollisionMapAll<T>(LayerMask layer, Func<GameObject, T> map)
+    {
+        var size = Size * 0.9f;
+        var colliders = Physics2D.OverlapBoxAll(Origin, size, 0, layer);
+        foreach (var collider in colliders)
+        {
+            var go = collider.gameObject;
+            var t = map(go);
+            if (t != null)
+            {
+                yield return t;
+            }
+        }
+        yield break;
+    }
+    public IEnumerable<GameObject> InBoxCollisionAll(LayerMask layer, Func<GameObject, bool> isValid = null)
+    {
         var size = Size * 0.9f;
         var colliders = Physics2D.OverlapBoxAll(Origin, size, 0, layer);
         foreach (var collider in colliders)
@@ -71,10 +94,10 @@ public class BoxPhysics : MonoBehaviour
             var go = collider.gameObject;
             if (isValid == null || isValid(go))
             {
-                return go;
+                yield return go;
             }
         }
-        return null;
+        yield break;
     }
     void OnDrawGizmosSelected()
     {

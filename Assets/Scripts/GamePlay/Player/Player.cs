@@ -482,14 +482,20 @@ namespace PlayerStates
         {
             mono.BlockMoveY();
             mono.BlockMoveX();
-            var attackableGo = mono.attackBox.InBoxCollision(mono.attackLayer, (go) =>
+            foreach (var attackable in mono.attackBox.InBoxCollisionMapAll(mono.attackLayer, go =>
             {
                 var attackable = go.GetComponentInParent<IPlayerAttackable>();
-                return attackable != null && attackable.ValidBox(go.GetComponent<BoxPhysics>());
-            });
-            if (attackableGo != null)
+                if (attackable == null)
+                {
+                    return null;
+                }
+                if (!attackable.ValidBox(go.GetComponent<BoxPhysics>()))
+                {
+                    return null;
+                }
+                return attackable;
+            }))
             {
-                var attackable = attackableGo.GetComponentInParent<IPlayerAttackable>();
                 if (!attacked.Contains(attackable))
                 {
                     attacked.Add(attackable);
@@ -535,8 +541,8 @@ namespace PlayerStates
                     }
                     Time.timeScale = 1;
                 }
+
             }
-            yield break;
         }
 
         public override void OnDamage(Vector2 direction)
