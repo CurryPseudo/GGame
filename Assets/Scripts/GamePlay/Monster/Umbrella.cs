@@ -16,7 +16,7 @@ public class Umbrella : Monster<Umbrella, UmbrellaState>
     void Start()
     {
         fsm.ChangeState(new Drop(false));
-        damagePlayer.DamageDir = () => FaceDir;
+        damagePlayer.DamageDirClosure = () => FaceDir;
     }
     public bool IdleParry(Vector2Int attackDirection)
     {

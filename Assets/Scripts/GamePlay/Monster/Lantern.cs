@@ -41,7 +41,7 @@ public class Lantern : Monster<Lantern, LanternState>, IPlayerAttackable
     void Start()
     {
         fsm.ChangeState(new Drop());
-        damagePlayer.DamageDir = () => FaceDir;
+        damagePlayer.DamageDirClosure = () => FaceDir;
     }
 }
 namespace LanternStates
