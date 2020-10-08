@@ -18,14 +18,20 @@ public class MainPlayerAnimation : PlayerAnimation
     public List<GameObjectInstantiator> parriedEffectRights;
     public AudioClip dashSound;
     public AudioClip attackSound;
+    public AudioClip landSound;
     public AudioSource Audio
     {
         get => GetComponent<AudioSource>();
     }
-    public void PlaySound(AudioClip clip)
+    public void PlaySound(AudioClip clip, bool loop = false)
     {
         Audio.clip = clip;
+        Audio.loop = loop;
         Audio.Play();
+    }
+    public void StopSoundLoop()
+    {
+        Audio.loop = false;
     }
     private SpriteRenderer spriteRenderer;
     private Animator animator;
@@ -93,6 +99,7 @@ public class MainPlayerAnimation : PlayerAnimation
 
     public override void OnGround()
     {
+        PlaySound(landSound);
         onGroundFart.Instantiate();
         animator.SetBool("OnGround", true);
     }
