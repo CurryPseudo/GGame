@@ -96,6 +96,7 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
         }
         if (life > 1)
         {
+            life -= 1;
             fsm.Current.OnDamage(attackDirection, false);
         }
         else
