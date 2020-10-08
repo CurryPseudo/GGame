@@ -21,6 +21,7 @@ public class MainPlayerAnimation : PlayerAnimation
     public AudioClip attackSound;
     public AudioClip landSound;
     public AudioClip damageSound;
+    public AudioClip bornSound;
     public AudioSource Audio
     {
         get => GetComponent<AudioSource>();
@@ -192,6 +193,7 @@ public class MainPlayerAnimation : PlayerAnimation
 
     public override void Born()
     {
+        PlaySound(bornSound);
         animator.updateMode = AnimatorUpdateMode.UnscaledTime;
         animator.SetTrigger("Born");
     }
