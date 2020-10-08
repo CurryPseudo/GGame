@@ -535,6 +535,7 @@ namespace PlayerStates
         {
             mono.BlockMoveY();
             mono.BlockMoveX();
+            bool preAttacked = false;
             foreach (var attackable in mono.attackBox.InBoxCollisionMapAll(mono.attackLayer, go =>
             {
                 var attackable = go.GetComponentInParent<IPlayerAttackable>();
@@ -549,6 +550,11 @@ namespace PlayerStates
                 return attackable;
             }))
             {
+                if (preAttacked)
+                {
+                    preAttacked = true;
+                    mono.animation.PreAttack();
+                }
                 if (!attacked.Contains(attackable))
                 {
                     attacked.Add(attackable);

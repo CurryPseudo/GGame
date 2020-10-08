@@ -17,6 +17,7 @@ public class MainPlayerAnimation : PlayerAnimation
     public List<GameObjectInstantiator> parriedEffectLefts;
     public List<GameObjectInstantiator> parriedEffectRights;
     public AudioClip dashSound;
+    public AudioClip preAttackSound;
     public AudioClip attackSound;
     public AudioClip landSound;
     public AudioSource Audio
@@ -25,9 +26,15 @@ public class MainPlayerAnimation : PlayerAnimation
     }
     public void PlaySound(AudioClip clip, bool loop = false)
     {
-        Audio.clip = clip;
-        Audio.loop = loop;
-        Audio.Play();
+        if (loop)
+        {
+            Audio.loop = true;
+            Audio.Play();
+        }
+        else
+        {
+            Audio.PlayOneShot(clip);
+        }
     }
     public void StopSoundLoop()
     {
@@ -137,6 +144,7 @@ public class MainPlayerAnimation : PlayerAnimation
     }
     public override void Dash(Vector2Int direction)
     {
+        PlaySound(dashSound);
         animator.SetTrigger("Dash");
         int n = DirectionNumber(direction);
         var dashFarts = (direction.x >= 0 ? dashFartRights : dashFartLefts);
@@ -145,6 +153,10 @@ public class MainPlayerAnimation : PlayerAnimation
             dashFarts[n].Instantiate();
         }
         animator.SetInteger("DashNo", n);
+    }
+    public override void PreAttack()
+    {
+        PlaySound(preAttackSound);
     }
     public override void Attack(Vector2Int direction, bool parried)
     {
@@ -207,4 +219,5 @@ public class MainPlayerAnimation : PlayerAnimation
     {
         animator.SetBool("Damage", false);
     }
+
 }

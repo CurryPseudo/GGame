@@ -90,4 +90,8 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void AfterDamage()
     {
     }
+
+    public override void PreAttack()
+    {
+    }
 }

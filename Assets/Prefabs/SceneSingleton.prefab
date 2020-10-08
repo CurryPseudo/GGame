@@ -3126,8 +3126,9 @@ MonoBehaviour:
     maxInstanceCount: 1
   - source: {fileID: 23604183}
     maxInstanceCount: 1
-  dashSound: {fileID: 0}
-  attackSound: {fileID: 8300000, guid: b2355d624b3aa50428edbdc05ec1addb, type: 3}
+  dashSound: {fileID: 8300000, guid: bf32151d974434a46b6bfc5ac7f3781a, type: 3}
+  preAttackSound: {fileID: 8300000, guid: b2355d624b3aa50428edbdc05ec1addb, type: 3}
+  attackSound: {fileID: 8300000, guid: 089d4aba51598684687e1b76d43fbe71, type: 3}
   landSound: {fileID: 8300000, guid: 1d5b86a8442824a45a7842a3f86fe059, type: 3}
 --- !u!95 &1497342231
 Animator:
