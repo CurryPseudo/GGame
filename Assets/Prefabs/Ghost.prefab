@@ -126,7 +126,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 160822549
   m_Mesh: {fileID: 0}
-  m_InstanceId: 120194
+  m_InstanceId: 158710
 --- !u!1 &4865084044036524350
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 160822549
   m_Mesh: {fileID: 0}
-  m_InstanceId: 120160
+  m_InstanceId: 158670
 --- !u!1 &5602521357285323894
 GameObject:
   m_ObjectHideFlags: 0
@@ -383,7 +383,7 @@ MonoBehaviour:
     maxInstanceCount: 1
   attackDetect: {fileID: 5735320263667995306}
   damagePlayer: {fileID: 1485725412}
-  detectTime: 1
+  detectTime: 2
   dieTime: 0.6
   attackVel: 15
   damageTime: 0
@@ -588,7 +588,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 160822549
   m_Mesh: {fileID: 0}
-  m_InstanceId: 120164
+  m_InstanceId: 158678
 --- !u!1001 &5602521357292119145
 PrefabInstance:
   m_ObjectHideFlags: 0

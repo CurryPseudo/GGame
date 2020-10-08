@@ -59,16 +59,13 @@ namespace GhostStates
     {
         public override IEnumerator Main()
         {
+            mono.Animator.SetTrigger("Detect");
             var player = mono.attackDetect.Player;
             var timeLeft = mono.detectTime;
             while (timeLeft > 0)
             {
                 yield return new WaitForFixedUpdate();
                 timeLeft -= Time.fixedDeltaTime;
-                if (mono.attackDetect.Player != player)
-                {
-                    fsm.ChangeState(new Idle());
-                }
                 mono.FaceLeft = (player.Position - mono.Position).x < 0;
             }
             fsm.ChangeState(new Attack(player.Position));
@@ -85,18 +82,19 @@ namespace GhostStates
         public override IEnumerator Main()
         {
             var dir = target - mono.Position;
+            var timeLeft = dir.magnitude / mono.attackVel;
             mono.Velocity = mono.attackVel * dir.normalized;
-            var dis = mono.attackVel * Time.fixedDeltaTime;
-            while (dir.sqrMagnitude > dis * dis)
+            while (timeLeft > 0)
             {
                 yield return new WaitForFixedUpdate();
+                if (timeLeft < Time.fixedDeltaTime)
+                {
+                    mono.Velocity = mono.attackVel * dir.normalized * timeLeft / Time.fixedDeltaTime;
+                }
+                timeLeft -= Time.fixedDeltaTime;
                 mono.BlockMoveY();
                 mono.BlockMoveX();
-                dir = target - mono.Position;
             }
-            mono.Velocity = dir / Time.fixedDeltaTime;
-            mono.BlockMoveY();
-            mono.BlockMoveX();
             mono.Velocity = Vector2.zero;
             fsm.ChangeState(new Idle());
         }
