@@ -81,6 +81,7 @@ namespace GhostStates
         }
         public override IEnumerator Main()
         {
+            mono.Animator.SetBool("Attack", true);
             var dir = target - mono.Position;
             var timeLeft = dir.magnitude / mono.attackVel;
             mono.Velocity = mono.attackVel * dir.normalized;
@@ -97,6 +98,10 @@ namespace GhostStates
             }
             mono.Velocity = Vector2.zero;
             fsm.ChangeState(new Idle());
+        }
+        public override void Exit()
+        {
+            mono.Animator.SetBool("Attack", false);
         }
 
     }
