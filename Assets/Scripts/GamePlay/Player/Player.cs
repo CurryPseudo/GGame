@@ -659,10 +659,9 @@ namespace PlayerStates
     {
         public override IEnumerator Main()
         {
+            mono.Velocity = Vector2.zero;
             mono.animation.Die();
-            Time.timeScale = 0;
-            yield return new WaitForSecondsRealtime(mono.dieTime);
-            Time.timeScale = 1;
+            yield return new WaitForSeconds(mono.dieTime);
             var scene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(scene.name);
             yield break;
@@ -682,9 +681,7 @@ namespace PlayerStates
         public override IEnumerator Main()
         {
             mono.animation.Born();
-            Time.timeScale = 0;
-            yield return new WaitForSecondsRealtime(mono.bornTime);
-            Time.timeScale = 1;
+            yield return new WaitForSeconds(mono.bornTime);
             mono.animation.AfterBorn();
             fsm.ChangeState(new Drop());
         }
