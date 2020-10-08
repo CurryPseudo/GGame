@@ -9,7 +9,20 @@ public interface IMonsterState
     void Parry(Vector2Int attackDirection);
 }
 
-public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S> where S : State<T, S>, IMonsterState
+public abstract class IMonster : Autonomy, IPlayerAttackable
+{
+    public abstract bool FaceLeft { get; set; }
+
+    public abstract AttackResult GetAttackResult(Vector2Int attackDirection);
+
+    public abstract void OnAttack(Vector2Int attackDirection);
+
+    public abstract void OnDamage(Vector2Int damageDirection);
+
+    public abstract bool ValidBox(BoxPhysics box);
+}
+
+public class Monster<T, S> : IMonster where T : Monster<T, S> where S : State<T, S>, IMonsterState
 {
     public float yGrav;
     public float yVelMax;
@@ -18,7 +31,7 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
     public int life;
     public new GameObject animation;
     public BoxPhysics attackableBox;
-    public bool FaceLeft
+    public override bool FaceLeft
     {
         get => faceLeft;
         set
@@ -49,6 +62,8 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
 
         }
     }
+
+
     protected FSM<T, S> fsm;
     protected override void Awake()
     {
@@ -56,7 +71,7 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
         fsm = new FSM<T, S>(this as T);
     }
 
-    public AttackResult GetAttackResult(Vector2Int attackDirection)
+    public override AttackResult GetAttackResult(Vector2Int attackDirection)
     {
         if (fsm.Current.IsParried(attackDirection))
         {
@@ -71,7 +86,7 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
             return AttackResult.Dead;
         }
     }
-    public bool ValidBox(BoxPhysics box)
+    public override bool ValidBox(BoxPhysics box)
     {
         return box == attackableBox;
     }
@@ -87,13 +102,17 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
         return BlockMoveY() && down;
     }
 
-    public void OnAttack(Vector2Int attackDirection)
+    public override void OnAttack(Vector2Int attackDirection)
     {
         if (fsm.Current.IsParried(attackDirection))
         {
             fsm.Current.Parry(attackDirection);
             return;
         }
+        OnDamage(attackDirection);
+    }
+    public override void OnDamage(Vector2Int attackDirection)
+    {
         if (life > 1)
         {
             life -= 1;

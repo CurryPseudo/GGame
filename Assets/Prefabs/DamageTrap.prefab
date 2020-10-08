@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 66940679}
   - component: {fileID: 66940680}
   - component: {fileID: 1388967767343551512}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,8 @@ GameObject:
   - component: {fileID: 6540421572018683718}
   - component: {fileID: 6540421572018683719}
   - component: {fileID: 388567527}
-  m_Layer: 0
+  - component: {fileID: 6829938750023495619}
+  m_Layer: 12
   m_Name: DamageTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -185,3 +186,15 @@ MonoBehaviour:
   holdTime: 2
   disableBoxRatio: 0.3
   animation: {fileID: 1388967767343551512}
+--- !u!114 &6829938750023495619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6540421572018683712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febb81ed6857aa748b9bae3a2a7e4e57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

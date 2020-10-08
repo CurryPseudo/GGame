@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 92581095978271768}
   - component: {fileID: 92581095978271769}
   - component: {fileID: 92581095978271774}
+  - component: {fileID: 3512888411963447565}
   m_Layer: 10
   m_Name: MoveBox
   m_TagString: Untagged
@@ -75,6 +76,22 @@ MonoBehaviour:
   debugLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &3512888411963447565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 92581095978271771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2137b063e0284aa498cd50d6d6df5dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 4096
+  host: {fileID: 92581096393600435}
 --- !u!1 &92581096393600434
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,7 +352,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 307526
+  m_InstanceId: 182676
 --- !u!1 &3264727375101209204
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,7 +528,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 307530
+  m_InstanceId: 182680
 --- !u!1 &8543327838594897649
 GameObject:
   m_ObjectHideFlags: 0
