@@ -16,6 +16,17 @@ public class MainPlayerAnimation : PlayerAnimation
     public List<GameObjectInstantiator> swordLightRights;
     public List<GameObjectInstantiator> parriedEffectLefts;
     public List<GameObjectInstantiator> parriedEffectRights;
+    public AudioClip dashSound;
+    public AudioClip attackSound;
+    public AudioSource Audio
+    {
+        get => GetComponent<AudioSource>();
+    }
+    public void PlaySound(AudioClip clip)
+    {
+        Audio.clip = clip;
+        Audio.Play();
+    }
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private bool flipXLock = false;
@@ -128,8 +139,12 @@ public class MainPlayerAnimation : PlayerAnimation
         }
         animator.SetInteger("DashNo", n);
     }
-    public override void Attack(Vector2Int direction)
+    public override void Attack(Vector2Int direction, bool parried)
     {
+        if (!parried)
+        {
+            PlaySound(attackSound);
+        }
         int n = DirectionNumber(direction);
         var sowrdLights = (direction.x >= 0 ? swordLightRights : swordLightLefts);
         if (n < sowrdLights.Count)

@@ -48,18 +48,24 @@ namespace LanternStates
 {
     public abstract class LanternState : State<Lantern, LanternState>, IMonsterState
     {
-        public virtual AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
+        public virtual void OnDamage(Vector2Int attackDirection, bool willDead)
         {
             if (willDead)
             {
                 fsm.ChangeState(new Die());
-                return AttackResult.Dead;
             }
             else
             {
                 fsm.ChangeState(new Damage());
-                return AttackResult.Damage;
             }
+        }
+        public bool IsParried(Vector2Int attackDirection)
+        {
+            return false;
+        }
+        void IMonsterState.Parry(Vector2Int attackDirection)
+        {
+
         }
     }
     public class Drop : LanternState

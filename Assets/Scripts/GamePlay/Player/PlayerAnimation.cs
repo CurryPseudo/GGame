@@ -15,7 +15,7 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void Dash(Vector2Int direction);
     public abstract void Drop();
     public abstract void OnGround();
-    public abstract void Attack(Vector2Int direction);
+    public abstract void Attack(Vector2Int direction, bool parried);
     public abstract void OnParried(Vector2Int direction);
     public abstract void Die();
     public abstract void Born();

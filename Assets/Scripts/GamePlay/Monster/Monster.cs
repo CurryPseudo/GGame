@@ -4,7 +4,9 @@ using UnityEngine;
 
 public interface IMonsterState
 {
-    AttackResult OnDamage(Vector2Int attackDirection, bool willDead);
+    bool IsParried(Vector2Int attackDirection);
+    void OnDamage(Vector2Int attackDirection, bool willDead);
+    void Parry(Vector2Int attackDirection);
 }
 
 public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S> where S : State<T, S>, IMonsterState
@@ -54,20 +56,19 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
         fsm = new FSM<T, S>(this as T);
     }
 
-    public AttackResult OnAttack(Vector2Int attackDirection)
+    public AttackResult GetAttackResult(Vector2Int attackDirection)
     {
+        if (fsm.Current.IsParried(attackDirection))
+        {
+            return AttackResult.Parry;
+        }
         if (life > 1)
         {
-            var result = fsm.Current.OnDamage(attackDirection, false);
-            if (result == AttackResult.Damage)
-            {
-                life -= 1;
-            }
-            return result;
+            return AttackResult.Damage;
         }
         else
         {
-            return fsm.Current.OnDamage(attackDirection, true);
+            return AttackResult.Dead;
         }
     }
     public bool ValidBox(BoxPhysics box)
@@ -84,5 +85,22 @@ public class Monster<T, S> : Autonomy, IPlayerAttackable where T : Monster<T, S>
         }
         var down = VelocityY < 0;
         return BlockMoveY() && down;
+    }
+
+    public void OnAttack(Vector2Int attackDirection)
+    {
+        if (fsm.Current.IsParried(attackDirection))
+        {
+            fsm.Current.Parry(attackDirection);
+            return;
+        }
+        if (life > 1)
+        {
+            fsm.Current.OnDamage(attackDirection, false);
+        }
+        else
+        {
+            fsm.Current.OnDamage(attackDirection, true);
+        }
     }
 }

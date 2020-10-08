@@ -35,11 +35,31 @@ namespace UmbrellaStates
 {
     public abstract class UmbrellaState : State<Umbrella, UmbrellaState>, IMonsterState
     {
-        public virtual AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
+        public virtual bool IsParried(Vector2Int attackDirection)
         {
-            return AttackResult.None;
+            if (Attacking)
+            {
+                return mono.AttackParry(attackDirection);
+            }
+            else
+            {
+                return mono.IdleParry(attackDirection);
+            }
+        }
+        public abstract bool Attacking
+        {
+            get;
         }
 
+        void IMonsterState.OnDamage(Vector2Int attackDirection, bool willDead)
+        {
+            fsm.ChangeState(new Die());
+        }
+
+        public void Parry(Vector2Int attackDirection)
+        {
+            fsm.ChangeState(new Parry(Attacking));
+        }
     }
     public class Drop : UmbrellaState
     {
@@ -48,16 +68,12 @@ namespace UmbrellaStates
         {
             this.attacking = attacking;
         }
-        public override AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
+
+        public override bool Attacking
         {
-            if ((attacking && mono.AttackParry(attackDirection)) || (!attacking && mono.IdleParry(attackDirection)))
-            {
-                fsm.ChangeState(new Parry());
-                return AttackResult.Parry;
-            }
-            fsm.ChangeState(new Die());
-            return AttackResult.Dead;
+            get => attacking;
         }
+
         public override IEnumerator Main()
         {
             while (true)
@@ -78,6 +94,8 @@ namespace UmbrellaStates
     }
     public class Idle : UmbrellaState
     {
+        public override bool Attacking => false;
+
         public override IEnumerator Main()
         {
             while (true)
@@ -89,19 +107,11 @@ namespace UmbrellaStates
                 }
             }
         }
-        public override AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
-        {
-            if (mono.IdleParry(attackDirection))
-            {
-                fsm.ChangeState(new Parry());
-                return AttackResult.Parry;
-            }
-            fsm.ChangeState(new Die());
-            return AttackResult.Dead;
-        }
     }
     public class Detected : UmbrellaState
     {
+        public override bool Attacking => false;
+
         public override IEnumerator Main()
         {
             var timeLeft = mono.detectAccumulatedTime;
@@ -118,19 +128,11 @@ namespace UmbrellaStates
             }
             fsm.ChangeState(new Attack());
         }
-        public override AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
-        {
-            if (mono.IdleParry(attackDirection))
-            {
-                fsm.ChangeState(new Parry());
-                return AttackResult.Parry;
-            }
-            fsm.ChangeState(new Die());
-            return AttackResult.Dead;
-        }
     }
     public class Attack : UmbrellaState
     {
+        public override bool Attacking => true;
+
         public override IEnumerator Main()
         {
             mono.Animator.SetBool("Attack", true);
@@ -154,29 +156,35 @@ namespace UmbrellaStates
                 }
             }
         }
-        public override AttackResult OnDamage(Vector2Int attackDirection, bool willDead)
-        {
-            if (mono.AttackParry(attackDirection))
-            {
-                fsm.ChangeState(new Parry());
-                return AttackResult.Parry;
-            }
-            fsm.ChangeState(new Die());
-            return AttackResult.Dead;
-        }
     }
     public class Parry : UmbrellaState
     {
+        private bool lastAttacking;
+        public Parry(bool lastAttacking)
+        {
+            this.lastAttacking = lastAttacking;
+        }
+        public override bool Attacking => lastAttacking;
+
         public override IEnumerator Main()
         {
             mono.Animator.SetTrigger("Parry");
             mono.VelocityX = 0;
             yield return new WaitForSeconds(mono.parryTime);
-            fsm.ChangeState(new Attack());
+            if (lastAttacking)
+            {
+                fsm.ChangeState(new Attack());
+            }
+            else
+            {
+                fsm.ChangeState(new Idle());
+            }
         }
     }
     public class Die : UmbrellaState
     {
+        public override bool Attacking => false;
+
         public override IEnumerator Main()
         {
             mono.damagePlayer.gameObject.SetActive(false);

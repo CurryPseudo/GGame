@@ -552,15 +552,16 @@ namespace PlayerStates
                 if (!attacked.Contains(attackable))
                 {
                     attacked.Add(attackable);
-                    mono.animation.Attack(dirInt);
                     Player.SetNoise(mono.attackAmplitude, mono.attackFrequency);
+                    var attackResult = attackable.GetAttackResult(dirInt);
+                    mono.animation.Attack(dirInt, attackResult == AttackResult.Parry);
                     if (mono.attackFrameDelay > 0)
                     {
                         Time.timeScale = 0;
                         yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
                     }
                     Player.SetNoise(0, 0);
-                    var attackResult = attackable.OnAttack(dirInt);
+                    attackable.OnAttack(dirInt);
                     if (attackResult == AttackResult.Dead)
                     {
                         mono.DashPower = mono.DashPower + mono.restoreDashPowerAfterKill;
