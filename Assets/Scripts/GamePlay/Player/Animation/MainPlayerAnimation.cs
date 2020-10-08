@@ -4,6 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+[Serializable]
+public class ClipInfo
+{
+    public AudioClip clip;
+    public float volumeScale = 1;
+}
+
 [RequireComponent(typeof(SpriteRenderer), typeof(Animator))]
 public class MainPlayerAnimation : PlayerAnimation
 {
@@ -16,26 +23,27 @@ public class MainPlayerAnimation : PlayerAnimation
     public List<GameObjectInstantiator> swordLightRights;
     public List<GameObjectInstantiator> parriedEffectLefts;
     public List<GameObjectInstantiator> parriedEffectRights;
-    public AudioClip dashSound;
-    public AudioClip preAttackSound;
-    public AudioClip attackSound;
-    public AudioClip landSound;
-    public AudioClip damageSound;
-    public AudioClip bornSound;
+    public ClipInfo dashSound;
+    public ClipInfo preAttackSound;
+    public ClipInfo attackSound;
+    public ClipInfo landSound;
+    public ClipInfo damageSound;
+    public ClipInfo bornSound;
     public AudioSource Audio
     {
         get => GetComponent<AudioSource>();
     }
-    public void PlaySound(AudioClip clip, bool loop = false)
+    public void PlaySound(ClipInfo clip, bool loop = false)
     {
         if (loop)
         {
             Audio.loop = true;
+            Audio.volume = clip.volumeScale;
             Audio.Play();
         }
         else
         {
-            Audio.PlayOneShot(clip);
+            Audio.PlayOneShot(clip.clip, clip.volumeScale);
         }
     }
     public void StopSoundLoop()
