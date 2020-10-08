@@ -14,6 +14,8 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void TurnAround(int lastSignDirectionX);
     public abstract void Dash(Vector2Int direction);
     public abstract void Drop();
+    public abstract void Parried();
+    public abstract void Damage();
     public abstract void OnGround();
     public abstract void PreAttack();
     public abstract void Attack(Vector2Int direction, bool parried);
@@ -23,6 +25,6 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void AfterBorn();
     public abstract void BounceUp();
     public abstract void AfterBounceUp();
-    public abstract void Damage();
-    public abstract void AfterDamage();
+    public abstract void Invincible();
+    public abstract void AfterInvincible();
 }

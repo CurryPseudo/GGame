@@ -20,6 +20,7 @@ public class MainPlayerAnimation : PlayerAnimation
     public AudioClip preAttackSound;
     public AudioClip attackSound;
     public AudioClip landSound;
+    public AudioClip damageSound;
     public AudioSource Audio
     {
         get => GetComponent<AudioSource>();
@@ -210,14 +211,24 @@ public class MainPlayerAnimation : PlayerAnimation
         animator.SetBool("BouncingUp", false);
     }
 
-    public override void Damage()
+    public override void Invincible()
     {
         animator.SetBool("Damage", true);
     }
 
-    public override void AfterDamage()
+    public override void AfterInvincible()
     {
         animator.SetBool("Damage", false);
     }
 
+    public override void Damage()
+    {
+        PlaySound(damageSound);
+        animator.SetBool("OnGround", false);
+    }
+
+    public override void Parried()
+    {
+        animator.SetBool("OnGround", false);
+    }
 }

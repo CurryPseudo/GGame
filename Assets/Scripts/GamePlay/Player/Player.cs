@@ -102,7 +102,7 @@ public class Player : Autonomy
         invincible = true;
         if (playAnimation)
         {
-            animation.Damage();
+            animation.Invincible();
         }
         StartCoroutine(InvincibleCoroutine(time, playAnimation));
     }
@@ -112,7 +112,7 @@ public class Player : Autonomy
         invincible = false;
         if (playAnimation)
         {
-            animation.AfterDamage();
+            animation.AfterInvincible();
         }
     }
     public void ResetPoweringTime()
@@ -608,7 +608,14 @@ namespace PlayerStates
         }
         public override IEnumerator Main()
         {
-            mono.animation.Drop();
+            if (isParried)
+            {
+                mono.animation.Parried();
+            }
+            else
+            {
+                mono.animation.Damage();
+            }
             mono.animation.SignDirectionX = mono.VelocityX >= 0 ? -1 : 1;
             if (!isParried)
             {

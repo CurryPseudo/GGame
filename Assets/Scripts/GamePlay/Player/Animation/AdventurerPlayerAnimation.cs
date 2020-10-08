@@ -87,11 +87,19 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     {
     }
 
-    public override void AfterDamage()
+    public override void PreAttack()
     {
     }
 
-    public override void PreAttack()
+    public override void Invincible()
+    {
+    }
+
+    public override void AfterInvincible()
+    {
+    }
+
+    public override void Parried()
     {
     }
 }
