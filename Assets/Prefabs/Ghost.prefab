@@ -386,7 +386,7 @@ MonoBehaviour:
   detectTime: 2
   dieTime: 0.6
   attackVel: 15
-  damageTime: 0
+  damageTime: 1
 --- !u!1 &5602521358479561393
 GameObject:
   m_ObjectHideFlags: 0
