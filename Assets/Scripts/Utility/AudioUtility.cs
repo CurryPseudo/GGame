@@ -9,6 +9,7 @@ public class ClipInfo
     public AudioClip clip;
     public float volumeScale = 1;
 }
+[RequireComponent(typeof(AudioSource))]
 public class AudioUtility : MonoBehaviour
 {
     public AudioSource Audio

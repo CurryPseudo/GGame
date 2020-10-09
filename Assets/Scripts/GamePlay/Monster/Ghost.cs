@@ -7,6 +7,8 @@ public class Ghost : Monster<Ghost, GhostState>, IPlayerAttackable
 {
     public ContainPlayer attackDetect;
     public DamagePlayer damagePlayer;
+    public ClipInfo detectSound;
+    public float detectSoundDelay;
     public float detectTime;
     public float dieTime;
     public float attackVel;
@@ -61,6 +63,7 @@ namespace GhostStates
         public override IEnumerator Main()
         {
             mono.Animator.SetTrigger("Detect");
+            mono.StartCoroutine(DetectSound());
             var player = mono.attackDetect.Player;
             var timeLeft = mono.detectTime;
             while (timeLeft > 0)
@@ -71,6 +74,11 @@ namespace GhostStates
             }
             fsm.ChangeState(new Attack(player.Position));
 
+        }
+        public IEnumerator DetectSound()
+        {
+            yield return new WaitForSeconds(mono.detectSoundDelay);
+            mono.GetComponent<AudioUtility>().PlaySound(mono.detectSound);
         }
     }
     public class Attack : GhostState
