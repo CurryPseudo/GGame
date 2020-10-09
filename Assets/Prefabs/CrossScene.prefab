@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bgm:
     clip: {fileID: 8300000, guid: 1bfa506b37288ec46925b8f7c5fb8fa7, type: 3}
-    volumeScale: 0.5
+    volumeScale: 0.2
 --- !u!82 &5634346861533503586
 AudioSource:
   m_ObjectHideFlags: 0

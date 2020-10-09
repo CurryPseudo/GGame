@@ -23,6 +23,7 @@ public class MainPlayerAnimation : PlayerAnimation
     public ClipInfo bornSound;
     public ClipInfo parriedSound;
     public ClipInfo healingSound;
+    public AudioUtility healingAudio;
     public float quickHealingSpeed;
     public float slowHealingSpeed;
     public float quickHealingParticleSpeed;
@@ -223,14 +224,14 @@ public class MainPlayerAnimation : PlayerAnimation
     {
         animator.SetBool("Healing", true);
         GetComponentInChildren<ParticleSystem>().Play();
-        Audio.PlaySound(healingSound);
+        healingAudio.PlaySound(healingSound, true);
     }
 
     public override void StopHealing()
     {
         animator.SetBool("Healing", false);
         GetComponentInChildren<ParticleSystem>().Stop();
-        Audio.FadeOut(healingSoundFadeOutTime);
+        healingAudio.FadeOut(healingSoundFadeOutTime);
     }
 
     public override void QuickHealing()

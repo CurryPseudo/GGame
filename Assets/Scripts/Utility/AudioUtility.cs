@@ -12,12 +12,17 @@ public class ClipInfo
 [RequireComponent(typeof(AudioSource))]
 public class AudioUtility : MonoBehaviour
 {
+    private bool fadingOut = false;
+    private float fadeOutTimeLeft = 0;
+    private float currentFadeOutTime = 0;
+    private Coroutine fadeOutCoroutine;
     public AudioSource Audio
     {
         get => GetComponent<AudioSource>();
     }
     public void PlaySound(ClipInfo clip, bool loop = false)
     {
+        fadingOut = false;
         if (loop)
         {
             Audio.loop = true;
@@ -36,19 +41,25 @@ public class AudioUtility : MonoBehaviour
     }
     public void FadeOut(float time)
     {
-        StartCoroutine(FadeOutCoroutine(time));
+        fadeOutTimeLeft = time;
+        currentFadeOutTime = time;
+        fadingOut = true;
     }
-    IEnumerator FadeOutCoroutine(float time)
+    void Update()
     {
-        var timeLeft = time;
-        Audio.volume = 1;
-        while (timeLeft > 0)
+        if (fadeOutTimeLeft > 0)
         {
-            yield return null;
-            timeLeft -= Time.unscaledDeltaTime;
-            Audio.volume = timeLeft / time;
+            fadeOutTimeLeft -= Time.unscaledDeltaTime;
         }
-        Audio.Stop();
-        Audio.volume = 1;
+        if (fadeOutTimeLeft < 0 && fadingOut)
+        {
+            fadeOutTimeLeft = 0;
+            fadingOut = false;
+            Audio.Stop();
+        }
+        else if (fadingOut)
+        {
+            Audio.volume = fadeOutTimeLeft / currentFadeOutTime;
+        }
     }
 }
