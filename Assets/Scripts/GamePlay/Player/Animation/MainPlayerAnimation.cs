@@ -22,6 +22,10 @@ public class MainPlayerAnimation : PlayerAnimation
     public ClipInfo damageSound;
     public ClipInfo bornSound;
     public ClipInfo parriedSound;
+    public float quickHealingSpeed;
+    public float slowHealingSpeed;
+    public float quickHealingParticleSpeed;
+    public float slowHealingParticleSpeed;
     public AudioUtility Audio
     {
         get => GetComponent<AudioUtility>();
@@ -223,5 +227,24 @@ public class MainPlayerAnimation : PlayerAnimation
     {
         animator.SetBool("Healing", false);
         GetComponentInChildren<ParticleSystem>().Stop();
+    }
+
+    public override void QuickHealing()
+    {
+        animator.SetFloat("HealingSpeed", quickHealingSpeed);
+        var main = GetComponentInChildren<ParticleSystem>().main;
+        main.startSpeed = quickHealingParticleSpeed;
+    }
+
+    public override void SlowHealing()
+    {
+        animator.SetFloat("HealingSpeed", slowHealingSpeed);
+        var main = GetComponentInChildren<ParticleSystem>().main;
+        main.startSpeed = slowHealingParticleSpeed;
+    }
+
+    public override void HealingOneShot()
+    {
+        animator.SetTrigger("HealingOneShot");
     }
 }

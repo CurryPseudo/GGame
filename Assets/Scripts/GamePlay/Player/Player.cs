@@ -224,11 +224,13 @@ public class Player : Autonomy
     void FixedUpdate()
     {
         var lastIsHealing = isHealing;
+        bool quickHealing = false;
         isHealing = false;
         isInCollision = moveBox.InBoxCollision(blockLayer, null) != null;
         if (inLights.Count > 0)
         {
             isHealing = true;
+            quickHealing = true;
             SetDashPower(DashPower + lightDashPowerAccBase.Evaluate(poweringTime) * Time.fixedDeltaTime, true);
             SetDashPower(DashPower + lightDashPowerAccMultiply.Evaluate(poweringTime) * inLights.Count * Time.fixedDeltaTime, true);
             if (!pausePowering)
@@ -275,6 +277,14 @@ public class Player : Autonomy
         if (!isHealing && lastIsHealing)
         {
             animation.StopHealing();
+        }
+        if (quickHealing)
+        {
+            animation.QuickHealing();
+        }
+        else
+        {
+            animation.SlowHealing();
         }
     }
     void OnDrawGizmosSelected()
@@ -414,6 +424,10 @@ public class Player : Autonomy
     }
     public void AtCheckPoint()
     {
+        if (DashPower < maxDashPower)
+        {
+            animation.HealingOneShot();
+        }
         SetDashPower(maxDashPower, true);
     }
     public static void SetNoise(float amplitude, float frequency)
@@ -602,6 +616,10 @@ namespace PlayerStates
                     Player.SetNoise(0, 0);
                     if (attackResult == AttackResult.Dead)
                     {
+                        if (mono.DashPower < mono.maxDashPower)
+                        {
+                            mono.animation.HealingOneShot();
+                        }
                         mono.SetDashPower(mono.DashPower + mono.restoreDashPowerAfterKill, false);
                         mono.SetInvincibleTime(mono.attackInvincibleTime, false);
                     }

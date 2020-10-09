@@ -110,4 +110,16 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void StopHealing()
     {
     }
+
+    public override void QuickHealing()
+    {
+    }
+
+    public override void SlowHealing()
+    {
+    }
+
+    public override void HealingOneShot()
+    {
+    }
 }

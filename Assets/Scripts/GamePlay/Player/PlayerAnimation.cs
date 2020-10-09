@@ -29,4 +29,7 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void AfterInvincible();
     public abstract void BeginHealing();
     public abstract void StopHealing();
+    public abstract void QuickHealing();
+    public abstract void SlowHealing();
+    public abstract void HealingOneShot();
 }

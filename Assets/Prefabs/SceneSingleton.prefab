@@ -1429,7 +1429,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b24d610e30de2044a294f199ee1736c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healingStopDelayTime: 0
   runFartLeft:
     source: {fileID: 1987436236}
     maxInstanceCount: 1
@@ -1469,6 +1468,10 @@ MonoBehaviour:
   parriedSound:
     clip: {fileID: 8300000, guid: 5bb83b7d2c7d85343adea648b0ef7951, type: 3}
     volumeScale: 1
+  quickHealingSpeed: 1
+  slowHealingSpeed: 0.5
+  quickHealingParticleSpeed: 4
+  slowHealingParticleSpeed: 1
 --- !u!95 &1497342231
 Animator:
   serializedVersion: 3
