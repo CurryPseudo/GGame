@@ -8,9 +8,6 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(SpriteRenderer), typeof(Animator))]
 public class MainPlayerAnimation : PlayerAnimation
 {
-    public float healingStopDelayTime;
-    private float healingStopDelayTimeLeft;
-    private bool isHealing = false;
 
     public GameObjectInstantiator runFartLeft;
     public GameObjectInstantiator runFartRight;
@@ -43,14 +40,6 @@ public class MainPlayerAnimation : PlayerAnimation
     }
     void Update()
     {
-        if (healingStopDelayTimeLeft > 0)
-        {
-            healingStopDelayTimeLeft -= Time.unscaledDeltaTime;
-        }
-        if (healingStopDelayTimeLeft < 0 && !isHealing)
-        {
-            GetComponentInChildren<ParticleSystem>().Stop();
-        }
     }
     public override int SignDirectionX
     {
@@ -226,13 +215,13 @@ public class MainPlayerAnimation : PlayerAnimation
 
     public override void BeginHealing()
     {
-        isHealing = true;
+        animator.SetBool("Healing", true);
         GetComponentInChildren<ParticleSystem>().Play();
     }
 
     public override void StopHealing()
     {
-        isHealing = false;
-        healingStopDelayTimeLeft = healingStopDelayTime;
+        animator.SetBool("Healing", false);
+        GetComponentInChildren<ParticleSystem>().Stop();
     }
 }
