@@ -25,5 +25,9 @@ public class CrossScene : MonoBehaviour
         }
         Audio.PlaySound(bgm, true);
     }
+    void OnDestroy()
+    {
+        created = false;
+    }
 
 }
