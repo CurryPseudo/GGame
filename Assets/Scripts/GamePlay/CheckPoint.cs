@@ -6,6 +6,11 @@ using UnityEngine;
 public class CheckPoint : MonoBehaviour
 {
     public Transform point;
+    public ClipInfo checkSound;
+    public AudioUtility Audio
+    {
+        get => GetComponent<AudioUtility>();
+    }
     private bool active = false;
     private Animator Animator
     {
@@ -13,6 +18,7 @@ public class CheckPoint : MonoBehaviour
     }
     public void Active(Player t)
     {
+        Audio.PlaySound(checkSound);
         t.AtCheckPoint();
         if (!active)
         {
