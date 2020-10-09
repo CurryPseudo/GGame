@@ -14,6 +14,7 @@ public class MainPlayerAnimation : PlayerAnimation
     public GameObjectInstantiator onGroundFart;
     public GameObjectInstantiator parriedEffect;
     public GameObjectInstantiator swordLight;
+    public GameObjectInstantiator swordLightLine;
     public ClipInfo dashSound;
     public ClipInfo preAttackSound;
     public ClipInfo landSound;
@@ -144,6 +145,7 @@ public class MainPlayerAnimation : PlayerAnimation
         Vector2 directionFloat = direction;
         float angle = Vector2.SignedAngle(Vector2.left, directionFloat);
         swordLight.Instantiate(angle, transform);
+        swordLightLine.Instantiate(angle);
     }
 
     public override void OnParried(Vector2Int direction)
