@@ -20,6 +20,7 @@ public class MainPlayerAnimation : PlayerAnimation
     public ClipInfo landSound;
     public ClipInfo damageSound;
     public ClipInfo bornSound;
+    public ClipInfo parriedSound;
     public AudioUtility Audio
     {
         get => GetComponent<AudioUtility>();
@@ -142,6 +143,10 @@ public class MainPlayerAnimation : PlayerAnimation
     }
     public override void Attack(Vector2Int direction, bool parried)
     {
+        if (parried)
+        {
+            Audio.PlaySound(parriedSound);
+        }
         Vector2 directionFloat = direction;
         float angle = Vector2.SignedAngle(Vector2.left, directionFloat);
         swordLight.Instantiate(angle, transform);
