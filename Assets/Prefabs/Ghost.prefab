@@ -126,7 +126,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 160822549
   m_Mesh: {fileID: 0}
-  m_InstanceId: 56022
+  m_InstanceId: 199562
 --- !u!1 &4865084044036524350
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 160822549
   m_Mesh: {fileID: 0}
-  m_InstanceId: 55982
+  m_InstanceId: 199520
 --- !u!1 &5602521357285323894
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,6 +388,10 @@ MonoBehaviour:
     maxInstanceCount: 1
   attackDetect: {fileID: 5735320263667995306}
   damagePlayer: {fileID: 1485725412}
+  detectSound:
+    clip: {fileID: 8300000, guid: fefa6a96313110149b1cfbc7fd38331d, type: 3}
+    volumeScale: 1
+  detectSoundDelay: 0.2
   detectTime: 2
   dieTime: 0.6
   attackVel: 15
@@ -718,7 +722,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 160822549
   m_Mesh: {fileID: 0}
-  m_InstanceId: 55990
+  m_InstanceId: 199530
 --- !u!1001 &5602521357292119145
 PrefabInstance:
   m_ObjectHideFlags: 0
