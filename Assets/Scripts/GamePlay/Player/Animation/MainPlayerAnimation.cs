@@ -10,8 +10,7 @@ public class MainPlayerAnimation : PlayerAnimation
 {
     public GameObjectInstantiator runFartLeft;
     public GameObjectInstantiator runFartRight;
-    public List<GameObjectInstantiator> dashFartLefts;
-    public List<GameObjectInstantiator> dashFartRights;
+    public GameObjectInstantiator dashFart;
     public GameObjectInstantiator onGroundFart;
     public List<GameObjectInstantiator> parriedEffectLefts;
     public List<GameObjectInstantiator> parriedEffectRights;
@@ -132,12 +131,10 @@ public class MainPlayerAnimation : PlayerAnimation
         Audio.PlaySound(dashSound);
         animator.SetTrigger("Dash");
         int n = DirectionNumber(direction);
-        var dashFarts = (direction.x >= 0 ? dashFartRights : dashFartLefts);
-        if (n < dashFarts.Count)
-        {
-            dashFarts[n].Instantiate();
-        }
         animator.SetInteger("DashNo", n);
+        Vector2 directionFloat = direction;
+        float angle = Vector2.SignedAngle(Vector2.left, directionFloat);
+        dashFart.Instantiate(angle);
     }
     public override void PreAttack()
     {
@@ -145,7 +142,6 @@ public class MainPlayerAnimation : PlayerAnimation
     }
     public override void Attack(Vector2Int direction, bool parried)
     {
-        int n = DirectionNumber(direction);
         Vector2 directionFloat = direction;
         float angle = Vector2.SignedAngle(Vector2.left, directionFloat);
         swordLight.Instantiate(angle, transform);
