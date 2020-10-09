@@ -20,9 +20,13 @@ public abstract class IMonster : Autonomy, IPlayerAttackable
     public abstract void OnDamage(Vector2Int damageDirection);
 
     public abstract bool ValidBox(BoxPhysics box);
+    public abstract bool CouldAffectedByDamageMonster
+    {
+        get;
+    }
 }
 
-public class Monster<T, S> : IMonster where T : Monster<T, S> where S : State<T, S>, IMonsterState
+public abstract class Monster<T, S> : IMonster where T : Monster<T, S> where S : State<T, S>, IMonsterState
 {
     public float yGrav;
     public float yVelMax;

@@ -38,6 +38,7 @@ public class Lantern : Monster<Lantern, LanternState>, IPlayerAttackable
     public BoxPhysics detectBoxGroundRight;
     public ContainPlayer attackDetect;
     public DamagePlayer damagePlayer;
+    public override bool CouldAffectedByDamageMonster { get => true; }
     void Start()
     {
         fsm.ChangeState(new Drop());

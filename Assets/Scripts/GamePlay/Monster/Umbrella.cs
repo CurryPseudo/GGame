@@ -13,6 +13,7 @@ public class Umbrella : Monster<Umbrella, UmbrellaState>
     public float afterAttackToIdleTime;
     public ContainPlayer attackDetect;
     public DamagePlayer damagePlayer;
+    public override bool CouldAffectedByDamageMonster { get => true; }
     void Start()
     {
         fsm.ChangeState(new Drop(false));

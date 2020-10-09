@@ -11,6 +11,7 @@ public class Ghost : Monster<Ghost, GhostState>, IPlayerAttackable
     public float dieTime;
     public float attackVel;
     public float damageTime;
+    public override bool CouldAffectedByDamageMonster { get => false; }
     void Start()
     {
         fsm.ChangeState(new Idle());

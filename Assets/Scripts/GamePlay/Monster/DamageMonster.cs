@@ -6,7 +6,10 @@ public class DamageMonster : MonoBehaviour, IBoxDetectGuest<IMonster>
 {
     public void Enter(IMonster t)
     {
-        t.OnDamage((t.FaceLeft ? -1 : 1) * Vector2Int.right);
+        if (t.CouldAffectedByDamageMonster)
+        {
+            t.OnDamage((t.FaceLeft ? -1 : 1) * Vector2Int.right);
+        }
     }
 
     public void Exit(IMonster t)
@@ -15,6 +18,9 @@ public class DamageMonster : MonoBehaviour, IBoxDetectGuest<IMonster>
 
     public void Stay(IMonster t)
     {
-        t.OnDamage((t.FaceLeft ? -1 : 1) * Vector2Int.right);
+        if (t.CouldAffectedByDamageMonster)
+        {
+            t.OnDamage((t.FaceLeft ? -1 : 1) * Vector2Int.right);
+        }
     }
 }
