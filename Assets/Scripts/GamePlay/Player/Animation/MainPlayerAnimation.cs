@@ -19,7 +19,6 @@ public class MainPlayerAnimation : PlayerAnimation
     public List<GameObjectInstantiator> parriedEffectRights;
     public ClipInfo dashSound;
     public ClipInfo preAttackSound;
-    public ClipInfo attackSound;
     public ClipInfo landSound;
     public ClipInfo damageSound;
     public ClipInfo bornSound;
@@ -147,10 +146,6 @@ public class MainPlayerAnimation : PlayerAnimation
     }
     public override void Attack(Vector2Int direction, bool parried)
     {
-        if (!parried)
-        {
-            Audio.PlaySound(attackSound);
-        }
         int n = DirectionNumber(direction);
         var sowrdLights = (direction.x >= 0 ? swordLightRights : swordLightLefts);
         if (n < sowrdLights.Count)

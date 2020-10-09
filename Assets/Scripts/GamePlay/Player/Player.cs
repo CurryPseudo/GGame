@@ -558,24 +558,24 @@ namespace PlayerStates
                 return attackable;
             }))
             {
-                if (preAttacked)
-                {
-                    preAttacked = true;
-                    mono.animation.PreAttack();
-                }
                 if (!attacked.Contains(attackable))
                 {
+                    if (!preAttacked)
+                    {
+                        preAttacked = true;
+                        mono.animation.PreAttack();
+                    }
                     attacked.Add(attackable);
                     Player.SetNoise(mono.attackAmplitude, mono.attackFrequency);
                     var attackResult = attackable.GetAttackResult(dirInt);
                     mono.animation.Attack(dirInt, attackResult == AttackResult.Parry);
+                    attackable.OnAttack(dirInt);
                     if (mono.attackFrameDelay > 0)
                     {
                         Time.timeScale = 0;
                         yield return new WaitForSecondsRealtime(mono.attackFrameDelay);
                     }
                     Player.SetNoise(0, 0);
-                    attackable.OnAttack(dirInt);
                     if (attackResult == AttackResult.Dead)
                     {
                         mono.SetDashPower(mono.DashPower + mono.restoreDashPowerAfterKill, false);

@@ -35,6 +35,11 @@ public abstract class Monster<T, S> : IMonster where T : Monster<T, S> where S :
     public int life;
     public new GameObject animation;
     public BoxPhysics attackableBox;
+    public ClipInfo damageSound;
+    public AudioUtility Audio
+    {
+        get => GetComponent<AudioUtility>();
+    }
     public override bool FaceLeft
     {
         get => faceLeft;
@@ -117,6 +122,7 @@ public abstract class Monster<T, S> : IMonster where T : Monster<T, S> where S :
     }
     public override void OnDamage(Vector2Int attackDirection)
     {
+        Audio.PlaySound(damageSound);
         if (life > 1)
         {
             life -= 1;
