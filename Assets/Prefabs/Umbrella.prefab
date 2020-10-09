@@ -154,7 +154,7 @@ MonoBehaviour:
   attackableBox: {fileID: 92581095978271774}
   damageSound:
     clip: {fileID: 8300000, guid: 089d4aba51598684687e1b76d43fbe71, type: 3}
-    volumeScale: 1
+    volumeScale: 0.5
   dieLight:
     source: {fileID: 3264727375101209204}
     maxInstanceCount: 1

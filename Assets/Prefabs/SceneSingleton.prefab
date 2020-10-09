@@ -1453,7 +1453,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 609f76899079b774a9c2e5c6450ac162, type: 3}
     volumeScale: 1
   preAttackSound:
-    clip: {fileID: 8300000, guid: b2355d624b3aa50428edbdc05ec1addb, type: 3}
+    clip: {fileID: 8300000, guid: 6f99024753ca17f4898b56f77bd4c994, type: 3}
     volumeScale: 1
   landSound:
     clip: {fileID: 8300000, guid: 16829c8eb762f6a4285a570c1d273084, type: 3}
