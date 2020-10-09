@@ -21,10 +21,7 @@ public struct XMoveParam
 
 public interface IDashPowerUI
 {
-    float DashPower
-    {
-        set;
-    }
+    void SetDashPower(float value, bool playSound);
 }
 
 public class Player : Autonomy
@@ -148,23 +145,24 @@ public class Player : Autonomy
 
         }
     }
+    public void SetDashPower(float value, bool playSound)
+    {
+        var last = dashPower;
+        dashPower = value;
+        if (dashPower < 1)
+        {
+            lastPowerRestoreTimeLeft = lastDashPowerRestoreTime;
+        }
+        if (dashPower > maxDashPower)
+        {
+            dashPower = maxDashPower;
+        }
+        SceneSingleton.Get<IDashPowerUI>().SetDashPower(dashPower, playSound);
+
+    }
     public float DashPower
     {
         get => dashPower;
-        set
-        {
-            var last = dashPower;
-            dashPower = value;
-            if (dashPower < 1)
-            {
-                lastPowerRestoreTimeLeft = lastDashPowerRestoreTime;
-            }
-            if (dashPower > maxDashPower)
-            {
-                dashPower = maxDashPower;
-            }
-            SceneSingleton.Get<IDashPowerUI>().DashPower = dashPower;
-        }
     }
 
     [ShowInInspector]
@@ -220,15 +218,15 @@ public class Player : Autonomy
             transform.position = currentCheckPoint.Point;
         }
         mainFsm.ChangeState(new Born());
-        DashPower = maxDashPower;
+        SetDashPower(maxDashPower, false);
     }
     void FixedUpdate()
     {
         isInCollision = moveBox.InBoxCollision(blockLayer, null) != null;
         if (inLights.Count > 0)
         {
-            DashPower += lightDashPowerAccBase.Evaluate(poweringTime) * Time.fixedDeltaTime;
-            DashPower += lightDashPowerAccMultiply.Evaluate(poweringTime) * inLights.Count * Time.fixedDeltaTime;
+            SetDashPower(DashPower + lightDashPowerAccBase.Evaluate(poweringTime) * Time.fixedDeltaTime, true);
+            SetDashPower(DashPower + lightDashPowerAccMultiply.Evaluate(poweringTime) * inLights.Count * Time.fixedDeltaTime, true);
             if (!pausePowering)
             {
                 poweringTime += Time.fixedDeltaTime;
@@ -252,7 +250,7 @@ public class Player : Autonomy
         }
         if (DashPower < 1 && lastPowerRestoreTimeLeft <= 0)
         {
-            DashPower = 1;
+            SetDashPower(1, true);
         }
     }
     void OnDrawGizmosSelected()
@@ -372,7 +370,7 @@ public class Player : Autonomy
     }
     public void ProcessDamage()
     {
-        DashPower -= 1;
+        SetDashPower(DashPower - 1, false);
         if (DashPower < 0)
         {
             mainFsm.ChangeState(new Die());
@@ -392,7 +390,7 @@ public class Player : Autonomy
     }
     public void AtCheckPoint()
     {
-        DashPower = maxDashPower;
+        SetDashPower(maxDashPower, true);
     }
     public static void SetNoise(float amplitude, float frequency)
     {
@@ -411,7 +409,7 @@ public abstract class PlayerState : State<Player, PlayerState>
     {
         if (mono.DashPower >= 1)
         {
-            mono.DashPower -= 1;
+            mono.SetDashPower(mono.DashPower - 1, false);
             fsm.ChangeState(new Dash(dir, OnGround));
         }
     }
@@ -580,7 +578,7 @@ namespace PlayerStates
                     attackable.OnAttack(dirInt);
                     if (attackResult == AttackResult.Dead)
                     {
-                        mono.DashPower = mono.DashPower + mono.restoreDashPowerAfterKill;
+                        mono.SetDashPower(mono.DashPower + mono.restoreDashPowerAfterKill, false);
                         mono.SetInvincibleTime(mono.attackInvincibleTime, false);
                     }
                     else if (attackResult == AttackResult.Parry)
