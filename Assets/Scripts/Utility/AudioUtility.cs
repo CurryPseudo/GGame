@@ -21,6 +21,7 @@ public class AudioUtility : MonoBehaviour
         {
             Audio.loop = true;
             Audio.volume = clip.volumeScale;
+            Audio.clip = clip.clip;
             Audio.Play();
         }
         else
