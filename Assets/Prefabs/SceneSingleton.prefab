@@ -1459,7 +1459,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 16829c8eb762f6a4285a570c1d273084, type: 3}
     volumeScale: 1
   damageSound:
-    clip: {fileID: 8300000, guid: 70e7505d586e32647a906ad5cfe62aad, type: 3}
+    clip: {fileID: 8300000, guid: ce2cee5746d402140a052370143a555e, type: 3}
     volumeScale: 1
   bornSound:
     clip: {fileID: 8300000, guid: 3c44da11e6115ba4db6121c6419f6bbf, type: 3}
@@ -4416,7 +4416,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5576726914537856773}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.993953, y: -2.322958, z: -10}
+  m_LocalPosition: {x: 34.85395, y: 11.487041, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4011743833216391334}
