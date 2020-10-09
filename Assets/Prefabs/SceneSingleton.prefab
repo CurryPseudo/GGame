@@ -1430,10 +1430,10 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 6f99024753ca17f4898b56f77bd4c994, type: 3}
     volumeScale: 1
   landSound:
-    clip: {fileID: 8300000, guid: 16829c8eb762f6a4285a570c1d273084, type: 3}
+    clip: {fileID: 8300000, guid: b2722ef100619434c970f325c6e8270e, type: 3}
     volumeScale: 1
   damageSound:
-    clip: {fileID: 8300000, guid: ce2cee5746d402140a052370143a555e, type: 3}
+    clip: {fileID: 8300000, guid: 61ccaa05ccaacb3439cb2c8f3eefb49e, type: 3}
     volumeScale: 1
   bornSound:
     clip: {fileID: 8300000, guid: 3c44da11e6115ba4db6121c6419f6bbf, type: 3}
@@ -1443,6 +1443,9 @@ MonoBehaviour:
     volumeScale: 1
   healingSound:
     clip: {fileID: 8300000, guid: 0262d4337f00e2a42b565f683dc75c40, type: 3}
+    volumeScale: 1
+  dieSound:
+    clip: {fileID: 8300000, guid: 4465bccf41d4c584d93713eae1454987, type: 3}
     volumeScale: 1
   healingAudio: {fileID: 2125327732272015344}
   quickHealingSpeed: 1

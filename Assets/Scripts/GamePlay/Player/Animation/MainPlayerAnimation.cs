@@ -23,6 +23,7 @@ public class MainPlayerAnimation : PlayerAnimation
     public ClipInfo bornSound;
     public ClipInfo parriedSound;
     public ClipInfo healingSound;
+    public ClipInfo dieSound;
     public AudioUtility healingAudio;
     public float quickHealingSpeed;
     public float slowHealingSpeed;
@@ -173,6 +174,8 @@ public class MainPlayerAnimation : PlayerAnimation
 
     public override void Die()
     {
+        Audio.PlaySound(damageSound);
+        Audio.PlaySound(dieSound);
         animator.updateMode = AnimatorUpdateMode.UnscaledTime;
         animator.SetTrigger("Die");
     }
