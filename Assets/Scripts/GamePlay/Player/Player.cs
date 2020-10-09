@@ -427,8 +427,15 @@ public abstract class PlayerState : State<Player, PlayerState>
     }
     public virtual void OnBounceUp()
     {
-        mono.VelocityY = mono.BounceUpVel;
-        fsm.ChangeState(new BounceUp());
+        if (CouldBounceUp)
+        {
+            mono.VelocityY = mono.BounceUpVel;
+            fsm.ChangeState(new BounceUp());
+        }
+    }
+    public virtual bool CouldBounceUp
+    {
+        get => true;
     }
 }
 namespace PlayerStates
@@ -667,6 +674,10 @@ namespace PlayerStates
         {
             get => couldDash;
         }
+        public override bool CouldBounceUp
+        {
+            get => false;
+        }
     }
     public class Die : PlayerState
     {
@@ -684,6 +695,10 @@ namespace PlayerStates
         {
         }
         public override bool CouldDash
+        {
+            get => false;
+        }
+        public override bool CouldBounceUp
         {
             get => false;
         }
@@ -733,6 +748,10 @@ namespace PlayerStates
         public override void Exit()
         {
             mono.animation.AfterBounceUp();
+        }
+        public override bool CouldBounceUp
+        {
+            get => false;
         }
 
     }
