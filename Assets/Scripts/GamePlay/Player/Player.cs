@@ -96,6 +96,7 @@ public class Player : Autonomy
     private float lastPowerRestoreTimeLeft = 0;
     private bool pausePowering = false;
     private bool invincible = false;
+    private bool isHealing = false;
     public bool dashable = true;
     public void SetInvincibleTime(float time, bool playAnimation)
     {
@@ -222,9 +223,12 @@ public class Player : Autonomy
     }
     void FixedUpdate()
     {
+        var lastIsHealing = isHealing;
+        isHealing = false;
         isInCollision = moveBox.InBoxCollision(blockLayer, null) != null;
         if (inLights.Count > 0)
         {
+            isHealing = true;
             SetDashPower(DashPower + lightDashPowerAccBase.Evaluate(poweringTime) * Time.fixedDeltaTime, true);
             SetDashPower(DashPower + lightDashPowerAccMultiply.Evaluate(poweringTime) * inLights.Count * Time.fixedDeltaTime, true);
             if (!pausePowering)
@@ -246,11 +250,31 @@ public class Player : Autonomy
         }
         if (lastPowerRestoreTimeLeft > 0)
         {
-            lastPowerRestoreTimeLeft -= Time.fixedDeltaTime;
+            if (DashPower >= 1)
+            {
+                lastPowerRestoreTimeLeft = 0;
+            }
+            else
+            {
+                isHealing = true;
+                lastPowerRestoreTimeLeft -= Time.fixedDeltaTime;
+            }
         }
         if (DashPower < 1 && lastPowerRestoreTimeLeft <= 0)
         {
             SetDashPower(1, true);
+        }
+        if (DashPower >= maxDashPower)
+        {
+            isHealing = false;
+        }
+        if (isHealing && !lastIsHealing)
+        {
+            animation.BeginHealing();
+        }
+        if (!isHealing && lastIsHealing)
+        {
+            animation.StopHealing();
         }
     }
     void OnDrawGizmosSelected()

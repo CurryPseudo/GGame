@@ -8,6 +8,10 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(SpriteRenderer), typeof(Animator))]
 public class MainPlayerAnimation : PlayerAnimation
 {
+    public float healingStopDelayTime;
+    private float healingStopDelayTimeLeft;
+    private bool isHealing = false;
+
     public GameObjectInstantiator runFartLeft;
     public GameObjectInstantiator runFartRight;
     public GameObjectInstantiator dashFart;
@@ -36,6 +40,17 @@ public class MainPlayerAnimation : PlayerAnimation
         animator = GetComponent<Animator>();
         Assert.IsNotNull(runFartLeft.source);
         Assert.IsNotNull(runFartRight.source);
+    }
+    void Update()
+    {
+        if (healingStopDelayTimeLeft > 0)
+        {
+            healingStopDelayTimeLeft -= Time.unscaledDeltaTime;
+        }
+        if (healingStopDelayTimeLeft < 0 && !isHealing)
+        {
+            GetComponentInChildren<ParticleSystem>().Stop();
+        }
     }
     public override int SignDirectionX
     {
@@ -207,5 +222,17 @@ public class MainPlayerAnimation : PlayerAnimation
     public override void Parried()
     {
         animator.SetBool("OnGround", false);
+    }
+
+    public override void BeginHealing()
+    {
+        isHealing = true;
+        GetComponentInChildren<ParticleSystem>().Play();
+    }
+
+    public override void StopHealing()
+    {
+        isHealing = false;
+        healingStopDelayTimeLeft = healingStopDelayTime;
     }
 }

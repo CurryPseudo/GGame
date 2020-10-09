@@ -102,4 +102,12 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void Parried()
     {
     }
+
+    public override void BeginHealing()
+    {
+    }
+
+    public override void StopHealing()
+    {
+    }
 }

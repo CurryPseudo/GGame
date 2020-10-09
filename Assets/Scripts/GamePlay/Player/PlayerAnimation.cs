@@ -27,4 +27,6 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void AfterBounceUp();
     public abstract void Invincible();
     public abstract void AfterInvincible();
+    public abstract void BeginHealing();
+    public abstract void StopHealing();
 }
