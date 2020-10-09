@@ -118,6 +118,7 @@ namespace GhostStates
     {
         public override IEnumerator Main()
         {
+            mono.Animator.SetTrigger("Damage");
             mono.damagePlayer.gameObject.SetActive(false);
             yield return new WaitForSeconds(mono.damageTime);
             mono.damagePlayer.gameObject.SetActive(true);
