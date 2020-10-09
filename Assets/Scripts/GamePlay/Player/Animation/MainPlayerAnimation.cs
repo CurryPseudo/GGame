@@ -13,10 +13,9 @@ public class MainPlayerAnimation : PlayerAnimation
     public List<GameObjectInstantiator> dashFartLefts;
     public List<GameObjectInstantiator> dashFartRights;
     public GameObjectInstantiator onGroundFart;
-    public List<GameObjectInstantiator> swordLightLefts;
-    public List<GameObjectInstantiator> swordLightRights;
     public List<GameObjectInstantiator> parriedEffectLefts;
     public List<GameObjectInstantiator> parriedEffectRights;
+    public GameObjectInstantiator swordLight;
     public ClipInfo dashSound;
     public ClipInfo preAttackSound;
     public ClipInfo landSound;
@@ -147,11 +146,9 @@ public class MainPlayerAnimation : PlayerAnimation
     public override void Attack(Vector2Int direction, bool parried)
     {
         int n = DirectionNumber(direction);
-        var sowrdLights = (direction.x >= 0 ? swordLightRights : swordLightLefts);
-        if (n < sowrdLights.Count)
-        {
-            sowrdLights[n].Instantiate(transform);
-        }
+        Vector2 directionFloat = direction;
+        float angle = Vector2.SignedAngle(Vector2.left, directionFloat);
+        swordLight.Instantiate(angle, transform);
     }
 
     public override void OnParried(Vector2Int direction)
