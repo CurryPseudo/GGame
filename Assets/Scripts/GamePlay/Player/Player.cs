@@ -21,7 +21,10 @@ public struct XMoveParam
 
 public interface IDashPowerUI
 {
-    void SetDashPower(float value);
+    float DashPower
+    {
+        set;
+    }
 }
 
 public class Player : Autonomy
@@ -160,7 +163,7 @@ public class Player : Autonomy
             {
                 dashPower = maxDashPower;
             }
-            SceneSingleton.Get<IDashPowerUI>().SetDashPower(dashPower);
+            SceneSingleton.Get<IDashPowerUI>().DashPower = dashPower;
         }
     }
 

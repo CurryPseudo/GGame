@@ -4,12 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-[Serializable]
-public class ClipInfo
-{
-    public AudioClip clip;
-    public float volumeScale = 1;
-}
 
 [RequireComponent(typeof(SpriteRenderer), typeof(Animator))]
 public class MainPlayerAnimation : PlayerAnimation
@@ -29,26 +23,9 @@ public class MainPlayerAnimation : PlayerAnimation
     public ClipInfo landSound;
     public ClipInfo damageSound;
     public ClipInfo bornSound;
-    public AudioSource Audio
+    public AudioUtility Audio
     {
-        get => GetComponent<AudioSource>();
-    }
-    public void PlaySound(ClipInfo clip, bool loop = false)
-    {
-        if (loop)
-        {
-            Audio.loop = true;
-            Audio.volume = clip.volumeScale;
-            Audio.Play();
-        }
-        else
-        {
-            Audio.PlayOneShot(clip.clip, clip.volumeScale);
-        }
-    }
-    public void StopSoundLoop()
-    {
-        Audio.loop = false;
+        get => GetComponent<AudioUtility>();
     }
     private SpriteRenderer spriteRenderer;
     private Animator animator;
@@ -116,7 +93,7 @@ public class MainPlayerAnimation : PlayerAnimation
 
     public override void OnGround()
     {
-        PlaySound(landSound);
+        Audio.PlaySound(landSound);
         onGroundFart.Instantiate();
         animator.SetBool("OnGround", true);
     }
@@ -154,7 +131,7 @@ public class MainPlayerAnimation : PlayerAnimation
     }
     public override void Dash(Vector2Int direction)
     {
-        PlaySound(dashSound);
+        Audio.PlaySound(dashSound);
         animator.SetTrigger("Dash");
         int n = DirectionNumber(direction);
         var dashFarts = (direction.x >= 0 ? dashFartRights : dashFartLefts);
@@ -166,13 +143,13 @@ public class MainPlayerAnimation : PlayerAnimation
     }
     public override void PreAttack()
     {
-        PlaySound(preAttackSound);
+        Audio.PlaySound(preAttackSound);
     }
     public override void Attack(Vector2Int direction, bool parried)
     {
         if (!parried)
         {
-            PlaySound(attackSound);
+            Audio.PlaySound(attackSound);
         }
         int n = DirectionNumber(direction);
         var sowrdLights = (direction.x >= 0 ? swordLightRights : swordLightLefts);
@@ -201,7 +178,7 @@ public class MainPlayerAnimation : PlayerAnimation
 
     public override void Born()
     {
-        PlaySound(bornSound);
+        Audio.PlaySound(bornSound);
         animator.updateMode = AnimatorUpdateMode.UnscaledTime;
         animator.SetTrigger("Born");
     }
@@ -233,7 +210,7 @@ public class MainPlayerAnimation : PlayerAnimation
 
     public override void Damage()
     {
-        PlaySound(damageSound);
+        Audio.PlaySound(damageSound);
         animator.SetBool("OnGround", false);
     }
 
