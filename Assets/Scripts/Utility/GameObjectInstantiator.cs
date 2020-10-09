@@ -22,7 +22,7 @@ public class GameObjectInstantiator
         int index = instances.FindIndex((instance) => instance == null);
         if (index != -1)
         {
-            instances[index] = GameObject.Instantiate(source, source.transform.position, Quaternion.Euler(0, 0, angle));
+            instances[index] = GameObject.Instantiate(source, source.transform.position, source.transform.rotation * Quaternion.Euler(0, 0, angle));
             if (transform != null)
             {
                 instances[index].transform.SetParent(transform, true);
