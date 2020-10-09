@@ -10,6 +10,7 @@ public class CrossScene : MonoBehaviour
     {
         get => GetComponent<AudioUtility>();
     }
+    private bool isCustomDestroy;
     private static bool created = false;
     void Awake()
     {
@@ -20,6 +21,7 @@ public class CrossScene : MonoBehaviour
         }
         else
         {
+            isCustomDestroy = true;
             Destroy(gameObject);
             return;
         }
@@ -27,7 +29,10 @@ public class CrossScene : MonoBehaviour
     }
     void OnDestroy()
     {
-        created = false;
+        if (!isCustomDestroy)
+        {
+            created = false;
+        }
     }
 
 }

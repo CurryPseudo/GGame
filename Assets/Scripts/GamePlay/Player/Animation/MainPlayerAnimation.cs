@@ -8,6 +8,7 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(SpriteRenderer), typeof(Animator))]
 public class MainPlayerAnimation : PlayerAnimation
 {
+
     public GameObjectInstantiator runFartLeft;
     public GameObjectInstantiator runFartRight;
     public GameObjectInstantiator dashFart;
@@ -21,6 +22,12 @@ public class MainPlayerAnimation : PlayerAnimation
     public ClipInfo damageSound;
     public ClipInfo bornSound;
     public ClipInfo parriedSound;
+    public ClipInfo healingSound;
+    public float quickHealingSpeed;
+    public float slowHealingSpeed;
+    public float quickHealingParticleSpeed;
+    public float slowHealingParticleSpeed;
+    public float healingSoundFadeOutTime;
     public AudioUtility Audio
     {
         get => GetComponent<AudioUtility>();
@@ -36,6 +43,9 @@ public class MainPlayerAnimation : PlayerAnimation
         animator = GetComponent<Animator>();
         Assert.IsNotNull(runFartLeft.source);
         Assert.IsNotNull(runFartRight.source);
+    }
+    void Update()
+    {
     }
     public override int SignDirectionX
     {
@@ -207,5 +217,38 @@ public class MainPlayerAnimation : PlayerAnimation
     public override void Parried()
     {
         animator.SetBool("OnGround", false);
+    }
+
+    public override void BeginHealing()
+    {
+        animator.SetBool("Healing", true);
+        GetComponentInChildren<ParticleSystem>().Play();
+        Audio.PlaySound(healingSound);
+    }
+
+    public override void StopHealing()
+    {
+        animator.SetBool("Healing", false);
+        GetComponentInChildren<ParticleSystem>().Stop();
+        Audio.FadeOut(healingSoundFadeOutTime);
+    }
+
+    public override void QuickHealing()
+    {
+        animator.SetFloat("HealingSpeed", quickHealingSpeed);
+        var main = GetComponentInChildren<ParticleSystem>().main;
+        main.startSpeed = quickHealingParticleSpeed;
+    }
+
+    public override void SlowHealing()
+    {
+        animator.SetFloat("HealingSpeed", slowHealingSpeed);
+        var main = GetComponentInChildren<ParticleSystem>().main;
+        main.startSpeed = slowHealingParticleSpeed;
+    }
+
+    public override void HealingOneShot()
+    {
+        animator.SetTrigger("HealingOneShot");
     }
 }

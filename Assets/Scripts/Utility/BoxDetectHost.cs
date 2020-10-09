@@ -14,6 +14,8 @@ public interface IBoxDetectGuest<T>
 public class EventDetectGuest<T> : MonoBehaviour, IBoxDetectGuest<T>
 {
     public UnityEvent<T> OnDetect;
+    public UnityEvent<T> OnStay;
+    public UnityEvent<T> OnExit;
 
     public void Enter(T t)
     {
@@ -22,10 +24,12 @@ public class EventDetectGuest<T> : MonoBehaviour, IBoxDetectGuest<T>
 
     public void Exit(T t)
     {
+        OnExit.Invoke(t);
     }
 
     public void Stay(T t)
     {
+        OnStay.Invoke(t);
     }
 }
 
