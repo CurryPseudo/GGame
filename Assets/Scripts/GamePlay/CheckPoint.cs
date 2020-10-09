@@ -18,10 +18,10 @@ public class CheckPoint : MonoBehaviour
     }
     public void Active(Player t)
     {
-        Audio.PlaySound(checkSound);
         t.AtCheckPoint();
         if (!active)
         {
+            Audio.PlaySound(checkSound);
             active = true;
             Animator.SetBool("Active", true);
             PlayerPrefs.SetInt("BornPoint", this.gameObject.name.GetHashCode());

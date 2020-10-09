@@ -1462,7 +1462,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 70e7505d586e32647a906ad5cfe62aad, type: 3}
     volumeScale: 1
   bornSound:
-    clip: {fileID: 8300000, guid: 71e166b680bfab242b38a55afaa6bde6, type: 3}
+    clip: {fileID: 8300000, guid: 3c44da11e6115ba4db6121c6419f6bbf, type: 3}
     volumeScale: 1
   parriedSound:
     clip: {fileID: 8300000, guid: 5bb83b7d2c7d85343adea648b0ef7951, type: 3}
