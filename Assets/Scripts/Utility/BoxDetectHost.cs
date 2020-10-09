@@ -54,7 +54,7 @@ public class BoxDetectHost<T> : MonoBehaviour
         {
             currents.Clear();
         }
-        foreach (var guest in box.InBoxCollisionMapAll(detectLayer, go => go.GetComponent<IBoxDetectGuest<T>>()))
+        foreach (var guest in box.InBoxCollisionMapAllFlatten(detectLayer, go => go.GetComponents<IBoxDetectGuest<T>>()))
         {
             if (lasts == null || !lasts.Contains(guest))
             {

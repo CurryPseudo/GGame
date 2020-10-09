@@ -70,6 +70,16 @@ public class BoxPhysics : MonoBehaviour
         }
         return null;
     }
+    public IEnumerable<T> InBoxCollisionMapAllFlatten<T>(LayerMask layer, Func<GameObject, IEnumerable<T>> map)
+    {
+        foreach (var ts in InBoxCollisionMapAll(layer, map))
+        {
+            foreach (var t in ts)
+            {
+                yield return t;
+            }
+        }
+    }
     public IEnumerable<T> InBoxCollisionMapAll<T>(LayerMask layer, Func<GameObject, T> map)
     {
         var size = Size * 0.9f;
