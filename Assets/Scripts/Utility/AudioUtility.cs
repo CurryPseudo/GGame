@@ -34,4 +34,21 @@ public class AudioUtility : MonoBehaviour
     {
         Audio.loop = false;
     }
+    public void FadeOut(float time)
+    {
+        StartCoroutine(FadeOutCoroutine(time));
+    }
+    IEnumerator FadeOutCoroutine(float time)
+    {
+        var timeLeft = time;
+        Audio.volume = 1;
+        while (timeLeft > 0)
+        {
+            yield return null;
+            timeLeft -= Time.unscaledDeltaTime;
+            Audio.volume = timeLeft / time;
+        }
+        Audio.Stop();
+        Audio.volume = 1;
+    }
 }

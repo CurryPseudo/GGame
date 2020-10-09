@@ -876,7 +876,7 @@ MonoBehaviour:
   damageAmplitude: 25
   damageFrequency: 0.1
   bounceUpDis: 8
-  lastDashPowerRestoreTime: 4
+  lastDashPowerRestoreTime: 3
   onDamageFrameDelay: 0.3
   damageVelDrop: {x: 13, y: 10}
   damageVelIdle: {x: 13, y: 10}
@@ -1468,10 +1468,14 @@ MonoBehaviour:
   parriedSound:
     clip: {fileID: 8300000, guid: 5bb83b7d2c7d85343adea648b0ef7951, type: 3}
     volumeScale: 1
+  healingSound:
+    clip: {fileID: 8300000, guid: 0262d4337f00e2a42b565f683dc75c40, type: 3}
+    volumeScale: 1
   quickHealingSpeed: 1
   slowHealingSpeed: 0.5
   quickHealingParticleSpeed: 4
   slowHealingParticleSpeed: 1
+  healingSoundFadeOutTime: 1
 --- !u!95 &1497342231
 Animator:
   serializedVersion: 3
@@ -9233,7 +9237,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5576726914537856773}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 27.573954, y: 13.447042, z: -10}
+  m_LocalPosition: {x: 34.85395, y: 11.487041, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4011743833216391334}
