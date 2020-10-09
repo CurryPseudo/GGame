@@ -11,8 +11,9 @@ public class ButtonUI : MonoBehaviour
     public Sprite Released;
     public Image Image
     {
-        get => GetComponent<Image>();
+        get => image;
     }
+    private Image image;
     public InputAction action;
     public void OnEnable()
     {
@@ -24,15 +25,29 @@ public class ButtonUI : MonoBehaviour
     }
     void Awake()
     {
+        image = GetComponent<Image>();
         action.performed += Press;
         action.canceled += Release;
     }
+    void SetSprite(Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            Image.enabled = false;
+        }
+        else
+        {
+            Image.enabled = true;
+            Image.sprite = sprite;
+        }
+
+    }
     void Press(CallbackContext context)
     {
-        Image.sprite = Pressed;
+        SetSprite(Pressed);
     }
     void Release(CallbackContext context)
     {
-        Image.sprite = Released;
+        SetSprite(Released);
     }
 }
