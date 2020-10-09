@@ -377,7 +377,7 @@ MonoBehaviour:
   yGrav: 40
   yVelMax: 28
   faceLeft: 1
-  life: 3
+  life: 2
   animation: {fileID: 5602521357336740158}
   attackableBox: {fileID: 5602521358479561392}
   damageSound:
