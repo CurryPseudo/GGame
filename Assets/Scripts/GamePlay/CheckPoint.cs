@@ -68,12 +68,23 @@ public class CheckPoint : MonoBehaviour
             return map[hash];
         }
     }
+    public static bool HasValidSave
+    {
+        get
+        {
+            if (!PlayerPrefs.HasKey("BornPoint"))
+            {
+                return false;
+            }
+            return true;
+        }
+    }
     public Vector2 Point
     {
         get => point.position;
     }
     [Button]
-    public void ResetCheckPoint()
+    public static void ResetCheckPoint()
     {
         PlayerPrefs.DeleteKey("BornPoint");
     }
