@@ -447,8 +447,7 @@ public abstract class PlayerState : State<Player, PlayerState>
     {
         if (mono.DashPower >= 1)
         {
-            mono.SetDashPower(mono.DashPower - 1, false);
-            fsm.ChangeState(new Dash(dir, OnGround));
+            fsm.ChangeState(new Dash(dir, OnGround, false));
         }
     }
     public virtual bool CouldDash
@@ -529,12 +528,15 @@ namespace PlayerStates
     }
     public class Dash : PlayerState
     {
+        private bool freeDash = false;
         private bool onGroundWhileDash;
         private Vector2Int dirInt;
-        public Dash(Vector2Int dirInt, bool onGroundWhileDash)
+        private int killCount = 0;
+        public Dash(Vector2Int dirInt, bool onGroundWhileDash, bool freeDash)
         {
             this.dirInt = dirInt;
             this.onGroundWhileDash = onGroundWhileDash;
+            this.freeDash = freeDash;
         }
         private HashSet<IPlayerAttackable> attacked;
         public override IEnumerator Main()
@@ -563,6 +565,7 @@ namespace PlayerStates
             }
             mono.Velocity = mono.dashRemainSpeed * dir;
             mono.StartCoroutine(BlockMove(dirInt));
+            mono.SetDashPower(mono.DashPower - 1 + killCount * mono.restoreDashPowerAfterKill, false);
             if (!mono.IsOnGround)
             {
                 fsm.ChangeState(new Drop());
@@ -620,7 +623,7 @@ namespace PlayerStates
                         {
                             mono.animation.HealingOneShot();
                         }
-                        mono.SetDashPower(mono.DashPower + mono.restoreDashPowerAfterKill, false);
+                        killCount += 1;
                         mono.SetInvincibleTime(mono.attackInvincibleTime, false);
                     }
                     else if (attackResult == AttackResult.Parry)
@@ -710,7 +713,7 @@ namespace PlayerStates
         {
             if (couldDash)
             {
-                fsm.ChangeState(new Dash(dir, false));
+                fsm.ChangeState(new Dash(dir, false, true));
             }
         }
         public override bool CouldDash
