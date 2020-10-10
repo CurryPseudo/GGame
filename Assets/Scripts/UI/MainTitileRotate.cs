@@ -3,31 +3,24 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public interface IMainTitleUI
+public class MainTitileRotate : MonoBehaviour, IMainTitleUI
 {
-    void Init();
-    void Enter();
-    void Exit();
-}
-public class MainTitileMove : MonoBehaviour, IMainTitleUI
-{
-    public Vector2 direction;
+    public float angle;
     public float offset;
     public float time;
     private RectTransform Rect
     {
         get => GetComponent<RectTransform>();
     }
-    private Vector2 origin;
+    private Quaternion origin;
     void Awake()
     {
         var rect = GetComponent<RectTransform>();
-        origin = rect.anchoredPosition;
+        origin = rect.rotation;
     }
     public void Init()
     {
-        var from = origin + direction;
-        Rect.anchoredPosition = from;
+        Rect.rotation = origin * Quaternion.Euler(0, 0, angle);
     }
     [Button]
     public void Enter()
@@ -38,16 +31,16 @@ public class MainTitileMove : MonoBehaviour, IMainTitleUI
     {
         var timeLeft = time;
         var rect = GetComponent<RectTransform>();
-        var from = origin + direction;
+        var from = origin * Quaternion.Euler(0, 0, angle);
         var to = origin;
-        Rect.anchoredPosition = from;
+        Rect.rotation = from;
         yield return new WaitForSecondsRealtime(offset);
         while (timeLeft > 0)
         {
             yield return null;
             timeLeft -= Time.unscaledDeltaTime;
             timeLeft = Mathf.Max(0, timeLeft);
-            Rect.anchoredPosition = Vector3.Lerp(from, to, Mathf.SmoothStep(0, 1, 1 - timeLeft / time));
+            Rect.rotation = Quaternion.Lerp(from, to, Mathf.SmoothStep(0, 1, 1 - timeLeft / time));
         }
     }
     [Button]
@@ -60,17 +53,16 @@ public class MainTitileMove : MonoBehaviour, IMainTitleUI
         var timeLeft = time;
         var rect = GetComponent<RectTransform>();
         var from = origin;
-        var to = origin + direction;
-        Rect.anchoredPosition = from;
+        var to = origin * Quaternion.Euler(0, 0, angle);
+        Rect.rotation = from;
         yield return new WaitForSecondsRealtime(offset);
         while (timeLeft > 0)
         {
             yield return null;
             timeLeft -= Time.unscaledDeltaTime;
             timeLeft = Mathf.Max(0, timeLeft);
-            Rect.anchoredPosition = Vector3.Lerp(from, to, Mathf.SmoothStep(0, 1, 1 - timeLeft / time));
+            Rect.rotation = Quaternion.Lerp(from, to, Mathf.SmoothStep(0, 1, 1 - timeLeft / time));
         }
 
     }
-
 }
