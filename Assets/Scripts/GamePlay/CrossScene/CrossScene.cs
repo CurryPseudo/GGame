@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrossScene : MonoBehaviour
+public class CrossScene<T> : MonoBehaviour where T : CrossScene<T>
 {
-    // Start is called before the first frame update
-    public ClipInfo bgm;
-    public AudioUtility Audio
-    {
-        get => GetComponent<AudioUtility>();
-    }
     private bool isCustomDestroy;
     private static bool created = false;
     void Awake()
@@ -25,7 +19,6 @@ public class CrossScene : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        Audio.PlaySound(bgm, true);
     }
     void OnDestroy()
     {
