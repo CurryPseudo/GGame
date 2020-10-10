@@ -12,6 +12,11 @@ public class MainTitileDirector : MonoBehaviour
     public Button continueGameButton;
     public Image continueGameImage;
     public Sprite notValidButtonSprite;
+    public ClipInfo mainTitleBGM;
+    public AudioUtility Audio
+    {
+        get => GetComponent<AudioUtility>();
+    }
     public MainTitleUICombiner Combiner
     {
         get => GetComponent<MainTitleUICombiner>();
@@ -23,9 +28,14 @@ public class MainTitileDirector : MonoBehaviour
     }
     IEnumerator Main()
     {
+        PlayMainTitleBGM();
         yield return new WaitForSecondsRealtime(waitToEnter);
         Combiner.Enter();
         SetContinueGameStatus(CheckPoint.HasValidSave);
+    }
+    public void PlayMainTitleBGM()
+    {
+        Audio.PlaySound(mainTitleBGM);
     }
     public void StartGame()
     {
