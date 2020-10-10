@@ -97,6 +97,7 @@ public class Player : Autonomy
     private bool pausePowering = false;
     private bool invincible = false;
     private bool isHealing = false;
+    public static bool born = false;
     public bool dashable = true;
     public void SetInvincibleTime(float time, bool playAnimation)
     {
@@ -218,7 +219,14 @@ public class Player : Autonomy
         {
             transform.position = currentCheckPoint.Point;
         }
-        mainFsm.ChangeState(new Born());
+        if (born)
+        {
+            mainFsm.ChangeState(new Born());
+        }
+        else
+        {
+            mainFsm.ChangeState(new Drop());
+        }
         SetDashPower(maxDashPower, false);
     }
     void FixedUpdate()
@@ -732,6 +740,7 @@ namespace PlayerStates
             mono.Velocity = Vector2.zero;
             mono.animation.Die();
             yield return new WaitForSeconds(mono.dieTime);
+            Player.born = true;
             var scene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(scene.name);
             yield break;

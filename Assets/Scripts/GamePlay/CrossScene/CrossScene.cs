@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CrossScene<T> : MonoBehaviour where T : CrossScene<T>
 {
-    private bool isCustomDestroy;
     private static T created;
     public static T Current
     {
@@ -19,16 +18,8 @@ public class CrossScene<T> : MonoBehaviour where T : CrossScene<T>
         }
         else
         {
-            isCustomDestroy = true;
             Destroy(gameObject);
             return;
-        }
-    }
-    void OnDestroy()
-    {
-        if (!isCustomDestroy)
-        {
-            created = null;
         }
     }
 

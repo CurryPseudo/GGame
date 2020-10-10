@@ -106,6 +106,11 @@ public class MainTitleDirector : MonoBehaviour
     public void StartGame()
     {
         Time.timeScale = 1;
+        Player.born = false;
+        if (GamePlayCrossScene.Current != null)
+        {
+            GamePlayCrossScene.Current.CancelPause();
+        }
         StartCoroutine(StartGameCoroutine());
     }
     public void NewGame()
