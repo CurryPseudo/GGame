@@ -65,6 +65,21 @@ public class MainTitleDirector : MonoBehaviour
         }
         Combiner.Enter();
     }
+    public void MainMenu()
+    {
+        PlayMainTitleBGM();
+        GamePlayCrossScene.Current.Pause();
+        Time.timeScale = 0;
+        foreach (var pauseOnly in GetComponentsInChildren<PauseOnly>(true))
+        {
+            pauseOnly.gameObject.SetActive(false);
+        }
+        foreach (var mainTitleOnly in GetComponentsInChildren<MainTitleOnly>(true))
+        {
+            mainTitleOnly.gameObject.SetActive(true);
+        }
+        Combiner.Enter();
+    }
     public void ToMainMenu()
     {
         foreach (var mainTitleOnly in GetComponentsInChildren<MainTitleOnly>(true))

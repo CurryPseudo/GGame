@@ -8,4 +8,8 @@ public class MainTitleUIHelper : MonoBehaviour
     {
         MainTitleDirector.Current.Pause();
     }
+    public void MainTitle()
+    {
+        MainTitleDirector.Current.MainMenu();
+    }
 }
