@@ -13,4 +13,12 @@ public class GamePlayCrossScene : CrossScene<GamePlayCrossScene>
     {
         Audio.PlaySound(bgm, true);
     }
+    public void Pause()
+    {
+        Audio.FadeOut(0.5f);
+    }
+    public void CancelPause()
+    {
+        Audio.Restore();
+    }
 }

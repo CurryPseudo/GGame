@@ -5,12 +5,16 @@ using UnityEngine;
 public class CrossScene<T> : MonoBehaviour where T : CrossScene<T>
 {
     private bool isCustomDestroy;
-    private static bool created = false;
+    private static T created;
+    public static T Current
+    {
+        get => created;
+    }
     void Awake()
     {
-        if (!created)
+        if (created == null)
         {
-            created = true;
+            created = this as T;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -24,7 +28,7 @@ public class CrossScene<T> : MonoBehaviour where T : CrossScene<T>
     {
         if (!isCustomDestroy)
         {
-            created = false;
+            created = null;
         }
     }
 

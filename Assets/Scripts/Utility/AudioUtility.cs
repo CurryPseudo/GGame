@@ -16,6 +16,7 @@ public class AudioUtility : MonoBehaviour
     private float fadeOutTimeLeft = 0;
     private float currentFadeOutTime = 0;
     private Coroutine fadeOutCoroutine;
+    private ClipInfo current;
     public AudioSource Audio
     {
         get => GetComponent<AudioSource>();
@@ -25,6 +26,8 @@ public class AudioUtility : MonoBehaviour
         fadingOut = false;
         if (loop)
         {
+            current = clip;
+            Audio.Stop();
             Audio.loop = true;
             Audio.volume = clip.volumeScale;
             Audio.clip = clip.clip;
@@ -45,6 +48,10 @@ public class AudioUtility : MonoBehaviour
         currentFadeOutTime = time;
         fadingOut = true;
     }
+    public void Restore()
+    {
+        Audio.volume = current.volumeScale;
+    }
     void Update()
     {
         if (fadeOutTimeLeft > 0)
@@ -55,11 +62,10 @@ public class AudioUtility : MonoBehaviour
         {
             fadeOutTimeLeft = 0;
             fadingOut = false;
-            Audio.Stop();
         }
         else if (fadingOut)
         {
-            Audio.volume = fadeOutTimeLeft / currentFadeOutTime;
+            Audio.volume = fadeOutTimeLeft / currentFadeOutTime * current.volumeScale;
         }
     }
 }
