@@ -32,6 +32,7 @@ public class Lantern : Monster<Lantern, LanternState>, IPlayerAttackable
     public float prepareJumpTime;
     public float dieTime;
     public float damageTime;
+    public bool idleForever = false;
     public BoxPhysics detectBoxAirLeft;
     public BoxPhysics detectBoxAirRight;
     public BoxPhysics detectBoxGroundLeft;
@@ -88,32 +89,35 @@ namespace LanternStates
     {
         public override IEnumerator Main()
         {
-            while (true)
+            do
             {
-                yield return new WaitForSeconds(mono.waitJumpTime);
-                if (mono.attackDetect.Player != null)
+                while (true)
                 {
-                    var player = mono.attackDetect.Player;
-                    mono.FaceLeft = (player.transform.position - mono.transform.position).x < 0;
-                    if (ValidAttackGround(mono.FaceLeft))
+                    yield return new WaitForSeconds(mono.waitJumpTime);
+                    if (mono.attackDetect.Player != null)
                     {
-                        break;
+                        var player = mono.attackDetect.Player;
+                        mono.FaceLeft = (player.transform.position - mono.transform.position).x < 0;
+                        if (ValidAttackGround(mono.FaceLeft))
+                        {
+                            break;
+                        }
                     }
-                }
-                else
-                {
-                    if (ValidAttackAir(mono.FaceLeft) && ValidAttackGround(mono.FaceLeft))
+                    else
                     {
-                        break;
+                        if (ValidAttackAir(mono.FaceLeft) && ValidAttackGround(mono.FaceLeft))
+                        {
+                            break;
+                        }
+                        else if (ValidAttackAir(!mono.FaceLeft) && ValidAttackGround(!mono.FaceLeft))
+                        {
+                            mono.FaceLeft = !mono.FaceLeft;
+                            break;
+                        }
                     }
-                    else if (ValidAttackAir(!mono.FaceLeft) && ValidAttackGround(!mono.FaceLeft))
-                    {
-                        mono.FaceLeft = !mono.FaceLeft;
-                        break;
-                    }
-                }
 
-            }
+                }
+            } while (mono.idleForever);
             fsm.ChangeState(new Attack());
         }
         private bool ValidAttackAir(bool left)
