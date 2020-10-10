@@ -57,6 +57,8 @@ public class Player : Autonomy
     public float bounceUpDis;
     public float lastDashPowerRestoreTime;
     public float onDamageFrameDelay;
+    public float endDieDelay;
+    public float endOnGroundDelay;
     [ShowInInspector]
     public float BounceUpVel
     {
@@ -397,6 +399,20 @@ public class Player : Autonomy
             animation.OnGround();
         }
     }
+    public void DropYEnd()
+    {
+        VelocityY -= yGrav * Time.fixedDeltaTime;
+        if (Mathf.Abs(VelocityY) > yVelMax)
+        {
+            VelocityY = Mathf.Sign(VelocityY) * yVelMax;
+        }
+        var down = VelocityY < 0;
+        if (BlockMoveY() && down)
+        {
+            mainFsm.ChangeState(new EndGround());
+        }
+
+    }
     public void OnDamage(Vector2 dir)
     {
         if (invincible)
@@ -447,6 +463,13 @@ public class Player : Autonomy
         perlin.m_AmplitudeGain = amplitude;
         perlin.m_FrequencyGain = frequency;
     }
+    public void OnEnd()
+    {
+        if (mainFsm.Current != null)
+        {
+            mainFsm.Current.OnEnd();
+        }
+    }
 }
 
 public abstract class PlayerState : State<Player, PlayerState>
@@ -482,6 +505,10 @@ public abstract class PlayerState : State<Player, PlayerState>
     public virtual bool CouldBounceUp
     {
         get => true;
+    }
+    public virtual void OnEnd()
+    {
+
     }
 }
 namespace PlayerStates
@@ -532,6 +559,10 @@ namespace PlayerStates
         {
             mono.DamageVel(direction, mono.damageVelDrop);
             mono.ProcessDamage();
+        }
+        public override void OnEnd()
+        {
+            fsm.ChangeState(new End());
         }
     }
     public class Dash : PlayerState
@@ -809,5 +840,56 @@ namespace PlayerStates
             get => false;
         }
 
+    }
+    public class End : PlayerState
+    {
+        public override IEnumerator Main()
+        {
+            mono.animation.End();
+            var timeLeft = mono.endDieDelay;
+            while (timeLeft > 0)
+            {
+                yield return new WaitForFixedUpdate();
+                timeLeft -= Time.fixedDeltaTime;
+                mono.DropYEnd();
+            }
+            mono.animation.Die();
+            while (true)
+            {
+                yield return new WaitForFixedUpdate();
+                mono.DropYEnd();
+            }
+        }
+        public override void OnDamage(Vector2 direction)
+        {
+        }
+        public override bool CouldDash
+        {
+            get => false;
+        }
+        public override bool CouldBounceUp
+        {
+            get => false;
+        }
+
+    }
+    public class EndGround : PlayerState
+    {
+        public override IEnumerator Main()
+        {
+            yield return new WaitForSeconds(mono.endOnGroundDelay);
+            MainTitleDirector.Current.MainMenu();
+        }
+        public override void OnDamage(Vector2 direction)
+        {
+        }
+        public override bool CouldDash
+        {
+            get => false;
+        }
+        public override bool CouldBounceUp
+        {
+            get => false;
+        }
     }
 }

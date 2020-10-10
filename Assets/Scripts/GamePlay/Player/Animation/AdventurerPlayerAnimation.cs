@@ -122,4 +122,8 @@ public class AdventurerPlayerAnimation : PlayerAnimation
     public override void HealingOneShot()
     {
     }
+
+    public override void End()
+    {
+    }
 }

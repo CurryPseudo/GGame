@@ -970,6 +970,8 @@ MonoBehaviour:
   bounceUpDis: 8
   lastDashPowerRestoreTime: 3
   onDamageFrameDelay: 0.3
+  endDieDelay: 1
+  endOnGroundDelay: 1.5
   damageVelDrop: {x: 13, y: 10}
   damageVelIdle: {x: 13, y: 10}
   damageVelParried: {x: 13, y: 10}

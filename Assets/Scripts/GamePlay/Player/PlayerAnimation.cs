@@ -32,4 +32,5 @@ public abstract class PlayerAnimation : MonoBehaviour
     public abstract void QuickHealing();
     public abstract void SlowHealing();
     public abstract void HealingOneShot();
+    public abstract void End();
 }

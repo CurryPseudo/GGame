@@ -255,4 +255,9 @@ public class MainPlayerAnimation : PlayerAnimation
     {
         animator.SetTrigger("HealingOneShot");
     }
+
+    public override void End()
+    {
+        animator.SetBool("End", true);
+    }
 }
