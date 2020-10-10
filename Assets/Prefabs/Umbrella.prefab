@@ -159,8 +159,8 @@ MonoBehaviour:
     source: {fileID: 3264727375101209204}
     maxInstanceCount: 1
   waitAttackTime: 0.5
-  detectAccumulatedTime: 0.5
-  attackVel: 20
+  detectAccumulatedTime: 1.1
+  attackVel: 15
   parryTime: 0.2
   dieTime: 0.6
   afterAttackToIdleTime: 0.2
